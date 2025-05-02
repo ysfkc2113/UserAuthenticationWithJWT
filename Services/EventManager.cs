@@ -38,11 +38,12 @@ namespace Services
 
         }
 
-        public async Task<EventDto> CreateOneEventAsync(EventDtoForInsertion eventDto)
+        public async Task<EventDto> CreateOneEventAsync(EventDtoForInsertion eventDto,string userId)
         {
             var club = await _clubService.GetOneClubByIdAsync(eventDto.ClubId, false);
 
             var entity = _mapper.Map<Event>(eventDto);
+            entity.PublishedById = userId;
             _manager.Event.CreateOneEvent(entity);
             await _manager.SaveAsync();
             return _mapper.Map<EventDto>(entity);

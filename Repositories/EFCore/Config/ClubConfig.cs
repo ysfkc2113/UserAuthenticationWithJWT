@@ -18,7 +18,9 @@ namespace Repositories.EFCore.Config
             builder.HasData(
                 new Club { ClubId = 1, ClubName = "satranç kulübü", Description="Satranç meraklılarına." , Faculty="Elektronik",CreatedTime=DateTime.Now },
                 new Club { ClubId = 2, ClubName = "futbol kulübü", Description = "Boş Gezenler İçin.", Faculty = "BESYO" , CreatedTime = DateTime.Now },
-                new Club { ClubId = 3, ClubName = "medeniyet tekno kulübü", Description = "Teknoloji Tutkunlarına.", Faculty = "Blgisayar Mühendisliği", CreatedTime= DateTime.Now });
+                new Club { ClubId = 3, ClubName = "medeniyet tekno kulübü", Description = "Teknoloji Tutkunlarına.", Faculty = "Blgisayar Mühendisliği", CreatedTime= DateTime.Now },
+                new Club { ClubId = 4, ClubName = "medeniyet Tiyatro kulübü", Description = "Ölü Ozanlar Derneği Sevenler Kulübü.", Faculty = "Edebiyat Fakultesi", CreatedTime= DateTime.Now }
+                );
         }
     }
 }

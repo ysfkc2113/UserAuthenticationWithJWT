@@ -26,7 +26,7 @@ namespace WebApi.Utilities.Formatters
         }
         private static void FormatCsv(StringBuilder buffer, EventDto eventDto)
         {
-            buffer.AppendLine($"{eventDto.Id}, {eventDto.Title}, {eventDto.Price}");
+            buffer.AppendLine($"{eventDto.Id}, {eventDto.Title}, {eventDto.IsApproved},{eventDto.EventDate},{eventDto.Location}");
         }
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, 
