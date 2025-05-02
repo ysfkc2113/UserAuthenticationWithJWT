@@ -23,7 +23,19 @@ namespace Services.Contracts
         Task<(EventDtoForUpdate eventDtoForUpdate, Event clubEvent)> GetOneEventForPatchAsync(int id, bool trackChanges);
 
         Task SaveChangesForPatchAsync(EventDtoForUpdate eventDtoForUpdate, Event clubEvent);
-        Task<List<Event>> GetAllEventsAsync(bool trackChanges);
+        //Task<List<Event>> GetAllEventsAsync(bool trackChanges);
         Task<List<Event>> GetAllEventsWithDetailsAsync(bool trackChanges);
+
+
+
+        Task<(LinkResponse linkResponse, MetaData metaData)> GetPendingApprovalEventsAsync(LinkParameters linkParameters, bool trackChanges);
+
+        Task<(LinkResponse linkResponse, MetaData metaData)> GetApprovedEventsAsync(LinkParameters linkParameters, bool trackChanges);
+
+        Task<(LinkResponse linkResponse, MetaData metaData)> GetEventsByClubIdAsync(int clubId, LinkParameters linkParameters, bool trackChanges);
+
+        Task ApproveEventAsync(int id, string approvedByUserId, bool trackChanges);
+
+
     }
 }

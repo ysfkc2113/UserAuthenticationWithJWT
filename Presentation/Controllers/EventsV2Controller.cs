@@ -26,7 +26,9 @@ namespace Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllEventsAsync()
         {
-            var events = await _serviceManager.EventService.GetAllEventsAsync(false);
+           // var events = await _serviceManager.EventService.GetAllEventsAsync(false);
+            var events = await _serviceManager.EventService.GetAllEventsWithDetailsAsync(false);
+            
             var eventsV2 = events.Select(m => new
             {
                 Title = m.Title,

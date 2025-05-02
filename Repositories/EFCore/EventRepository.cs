@@ -18,13 +18,28 @@ namespace Repositories.EFCore
             
         }
 
-        public void CreateOneEvent(Event clubEvent) => Create(clubEvent);
+        public void CreateOneEvent(Event clubEvent)
+        {
+            clubEvent.IsApproved = false;
+            clubEvent.ApprovedTime = DateTime.MinValue;
+            clubEvent.CreatedTime = DateTime.Now;
+            Create(clubEvent); } 
         public void DeleteOneEvent(Event clubEvent) => Delete(clubEvent);
+        public void UpdateOneEvent(Event clubEvent)
+        {
+
+            if (clubEvent.IsApproved && clubEvent.ApprovedTime==DateTime.MinValue) 
+            {
+                clubEvent.ApprovedTime = DateTime.Now;
+              //herkesin onaylamaması lazım sadece admin ve hoca yapabilir.
+            }
+            Update(clubEvent);
+        } 
         public async Task<PagedList<Event>> GetAllEventsAsync(EventParameters eventParameters,
             bool trackChanges)
         {
             var clubEvents = await FindAll(trackChanges)
-                .FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
+                //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
                 .Search(eventParameters.SearchTerm)
                 .Sort(eventParameters.OrderBy)
                 .ToListAsync();
@@ -35,20 +50,85 @@ namespace Repositories.EFCore
                 eventParameters.PageSize);
         }
 
-        public async Task<List<Event>> GetAllEventsAsync(bool trackChanges)
-        {
-            var clubEvents= await FindAll(trackChanges).OrderBy(m=> m.Id).ToListAsync();
-            return clubEvents;
-        }
+        //public async Task<List<Event>> GetAllEventsAsync(bool trackChanges)//
+        //{
+        //    var clubEvents= await FindAll(trackChanges).OrderBy(m=> m.Id).ToListAsync();
+        //    return clubEvents;
+        //}
 
-        public async Task<List<Event>> GetAllEventsWithDetailsAsync(bool trackChanges)
+        public async Task<List<Event>> GetAllEventsWithDetailsAsync(bool trackChanges)//ilişkili dto haline getirilebili,r
         {
             return await _context.Events.Include(m=>m.Club).OrderBy(m => m.Id).ToListAsync();
         }
 
+
         public async Task<Event> GetOneEventByIdAsync(int id, bool trackChanges) =>
             await FindByCondition(b => b.Id.Equals(id), trackChanges)
             .SingleOrDefaultAsync();
-        public void UpdateOneEvent(Event clubEvent) => Update(clubEvent);
+
+       
+
+
+
+        public async Task<PagedList<Event>> GetPendingApprovalEventsAsync(EventParameters eventParameters, bool trackChanges)
+        {
+            var clubEvents = await FindAll(trackChanges)
+               //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
+               .Where(y=> !y.IsApproved)
+               .Search(eventParameters.SearchTerm)
+               .Sort(eventParameters.OrderBy)
+               .ToListAsync();
+
+            return PagedList<Event>
+                .ToPagedList(clubEvents,
+                eventParameters.PageNumber,
+                eventParameters.PageSize);
+        }
+
+      
+
+        public async Task<PagedList<Event>> GetApprovedEventsAsync(EventParameters eventParameters, bool trackChanges)
+        {
+            var clubEvents = await FindAll(trackChanges)
+               //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
+               .Where(y => y.IsApproved)
+               .Search(eventParameters.SearchTerm)
+               .Sort(eventParameters.OrderBy)
+               .ToListAsync();
+
+            return PagedList<Event>
+                .ToPagedList(clubEvents,
+                eventParameters.PageNumber,
+                eventParameters.PageSize);
+        }
+
+        public async Task<Event> GetEventByIdWithDetailsAsync(int id, bool trackChanges)
+        {
+            //await FindByCondition(b => b.Id.Equals(id), trackChanges)
+            //.SingleOrDefaultAsync();
+            return await _context.Events.Include(m => m.Club).Where(y=> y.Id.Equals(id)).FirstOrDefaultAsync();
+        }
+
+        public async Task<PagedList<Event>> GetEventsByClubIdAsync(int clubId, EventParameters eventParameters, bool trackChanges)
+        {
+           var clubEvents = await FindByCondition(m=>m.ClubId.Equals(clubId),trackChanges)
+                .Search(eventParameters.SearchTerm)
+                .Sort(eventParameters.OrderBy)
+                .ToListAsync();
+            return PagedList<Event>
+                .ToPagedList(clubEvents,
+                eventParameters.PageNumber,
+                eventParameters.PageSize);
+        }
+
+        public void ChangeApprovedEvent(Event clubEvent, string userId)
+        {
+            if (clubEvent.IsApproved == true)
+            {
+                clubEvent.ApprovedTime = DateTime.Now;
+                clubEvent.ApprovedById= userId;
+            }
+            Update(clubEvent);
+        }
     }
 }

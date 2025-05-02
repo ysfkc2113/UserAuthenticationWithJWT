@@ -23,7 +23,7 @@ namespace Repositories.EFCore.Config
                 , new IdentityRole
                 {
                     Name = "Club Manager",
-                    NormalizedName = "CLUBMANAGER"
+                    NormalizedName = "CLUB MANAGER"
                 }, new IdentityRole
                 {
                     Name = "Academician",

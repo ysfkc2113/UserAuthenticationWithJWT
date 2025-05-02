@@ -16,8 +16,15 @@ namespace Repositories.Contracts
         void CreateOneEvent(Event clubEvent);
         void UpdateOneEvent(Event clubEvent);
         void DeleteOneEvent(Event clubEvent);
-        Task<List<Event>> GetAllEventsAsync(bool trackChanges);
+        //Task<List<Event>> GetAllEventsAsync(bool trackChanges);//silinecek
         Task<List<Event>> GetAllEventsWithDetailsAsync(bool trackChanges);
+
+        // New Methods
+        Task<PagedList<Event>> GetEventsByClubIdAsync(int clubId, EventParameters eventParameters, bool trackChanges);
+        Task<Event> GetEventByIdWithDetailsAsync(int id, bool trackChanges);
+        Task<PagedList<Event>> GetApprovedEventsAsync(EventParameters eventParameters, bool trackChanges);
+        Task<PagedList<Event>> GetPendingApprovalEventsAsync(EventParameters eventParameters, bool trackChanges);
+        void ChangeApprovedEvent(Event clubEvent,string userId);
 
     }
 }

@@ -24,7 +24,7 @@ namespace Services
             return await _manager.Club.GetAllClubsAsync(trackChanges);
         }
 
-        public async Task<Club> GteOneClubByIdAsync(int id, bool trackChanges)
+        public async Task<Club> GetOneClubByIdAsync(int id, bool trackChanges)
         {
             var club = await _manager.Club.GetOneClubByIdAsync(id, trackChanges);
             if (club == null)

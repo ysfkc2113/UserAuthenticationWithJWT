@@ -16,7 +16,7 @@ namespace Entities.Models
         public bool Approved  { get; set; }=false;
         public string? role_in_club { get; set; }
         public DateTime? ApprovedTime { get; set; }//onaylanma tarihi
-        public DateTime CreateTime  { get; set; }=DateTime.Now;//istek atma tarihi
+        public DateTime CreatedTime  { get; set; }//istek atma tarihi
 
 
     }

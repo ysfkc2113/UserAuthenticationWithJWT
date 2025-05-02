@@ -10,7 +10,7 @@ namespace Services.Contracts
     public interface IClubService
     {
         Task<IEnumerable<Club>> GetAllClubsAsync(bool trackChanges);
-        Task<Club> GteOneClubByIdAsync(int id,bool trackChanges);
+        Task<Club> GetOneClubByIdAsync(int id,bool trackChanges);
 
     }
 }

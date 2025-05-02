@@ -67,7 +67,7 @@ namespace Presentation.Controllers
 
             return Ok(clubEvent);
         }
-        [Authorize(Roles ="Admin, Editor")]
+        [Authorize(Roles ="Admin, Academician")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [HttpPost(Name = "CreateOneEventAsync")]
         public async Task<IActionResult> CreateOneEventAsync([FromBody] EventDtoForInsertion eventDto)
@@ -76,7 +76,7 @@ namespace Presentation.Controllers
             return StatusCode(201, clubEvent); // CreatedAtRoute()
         }
 
-        [Authorize(Roles ="Admin, Editor")]
+        [Authorize(Roles = "Admin, Academician,Club Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateOneEventAsync([FromRoute(Name = "id")] int id,
@@ -86,7 +86,7 @@ namespace Presentation.Controllers
             return NoContent(); // 204
         }
 
-        [Authorize(Roles = "Admin, Editor")]
+        [Authorize(Roles = "Admin, Academician")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteOneEventAsync([FromRoute(Name = "id")] int id)
         {
@@ -94,7 +94,7 @@ namespace Presentation.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin, Editor")]
+        [Authorize(Roles = "Admin, Academician,Club Manager")]
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PartiallyUpdateOneEventAsync([FromRoute(Name = "id")] int id,
             [FromBody] JsonPatchDocument<EventDtoForUpdate> eventPatch)
@@ -131,6 +131,24 @@ namespace Presentation.Controllers
         {
             return Ok(await _manager.EventService.GetAllEventsWithDetailsAsync(false));
         }
+        [Authorize]
+        [HttpGet("beklenenler")]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        public async Task<IActionResult> GetPendingApprovalEventsAsync([FromQuery] EventParameters eventParameters) 
+        {
+            var linkParameters = new LinkParameters()
+            {
+                EventParameters = eventParameters,
+                HttpContext = HttpContext
+            };
+            var events= await _manager.EventService.GetPendingApprovalEventsAsync(linkParameters, false);
+            return Ok(events);
+        
+        }
+
+
+
+        
 
     }
 }

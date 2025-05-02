@@ -7,11 +7,11 @@ namespace Repositories.EFCore.Extensions
 {
     public static class EventRepositoryExtensions
     {
-        public static IQueryable<Event> FilterEvents(this IQueryable<Event> events,
-            uint minPrice, uint maxPrice) =>
-            events.Where(clubEvent =>
-            clubEvent.Price >= minPrice &&
-            clubEvent.Price <= maxPrice);
+    //    public static IQueryable<Event> FilterEvents(this IQueryable<Event> events,
+    //        uint minPrice, uint maxPrice) =>
+    //        events.Where(clubEvent =>
+    //        clubEvent.Price >= minPrice &&
+    //        clubEvent.Price <= maxPrice);
 
         public static IQueryable<Event> Search(this IQueryable<Event> events, 
             string searchTerm)

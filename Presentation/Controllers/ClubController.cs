@@ -31,7 +31,7 @@ namespace Presentation.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetOneClubById([FromRoute] int id)
         {
-            var club = await _manager.ClubService.GteOneClubByIdAsync(id, false);
+            var club = await _manager.ClubService.GetOneClubByIdAsync(id, false);
             
             return Ok(club);
         }
