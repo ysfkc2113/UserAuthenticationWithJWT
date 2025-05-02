@@ -37,15 +37,15 @@ namespace Presentation.Controllers
                     },
                     new Link
                     {
-                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (BooksController.GetAllBooksAsync),new{}),
-                        Rel="books",
+                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (EventsController.GetAllEventsAsync),new{}),
+                        Rel="events",
                         Method = "GET",
 
                     },
                     new Link
                     {
-                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (BooksController.CreateOneBookAsync),new{}),
-                        Rel="books",
+                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (EventsController.CreateOneEventAsync),new{}),
+                        Rel="events",
                         Method = "Post",
 
                     }

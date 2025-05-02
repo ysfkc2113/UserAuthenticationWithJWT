@@ -12,8 +12,8 @@ using Repositories.EFCore;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250428124149_StartPoint")]
-    partial class StartPoint
+    [Migration("20250429145045_UpdateForClub")]
+    partial class UpdateForClub
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,70 @@ namespace WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Entities.Models.Book", b =>
+            modelBuilder.Entity("Entities.Models.Club", b =>
+                {
+                    b.Property<int>("ClubId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClubId"), 1L, 1);
+
+                    b.Property<string>("ClubName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Created_by")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Faculty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Logo_url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Responsible_teacher_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClubId");
+
+                    b.ToTable("Clubs");
+
+                    b.HasData(
+                        new
+                        {
+                            ClubId = 1,
+                            ClubName = "satranç kulübü",
+                            Created_at = new DateTime(2025, 4, 29, 17, 50, 45, 136, DateTimeKind.Local).AddTicks(8399),
+                            Description = "Satranç meraklılarına.",
+                            Faculty = "Elektronik"
+                        },
+                        new
+                        {
+                            ClubId = 2,
+                            ClubName = "futbol kulübü",
+                            Created_at = new DateTime(2025, 4, 29, 17, 50, 45, 136, DateTimeKind.Local).AddTicks(8407),
+                            Description = "Boş Gezenler İçin.",
+                            Faculty = "BESYO"
+                        },
+                        new
+                        {
+                            ClubId = 3,
+                            ClubName = "medeniyet tekno kulübü",
+                            Created_at = new DateTime(2025, 4, 29, 17, 50, 45, 136, DateTimeKind.Local).AddTicks(8409),
+                            Description = "Teknoloji Tutkunlarına.",
+                            Faculty = "Blgisayar Mühendisliği"
+                        });
+                });
+
+            modelBuilder.Entity("Entities.Models.Club_User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,7 +95,45 @@ namespace WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CategoryId")
+                    b.Property<bool>("Approved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ApprovedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ClubId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("role_in_club")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClubId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Club_User");
+                });
+
+            modelBuilder.Entity("Entities.Models.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ClubId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -44,65 +145,31 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("ClubId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Events");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CategoryId = 1,
+                            ClubId = 1,
                             Price = 75m,
                             Title = "Karagöz ve Hacivat"
                         },
                         new
                         {
                             Id = 2,
-                            CategoryId = 2,
+                            ClubId = 2,
                             Price = 175m,
                             Title = "Mesnevi"
                         },
                         new
                         {
                             Id = 3,
-                            CategoryId = 1,
+                            ClubId = 1,
                             Price = 375m,
                             Title = "Devlet"
-                        });
-                });
-
-            modelBuilder.Entity("Entities.Models.Category", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            Name = "satranç kulübü"
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            Name = "futbol kulübü"
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            Name = "medeniyet tekno kulübü"
                         });
                 });
 
@@ -117,6 +184,9 @@ namespace WebApi.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -153,6 +223,9 @@ namespace WebApi.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfilPhotoPath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
@@ -212,22 +285,29 @@ namespace WebApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7521ed9d-d076-49e2-a740-58e5522f9652",
-                            ConcurrencyStamp = "b80d5ffb-4fc2-41ed-bf5b-cf2202181ee6",
+                            Id = "9f938748-5629-449a-9c4a-8f741c0de7c0",
+                            ConcurrencyStamp = "a085c271-3d70-4bd7-b120-f21f721e4998",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "279931d4-c9f6-4488-aa4b-3ab9b5f1064b",
-                            ConcurrencyStamp = "4b5b4b90-f232-4885-9d44-7c728eb2509e",
-                            Name = "Editor",
-                            NormalizedName = "EDITOR"
+                            Id = "a7bd2bc3-9800-48e7-842d-a2a30463f84a",
+                            ConcurrencyStamp = "e39b2476-3745-4020-aed3-82f392aff585",
+                            Name = "Club Manager",
+                            NormalizedName = "CLUBMANAGER"
                         },
                         new
                         {
-                            Id = "92610a1c-7e56-4f0d-8cbe-63fd14d7bd2a",
-                            ConcurrencyStamp = "37efb64c-1b82-40f8-b86b-6d9f72844a76",
+                            Id = "d4a0fc64-be3d-48a6-941d-ce0890ed53e0",
+                            ConcurrencyStamp = "8b387bc5-f97e-4150-9fca-4a3d02e08d9c",
+                            Name = "Academician",
+                            NormalizedName = "ACADEMICIAN"
+                        },
+                        new
+                        {
+                            Id = "7cdf8408-170e-4ef0-bb29-d751969d7768",
+                            ConcurrencyStamp = "668980a0-cd00-4e74-a197-becf9f6faf97",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -339,15 +419,32 @@ namespace WebApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.Models.Book", b =>
+            modelBuilder.Entity("Entities.Models.Club_User", b =>
                 {
-                    b.HasOne("Entities.Models.Category", "Category")
-                        .WithMany("Books")
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("Entities.Models.Club", "Club")
+                        .WithMany("Club_Users")
+                        .HasForeignKey("ClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.HasOne("Entities.Models.User", "User")
+                        .WithMany("Club_Users")
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("Club");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Entities.Models.Event", b =>
+                {
+                    b.HasOne("Entities.Models.Club", "Club")
+                        .WithMany("Events")
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Club");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -401,9 +498,16 @@ namespace WebApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Entities.Models.Category", b =>
+            modelBuilder.Entity("Entities.Models.Club", b =>
                 {
-                    b.Navigation("Books");
+                    b.Navigation("Club_Users");
+
+                    b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("Entities.Models.User", b =>
+                {
+                    b.Navigation("Club_Users");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,28 +13,28 @@ namespace Presentation.Controllers
     //[ApiVersion("2.0",Deprecated = true)]// yayından kaldırdık //bu kısmı extensionda da yaptık.
     [ApiController]
     [ApiExplorerSettings(GroupName = "v2")]
-    [Route("api/books")]
-    public class BooksV2Controller : ControllerBase
+    [Route("api/events")]
+    public class EventsV2Controller : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
 
-        public BooksV2Controller(IServiceManager serviceManager)
+        public EventsV2Controller(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooksAsync()
+        public async Task<IActionResult> GetAllEventsAsync()
         {
-            var books = await _serviceManager.BookService.GetAllBooksAsync(false);
-            var booksV2 = books.Select(m => new
+            var events = await _serviceManager.EventService.GetAllEventsAsync(false);
+            var eventsV2 = events.Select(m => new
             {
                 Title = m.Title,
                 Id = m.Id
             });
             
 
-            return Ok(booksV2);
+            return Ok(eventsV2);
         }
     }
 }

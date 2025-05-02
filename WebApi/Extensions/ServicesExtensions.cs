@@ -60,7 +60,7 @@ namespace WebApi.Extensions
 
         public static void ConfigureDataShaper(this IServiceCollection services)
         {
-            services.AddScoped<IDataShaper<BookDto>, DataShaper<BookDto>>();
+            services.AddScoped<IDataShaper<EventDto>, DataShaper<EventDto>>();
         }
 
         public static void AddCustomMediaTypes(this IServiceCollection services)
@@ -101,9 +101,9 @@ namespace WebApi.Extensions
                    opt.AssumeDefaultVersionWhenUnspecified = true;
                    opt.DefaultApiVersion = new ApiVersion(1, 0);
                    opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
-                   opt.Conventions.Controller<BooksController>()
+                   opt.Conventions.Controller<EventsController>()
                         .HasApiVersion(new ApiVersion(1, 0));
-                   opt.Conventions.Controller<BooksV2Controller>()
+                   opt.Conventions.Controller<EventsV2Controller>()
                         .HasDeprecatedApiVersion(new ApiVersion(2, 0));
                });
 
@@ -191,19 +191,19 @@ namespace WebApi.Extensions
                 s.SwaggerDoc("v1",
                     new OpenApiInfo
                     {
-                        Title = "BTK Akademi",
+                        Title = "Club's Manager",
                         Version = "v1",
-                        Description = "BTK Akademi ASP.NET Core Web API",
-                        TermsOfService = new Uri("https://www.btkakademi.gov.tr/"),
+                        Description = "Club's Manager ASP.NET Core Web API",
+                        TermsOfService = new Uri("https://github.com/ysfkc2113"),
                         Contact = new OpenApiContact
                         {
-                            Name = "Zafer CÖMERT",
-                            Email = "comertzafer@gmail.com",
-                            Url = new Uri("https://www.zafercomert.com")
+                            Name = "Yusuf Koç",
+                            Email = "ysfkc2113@gmail.com",
+                            Url = new Uri("https://github.com/ysfkc2113")
                         }
                     });
 
-                s.SwaggerDoc("v2", new OpenApiInfo { Title = "BTK Akademi", Version = "v2" });
+                s.SwaggerDoc("v2", new OpenApiInfo { Title = "Club's Manager", Version = "v2" });
 
                 s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
@@ -234,13 +234,13 @@ namespace WebApi.Extensions
 
         public static void RegisterRepositories(this IServiceCollection services)
         {
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IClubRepository, ClubRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
         }
         public static void RegisterServices(this IServiceCollection services)
         {
-            services.AddScoped<ICategoryService, CategoryManager>();
-            services.AddScoped<IBookService, BookManager>();
+            services.AddScoped<IClubService, ClubManager>();
+            services.AddScoped<IEventService, EventManager>();
             services.AddScoped<IAuthenticationService, AuthenticationManager>();
         }
 

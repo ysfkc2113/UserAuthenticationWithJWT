@@ -10,30 +10,30 @@ using System.Threading.Tasks;
 namespace Presentation.Controllers
 {
     [ApiController]
-    [Route("api/category")]
+    [Route("api/club")]
     [ApiExplorerSettings(GroupName = "v1")]
     [ServiceFilter(typeof(LogFilterAttribute))]
-    public class CategoryController : ControllerBase
+    public class ClubController : ControllerBase
     {
         private readonly IServiceManager _manager;
 
-        public CategoryController(IServiceManager manager)
+        public ClubController(IServiceManager manager)
         {
             _manager = manager;
         }
 
         [HttpGet]
-        public async Task <IActionResult>  GetAllCategories()
+        public async Task <IActionResult>  GetAllClubs()
         {
-            return Ok(await _manager.CategoryService.GetAllCategoriesAsync(false));
+            return Ok(await _manager.ClubService.GetAllClubsAsync(false));
 
         }
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetOneCategoryById([FromRoute] int id)
+        public async Task<IActionResult> GetOneClubById([FromRoute] int id)
         {
-            var category = await _manager.CategoryService.GteOneCategoryByIdAsync(id, false);
+            var club = await _manager.ClubService.GteOneClubByIdAsync(id, false);
             
-            return Ok(category);
+            return Ok(club);
         }
     }
 }

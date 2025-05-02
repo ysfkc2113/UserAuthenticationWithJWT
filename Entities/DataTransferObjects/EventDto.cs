@@ -1,6 +1,6 @@
 ﻿namespace Entities.DataTransferObjects
 {
-    public record BookDto
+    public record EventDto
     {
         public int Id { get; set; }
         public String Title { get; set; }

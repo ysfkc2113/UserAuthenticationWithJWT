@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace Services.Contracts
 {
-    public interface IBookLinks
+    public interface IEventLinks
     {
-        LinkResponse TryGenerateLinks(IEnumerable<BookDto> booksDto,
+        LinkResponse TryGenerateLinks(IEnumerable<EventDto> eventDto,
             string fields, HttpContext httpContext);
     }
 }

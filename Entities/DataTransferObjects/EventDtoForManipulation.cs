@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public abstract record BookDtoForManipulation
+    public abstract record EventDtoForManipulation
     {
         [Required(ErrorMessage ="Title is a required field.")]
         [MinLength(2, ErrorMessage = "Title must consist of at least 2 characters")]

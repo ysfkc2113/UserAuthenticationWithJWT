@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Entities.Exceptions
 {
-    public sealed class CategoryNotFoundException : NotFoundException
+    public sealed class ClubNotFoundException : NotFoundException
     {
-        public CategoryNotFoundException(int id) : base($"The category with id : {id} could not found.")
+        public ClubNotFoundException(int id) : base($"The club with id : {id} could not found.")
         {
         }
     }

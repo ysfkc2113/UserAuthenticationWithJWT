@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace Entities.Models
 {
-    public class Book
+    public class Event
     {
         public int Id { get; set; }
         public String Title { get; set; }
         public decimal Price { get; set; }
-        public int CategoryId { get; set; }//fk
-        public Category Category { get; set; }// navigator prop
+        public int ClubId { get; set; }//fk
+        public Club Club { get; set; }// navigator prop
+
+
     }
 }

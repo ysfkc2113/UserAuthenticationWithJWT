@@ -17,16 +17,16 @@ namespace WebApi.Utilities.Formatters
 
         protected override bool CanWriteType(Type? type)
         {
-            if(typeof(BookDto).IsAssignableFrom(type) ||
-                typeof(IEnumerable<BookDto>).IsAssignableFrom(type))
+            if(typeof(EventDto).IsAssignableFrom(type) ||
+                typeof(IEnumerable<EventDto>).IsAssignableFrom(type))
             {
                 return base.CanWriteType(type);
             }
             return false;
         }
-        private static void FormatCsv(StringBuilder buffer, BookDto book)
+        private static void FormatCsv(StringBuilder buffer, EventDto eventDto)
         {
-            buffer.AppendLine($"{book.Id}, {book.Title}, {book.Price}");
+            buffer.AppendLine($"{eventDto.Id}, {eventDto.Title}, {eventDto.Price}");
         }
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, 
@@ -35,16 +35,16 @@ namespace WebApi.Utilities.Formatters
             var response = context.HttpContext.Response;
             var buffer = new StringBuilder();
 
-            if(context.Object is IEnumerable<BookDto>)
+            if(context.Object is IEnumerable<EventDto>)
             {
-                foreach(var book in (IEnumerable<BookDto>)context.Object)
+                foreach(var evnt in (IEnumerable<EventDto>)context.Object)
                 {
-                    FormatCsv(buffer, book);
+                    FormatCsv(buffer, evnt);
                 }
             }
             else
             {
-                FormatCsv(buffer, (BookDto)context.Object);
+                FormatCsv(buffer, (EventDto)context.Object);
             }
             await response.WriteAsync(buffer.ToString());
         }

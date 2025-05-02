@@ -18,13 +18,17 @@ namespace Repositories.EFCore
         {
 
         }
-        public DbSet<Book> Books { get; set; }
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Club> Clubs { get; set; }
+        public DbSet<Club_User> Club_User { get; set; }
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-           // modelBuilder.ApplyConfiguration(new BookConfig());
+           // modelBuilder.ApplyConfiguration(new EventConfig());
             //modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }

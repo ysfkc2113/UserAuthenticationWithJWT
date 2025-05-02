@@ -11,19 +11,18 @@ namespace Repositories.EFCore
     {
 
         private readonly RepositoryContext _context;
-        private readonly IBookRepository _bookRepository;
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IEventRepository _eventRepository;
+        private readonly IClubRepository _club;
 
-        public RepositoryManager(RepositoryContext context,
-            IBookRepository bookRepository, ICategoryRepository categoryRepository)
+        public RepositoryManager(RepositoryContext context, IEventRepository eventRepository, IClubRepository club)
         {
             _context = context;
-            _bookRepository = bookRepository;
-            _categoryRepository = categoryRepository;
+            _eventRepository = eventRepository;
+            _club = club;
         }
 
-        public IBookRepository Book => _bookRepository;
-        public ICategoryRepository Category => _categoryRepository;
+        public IEventRepository Event => _eventRepository;
+        public IClubRepository Club => _club;
 
         public async Task SaveAsync()
         {

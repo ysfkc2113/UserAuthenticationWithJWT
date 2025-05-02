@@ -5,40 +5,40 @@ using System.Linq.Dynamic.Core;
 
 namespace Repositories.EFCore.Extensions
 {
-    public static class BookRepositoryExtensions
+    public static class EventRepositoryExtensions
     {
-        public static IQueryable<Book> FilterBooks(this IQueryable<Book> books,
+        public static IQueryable<Event> FilterEvents(this IQueryable<Event> events,
             uint minPrice, uint maxPrice) =>
-            books.Where(book =>
-            book.Price >= minPrice &&
-            book.Price <= maxPrice);
+            events.Where(clubEvent =>
+            clubEvent.Price >= minPrice &&
+            clubEvent.Price <= maxPrice);
 
-        public static IQueryable<Book> Search(this IQueryable<Book> books, 
+        public static IQueryable<Event> Search(this IQueryable<Event> events, 
             string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
-                return books;
+                return events;
 
             var lowerCaseTerm = searchTerm.Trim().ToLower();
-            return books
+            return events
                 .Where(b => b.Title
                 .ToLower()
                 .Contains(searchTerm));
         }
 
-        public static IQueryable<Book> Sort(this IQueryable<Book> books, 
+        public static IQueryable<Event> Sort(this IQueryable<Event> events, 
             string orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return books.OrderBy(b => b.Id);
+                return events.OrderBy(b => b.Id);
 
             var orderQuery = OrderQueryBuilder
-                .CreateOrderQuery<Book>(orderByQueryString);
+                .CreateOrderQuery<Event>(orderByQueryString);
 
             if (orderQuery is null)
-                return books.OrderBy(b => b.Id);
+                return events.OrderBy(b => b.Id);
 
-            return books.OrderBy(orderQuery);
+            return events.OrderBy(orderQuery);
         }
     }
 }

@@ -44,7 +44,7 @@ builder.Services.ConfigureActionFilters();
 builder.Services.ConfigureCors();//farklý kullanýcýlardan isteklere izin
 builder.Services.ConfigureDataShaper();
 builder.Services.AddCustomMediaTypes();// xml cvs json gibi custom veri tipi oluþturma
-builder.Services.AddScoped<IBookLinks, BookLinks>();//kitaplara linkler
+builder.Services.AddScoped<IEventLinks, EventLinks>();//kitaplara linkler
 builder.Services.ConfigureVersioning();//proje version 
 builder.Services.ConfigureResponseCaching();//cache
 builder.Services.ConfigureHttpCacheHeaders();//cache
@@ -67,8 +67,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(s =>
     {
-        s.SwaggerEndpoint("/swagger/v1/swagger.json", "BTK Akademi v1");
-        s.SwaggerEndpoint("/swagger/v2/swagger.json", "BTK Akademi v2");
+        s.SwaggerEndpoint("/swagger/v1/swagger.json", "Club's Manager v1");
+        s.SwaggerEndpoint("/swagger/v2/swagger.json", "Club's Manager v2");
     });
 }
 

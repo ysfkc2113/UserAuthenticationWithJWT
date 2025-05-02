@@ -10,23 +10,23 @@ namespace Services
 {
     public class ServiceManager : IServiceManager
     {
-        private readonly IBookService _bookService;
-        private readonly ICategoryService _categoryService;
+        private readonly IEventService _eventService;
+        private readonly IClubService _clubService;
         private readonly IAuthenticationService _authenticationService;
 
-        public ServiceManager(IBookService bookService, 
-            ICategoryService categoryService, 
+        public ServiceManager(IEventService eventService, 
+            IClubService clubService, 
             IAuthenticationService authenticationService)
         {
-            _bookService = bookService;
-            _categoryService = categoryService;
+            _eventService = eventService;
+            _clubService = clubService;
             _authenticationService = authenticationService;
         }
 
-        public IBookService BookService => _bookService;
+        public IEventService EventService => _eventService;
 
         public IAuthenticationService AuthenticationService => _authenticationService;
 
-        public ICategoryService CategoryService => _categoryService;
+        public IClubService ClubService => _clubService;
     }
 }

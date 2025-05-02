@@ -21,34 +21,34 @@ namespace Presentation.Controllers
     //[ApiVersion("1.0")] //bu kısmı extensionda da yaptık.
     [ServiceFilter(typeof(LogFilterAttribute))]
     [ApiController]
-    [Route("api/books")]
+    [Route("api/events")]
     [Authorize]
     [ApiExplorerSettings(GroupName ="v1")]
     //[ResponseCache(CacheProfileName="5min")]
-    public class BooksController : ControllerBase
+    public class EventsController : ControllerBase
     {
         private readonly IServiceManager _manager;
-        public BooksController(IServiceManager manager)
+        public EventsController(IServiceManager manager)
         {
             _manager = manager;
         }
         [Authorize]
         [HttpHead]//respons body siz sadece header ile oluşturulur
-        [HttpGet(Name = "GetAllBooksAsync")]
+        [HttpGet(Name = "GetAllEventsAsync")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         //[HttpCacheExpiration(CacheLocation =CacheLocation.Private,MaxAge = 40)]
         [ResponseCache(Duration = 60)]
-        public async Task<IActionResult> GetAllBooksAsync([FromQuery] BookParameters bookParameters)
+        public async Task<IActionResult> GetAllEventsAsync([FromQuery] EventParameters eventParameters)
         {
             var linkParameters = new LinkParameters()
             {
-                BookParameters = bookParameters,
+                EventParameters = eventParameters,
                 HttpContext = HttpContext
             };
 
             var result = await _manager
-                .BookService
-                .GetAllBooksAsync(linkParameters, false);
+                .EventService
+                .GetAllEventsAsync(linkParameters, false);
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(result.metaData));
@@ -59,66 +59,67 @@ namespace Presentation.Controllers
         }
         [Authorize]
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetOneBookAsync([FromRoute(Name = "id")] int id)
+        public async Task<IActionResult> GetOneEventAsync([FromRoute(Name = "id")] int id)
         {
-            var book = await _manager
-            .BookService
-            .GetOneBookByIdAsync(id, false);
+            var clubEvent = await _manager
+            .EventService
+            .GetOneEventByIdAsync(id, false);
 
-            return Ok(book);
+            return Ok(clubEvent);
         }
         [Authorize(Roles ="Admin, Editor")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        [HttpPost(Name = "CreateOneBookAsync")]
-        public async Task<IActionResult> CreateOneBookAsync([FromBody] BookDtoForInsertion bookDto)
+        [HttpPost(Name = "CreateOneEventAsync")]
+        public async Task<IActionResult> CreateOneEventAsync([FromBody] EventDtoForInsertion eventDto)
         {
-            var book = await _manager.BookService.CreateOneBookAsync(bookDto);
-            return StatusCode(201, book); // CreatedAtRoute()
+            var clubEvent = await _manager.EventService.CreateOneEventAsync(eventDto);
+            return StatusCode(201, clubEvent); // CreatedAtRoute()
         }
 
         [Authorize(Roles ="Admin, Editor")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateOneBookAsync([FromRoute(Name = "id")] int id,[FromBody] BookDtoForUpdate bookDto)
+        public async Task<IActionResult> UpdateOneEventAsync([FromRoute(Name = "id")] int id,
+            [FromBody] EventDtoForUpdate eventDto)
         {
-            await _manager.BookService.UpdateOneBookAsync(id, bookDto, false);
+            await _manager.EventService.UpdateOneEventAsync(id, eventDto, false);
             return NoContent(); // 204
         }
 
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteOneBookAsync([FromRoute(Name = "id")] int id)
+        public async Task<IActionResult> DeleteOneEventAsync([FromRoute(Name = "id")] int id)
         {
-            await _manager.BookService.DeleteOneBookAsync(id, false);
+            await _manager.EventService.DeleteOneEventAsync(id, false);
             return NoContent();
         }
 
         [Authorize(Roles = "Admin, Editor")]
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> PartiallyUpdateOneBookAsync([FromRoute(Name = "id")] int id,
-            [FromBody] JsonPatchDocument<BookDtoForUpdate> bookPatch)
+        public async Task<IActionResult> PartiallyUpdateOneEventAsync([FromRoute(Name = "id")] int id,
+            [FromBody] JsonPatchDocument<EventDtoForUpdate> eventPatch)
         {
 
-            if (bookPatch is null)
+            if (eventPatch is null)
                 return BadRequest(); // 400
 
-            var result = await _manager.BookService.GetOneBookForPatchAsync(id, false);
+            var result = await _manager.EventService.GetOneEventForPatchAsync(id, false);
 
-            bookPatch.ApplyTo(result.bookDtoForUpdate, ModelState);
+            eventPatch.ApplyTo(result.eventDtoForUpdate, ModelState);
 
-            TryValidateModel(result.bookDtoForUpdate);
+            TryValidateModel(result.eventDtoForUpdate);
 
             if (!ModelState.IsValid)
                 return UnprocessableEntity(ModelState);
 
-            await _manager.BookService.SaveChangesForPatchAsync(result.bookDtoForUpdate, result.book);
+            await _manager.EventService.SaveChangesForPatchAsync(result.eventDtoForUpdate, result.clubEvent);
 
             return NoContent(); // 204
         }
 
         [Authorize]
         [HttpOptions]
-        public IActionResult OptionsBooks()
+        public IActionResult OptionsEvents()
         {
             Response.Headers.Add("Allow", "Get,Put,Post,Patch,Delete,Options");
             return Ok();
@@ -126,9 +127,9 @@ namespace Presentation.Controllers
 
         [Authorize]
         [HttpGet("details")]
-        public async Task <IActionResult> GetAllBooksWithDetailsAsync()
+        public async Task <IActionResult> GetAllEventsWithDetailsAsync()
         {
-            return Ok(await _manager.BookService.GetAllBooksWithDetailsAsync(false));
+            return Ok(await _manager.EventService.GetAllEventsWithDetailsAsync(false));
         }
 
     }

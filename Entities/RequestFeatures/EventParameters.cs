@@ -1,6 +1,6 @@
 ﻿namespace Entities.RequestFeatures
 {
-    public class BookParameters : RequestParameters
+    public class EventParameters : RequestParameters
 	{
 		public uint MinPrice { get; set; }
 		public uint MaxPrice { get; set; } = 1000;
@@ -8,7 +8,7 @@
 
 		public String? SearchTerm { get; set; }
 
-		public BookParameters()
+		public EventParameters()
 		{
 			OrderBy = "id";
 		}

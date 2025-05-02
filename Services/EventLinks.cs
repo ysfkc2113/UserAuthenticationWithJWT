@@ -10,60 +10,60 @@ using System.ComponentModel.Design;
 
 namespace Services
 {
-    public class BookLinks : IBookLinks
+    public class EventLinks : IEventLinks
     {
         private readonly LinkGenerator _linkGenerator;
-        private readonly IDataShaper<BookDto> _dataShaper;
+        private readonly IDataShaper<EventDto> _dataShaper;
 
-        public BookLinks(LinkGenerator linkGenerator, 
-            IDataShaper<BookDto> dataShaper)
+        public EventLinks(LinkGenerator linkGenerator, 
+            IDataShaper<EventDto> dataShaper)
         {
             _linkGenerator = linkGenerator;
             _dataShaper = dataShaper;
         }
 
-        public LinkResponse TryGenerateLinks(IEnumerable<BookDto> booksDto, 
+        public LinkResponse TryGenerateLinks(IEnumerable<EventDto> eventDto, 
             string fields, 
             HttpContext httpContext)
         {
-            var shapedBooks = ShapeData(booksDto, fields);
+            var shapedEvents = ShapeData(eventDto, fields);
             if (ShouldGenerateLinks(httpContext))
-                return ReturnLinkedBooks(booksDto, fields, httpContext, shapedBooks);
-            return ReturnShapedBooks(shapedBooks);
+                return ReturnLinkedEvents(eventDto, fields, httpContext, shapedEvents);
+            return ReturnShapedEvents(shapedEvents);
         }
 
-        private LinkResponse ReturnLinkedBooks(IEnumerable<BookDto> booksDto, 
+        private LinkResponse ReturnLinkedEvents(IEnumerable<EventDto> eventDto, 
             string fields, 
             HttpContext httpContext, 
-            List<Entity> shapedBooks)
+            List<Entity> shapedEvents)
         {
-            var bookDtoList = booksDto.ToList();
+            var eventDtoList = eventDto.ToList();
 
-            for (int index = 0; index < bookDtoList.Count(); index++)
+            for (int index = 0; index < eventDtoList.Count(); index++)
             {
-                var bookLinks = CreateForBook(httpContext, bookDtoList[index], fields);
-                shapedBooks[index].Add("Links", bookLinks);
+                var eventLinks = CreateForEvent(httpContext, eventDtoList[index], fields);
+                shapedEvents[index].Add("Links", eventLinks);
             }
 
-            var bookCollection = new LinkCollectionWrapper<Entity>(shapedBooks);
-            CreateForBooks(httpContext,bookCollection);
-            return new LinkResponse { HasLinks = true, LinkedEntities = bookCollection };
+            var eventCollection = new LinkCollectionWrapper<Entity>(shapedEvents);
+            CreateForEvents(httpContext,eventCollection);
+            return new LinkResponse { HasLinks = true, LinkedEntities = eventCollection };
         }
 
-        private LinkCollectionWrapper<Entity> CreateForBooks(HttpContext httpContext, 
-            LinkCollectionWrapper<Entity> bookCollectionWrapper)
+        private LinkCollectionWrapper<Entity> CreateForEvents(HttpContext httpContext, 
+            LinkCollectionWrapper<Entity> eventCollectionWrapper)
         {
-            bookCollectionWrapper.Links.Add(new Link() 
+            eventCollectionWrapper.Links.Add(new Link() 
             {
                 Href = $"/api/{httpContext.GetRouteData().Values["controller"].ToString().ToLower()}",
                 Rel = "self",
                 Method = "GET"
             });
-            return bookCollectionWrapper;
+            return eventCollectionWrapper;
         }
 
-        private List<Link> CreateForBook(HttpContext httpContext, 
-            BookDto bookDto, 
+        private List<Link> CreateForEvent(HttpContext httpContext, 
+            EventDto eventDto, 
             string fields)
         {
             var links = new List<Link>()
@@ -71,7 +71,7 @@ namespace Services
                new Link()
                { 
                    Href = $"/api/{httpContext.GetRouteData().Values["controller"].ToString().ToLower()}" +
-                   $"/{bookDto.Id}",
+                   $"/{eventDto.Id}",
                    Rel = "self",
                    Method = "GET"
                },
@@ -85,9 +85,9 @@ namespace Services
             return links;
         }
 
-        private LinkResponse ReturnShapedBooks(List<Entity> shapedBooks)
+        private LinkResponse ReturnShapedEvents(List<Entity> shapedEvents)
         {
-            return new LinkResponse() { ShapedEntities = shapedBooks };
+            return new LinkResponse() { ShapedEntities = shapedEvents };
         }
 
         private bool ShouldGenerateLinks(HttpContext httpContext)
@@ -98,10 +98,10 @@ namespace Services
                 .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private List<Entity> ShapeData(IEnumerable<BookDto> booksDto, string fields)
+        private List<Entity> ShapeData(IEnumerable<EventDto> eventsDto, string fields)
         {
             return _dataShaper
-                .ShapeData(booksDto, fields)
+                .ShapeData(eventsDto, fields)
                 .Select(b => b.Entity)
                 .ToList();
         }

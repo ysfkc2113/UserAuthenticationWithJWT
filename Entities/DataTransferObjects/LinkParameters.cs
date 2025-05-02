@@ -5,7 +5,7 @@ namespace Entities.DataTransferObjects
 {
     public record LinkParameters
     {
-        public BookParameters BookParameters { get; init; }
+        public EventParameters EventParameters { get; init; }
         public HttpContext HttpContext { get; init; }
     }
 }

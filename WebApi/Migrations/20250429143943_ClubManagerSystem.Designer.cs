@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repositories.EFCore;
 
@@ -11,9 +12,10 @@ using Repositories.EFCore;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250429143943_ClubManagerSystem")]
+    partial class ClubManagerSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +31,9 @@ namespace WebApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClubId"), 1L, 1);
+
+                    b.Property<string>("ClubManagerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ClubName")
                         .IsRequired()
@@ -51,10 +56,17 @@ namespace WebApi.Migrations
                     b.Property<string>("Logo_url")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Responsible_teacherId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("Responsible_teacher_id")
                         .HasColumnType("int");
 
                     b.HasKey("ClubId");
+
+                    b.HasIndex("ClubManagerId");
+
+                    b.HasIndex("Responsible_teacherId");
 
                     b.ToTable("Clubs");
 
@@ -63,7 +75,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 1,
                             ClubName = "satranç kulübü",
-                            Created_at = new DateTime(2025, 4, 29, 17, 50, 45, 136, DateTimeKind.Local).AddTicks(8399),
+                            Created_at = new DateTime(2025, 4, 29, 17, 39, 42, 897, DateTimeKind.Local).AddTicks(1561),
                             Description = "Satranç meraklılarına.",
                             Faculty = "Elektronik"
                         },
@@ -71,7 +83,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 2,
                             ClubName = "futbol kulübü",
-                            Created_at = new DateTime(2025, 4, 29, 17, 50, 45, 136, DateTimeKind.Local).AddTicks(8407),
+                            Created_at = new DateTime(2025, 4, 29, 17, 39, 42, 897, DateTimeKind.Local).AddTicks(1572),
                             Description = "Boş Gezenler İçin.",
                             Faculty = "BESYO"
                         },
@@ -79,7 +91,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 3,
                             ClubName = "medeniyet tekno kulübü",
-                            Created_at = new DateTime(2025, 4, 29, 17, 50, 45, 136, DateTimeKind.Local).AddTicks(8409),
+                            Created_at = new DateTime(2025, 4, 29, 17, 39, 42, 897, DateTimeKind.Local).AddTicks(1573),
                             Description = "Teknoloji Tutkunlarına.",
                             Faculty = "Blgisayar Mühendisliği"
                         });
@@ -283,29 +295,29 @@ namespace WebApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9f938748-5629-449a-9c4a-8f741c0de7c0",
-                            ConcurrencyStamp = "a085c271-3d70-4bd7-b120-f21f721e4998",
+                            Id = "6d801897-bea9-496e-9885-2b9038a30b33",
+                            ConcurrencyStamp = "121cf5b4-74c3-456b-a012-f4fef39d75f9",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "a7bd2bc3-9800-48e7-842d-a2a30463f84a",
-                            ConcurrencyStamp = "e39b2476-3745-4020-aed3-82f392aff585",
+                            Id = "bdc74106-9818-41c3-8e73-9e6f11021bb7",
+                            ConcurrencyStamp = "5041264f-b9a8-4fc3-a754-fe38310894f3",
                             Name = "Club Manager",
                             NormalizedName = "CLUBMANAGER"
                         },
                         new
                         {
-                            Id = "d4a0fc64-be3d-48a6-941d-ce0890ed53e0",
-                            ConcurrencyStamp = "8b387bc5-f97e-4150-9fca-4a3d02e08d9c",
+                            Id = "148ff3a3-a993-4069-884e-2c35ef890527",
+                            ConcurrencyStamp = "bf3f5a24-a665-48cc-9316-536eeff38850",
                             Name = "Academician",
                             NormalizedName = "ACADEMICIAN"
                         },
                         new
                         {
-                            Id = "7cdf8408-170e-4ef0-bb29-d751969d7768",
-                            ConcurrencyStamp = "668980a0-cd00-4e74-a197-becf9f6faf97",
+                            Id = "4f2987c1-0fea-4b77-8c74-78ebde2a68ee",
+                            ConcurrencyStamp = "04ca5421-195f-4a6b-ad98-30162b3f5016",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -415,6 +427,21 @@ namespace WebApi.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Entities.Models.Club", b =>
+                {
+                    b.HasOne("Entities.Models.User", "ClubManager")
+                        .WithMany()
+                        .HasForeignKey("ClubManagerId");
+
+                    b.HasOne("Entities.Models.User", "Responsible_teacher")
+                        .WithMany()
+                        .HasForeignKey("Responsible_teacherId");
+
+                    b.Navigation("ClubManager");
+
+                    b.Navigation("Responsible_teacher");
                 });
 
             modelBuilder.Entity("Entities.Models.Club_User", b =>
