@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApi.Migrations
 {
-    public partial class ClubManagerSystem : Migration
+    public partial class Start : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,6 +52,25 @@ namespace WebApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Clubs",
+                columns: table => new
+                {
+                    ClubId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClubName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Logo_url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Faculty = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Responsible_teacher_id = table.Column<int>(type: "int", nullable: true),
+                    Created_by = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clubs", x => x.ClubId);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,58 +180,27 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Clubs",
-                columns: table => new
-                {
-                    ClubId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ClubName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Logo_url = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Faculty = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Responsible_teacherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Responsible_teacher_id = table.Column<int>(type: "int", nullable: true),
-                    ClubManagerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Created_by = table.Column<int>(type: "int", nullable: true),
-                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Clubs", x => x.ClubId);
-                    table.ForeignKey(
-                        name: "FK_Clubs_AspNetUsers_ClubManagerId",
-                        column: x => x.ClubManagerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Clubs_AspNetUsers_Responsible_teacherId",
-                        column: x => x.Responsible_teacherId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Club_User",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClubId = table.Column<int>(type: "int", nullable: false),
-                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Approved = table.Column<bool>(type: "bit", nullable: false),
                     role_in_club = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ApprovedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Club_User", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Club_User_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Club_User_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Club_User_Clubs_ClubId",
                         column: x => x.ClubId,
@@ -228,7 +216,16 @@ namespace WebApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Visibility = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublishedById = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
+                    ApprovedById = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApprovedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ClubId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -247,36 +244,33 @@ namespace WebApi.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "148ff3a3-a993-4069-884e-2c35ef890527", "bf3f5a24-a665-48cc-9316-536eeff38850", "Academician", "ACADEMICIAN" },
-                    { "4f2987c1-0fea-4b77-8c74-78ebde2a68ee", "04ca5421-195f-4a6b-ad98-30162b3f5016", "Admin", "ADMIN" },
-                    { "6d801897-bea9-496e-9885-2b9038a30b33", "121cf5b4-74c3-456b-a012-f4fef39d75f9", "User", "USER" },
-                    { "bdc74106-9818-41c3-8e73-9e6f11021bb7", "5041264f-b9a8-4fc3-a754-fe38310894f3", "Club Manager", "CLUBMANAGER" }
+                    { "16613be4-c3f2-4244-9c04-76dca6046810", "2a6d9f8e-479e-4398-9ad5-3d788af8b2ef", "User", "USER" },
+                    { "5d27a15e-4900-43be-93c2-a6b870f835ba", "9853cdb3-a05c-4326-9771-c8283953b505", "Club Manager", "CLUB MANAGER" },
+                    { "9e0d454c-2827-472e-ab08-e484122f5165", "fb57e699-7759-4403-9c39-aae5d4f3fb79", "Admin", "ADMIN" },
+                    { "bdd4082a-e194-43e2-b81f-8b923166d091", "fa7fbf20-accb-4175-94f9-463bb49178c5", "Academician", "ACADEMICIAN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Clubs",
-                columns: new[] { "ClubId", "ClubManagerId", "ClubName", "Created_at", "Created_by", "Description", "Faculty", "Logo_url", "Responsible_teacherId", "Responsible_teacher_id" },
+                columns: new[] { "ClubId", "ClubName", "CreatedTime", "Created_by", "Description", "Faculty", "Logo_url", "Responsible_teacher_id" },
                 values: new object[,]
                 {
-                    { 1, null, "satranç kulübü", new DateTime(2025, 4, 29, 17, 39, 42, 897, DateTimeKind.Local).AddTicks(1561), null, "Satranç meraklılarına.", "Elektronik", null, null, null },
-                    { 2, null, "futbol kulübü", new DateTime(2025, 4, 29, 17, 39, 42, 897, DateTimeKind.Local).AddTicks(1572), null, "Boş Gezenler İçin.", "BESYO", null, null, null },
-                    { 3, null, "medeniyet tekno kulübü", new DateTime(2025, 4, 29, 17, 39, 42, 897, DateTimeKind.Local).AddTicks(1573), null, "Teknoloji Tutkunlarına.", "Blgisayar Mühendisliği", null, null, null }
+                    { 1, "satranç kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9878), null, "Satranç meraklılarına.", "Elektronik", null, null },
+                    { 2, "futbol kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9887), null, "Boş Gezenler İçin.", "BESYO", null, null },
+                    { 3, "medeniyet tekno kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9888), null, "Teknoloji Tutkunlarına.", "Blgisayar Mühendisliği", null, null },
+                    { 4, "medeniyet Tiyatro kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9889), null, "Ölü Ozanlar Derneği Sevenler Kulübü.", "Edebiyat Fakultesi", null, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Events",
-                columns: new[] { "Id", "ClubId", "Price", "Title" },
-                values: new object[] { 1, 1, 75m, "Karagöz ve Hacivat" });
-
-            migrationBuilder.InsertData(
-                table: "Events",
-                columns: new[] { "Id", "ClubId", "Price", "Title" },
-                values: new object[] { 2, 2, 175m, "Mesnevi" });
-
-            migrationBuilder.InsertData(
-                table: "Events",
-                columns: new[] { "Id", "ClubId", "Price", "Title" },
-                values: new object[] { 3, 1, 375m, "Devlet" });
+                columns: new[] { "Id", "ApprovedById", "ApprovedTime", "ClubId", "CreatedTime", "Description", "EventDate", "ImagePath", "IsApproved", "Location", "PublishedById", "Title", "Visibility" },
+                values: new object[,]
+                {
+                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(81), "Gleneksel medeniyet 5.Satranç Müsabakası", new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(77), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Quin Gambit  ", "private" },
+                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(83), "Tiyatro etkinlikleri buluşması", new DateTime(2025, 5, 10, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(82), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Mesneviden Tiyatrolar", "private" },
+                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(85), "Futbol Turnuvası Maç Kura Çekimleri", new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(84), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Futbolllll", "private" },
+                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(86), "Futbol Turnuvası İlk Maçı", new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(86), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Futbol Turnuvası 1.Tur ", "private" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -323,19 +317,9 @@ namespace WebApi.Migrations
                 column: "ClubId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Club_User_UserId1",
+                name: "IX_Club_User_UserId",
                 table: "Club_User",
-                column: "UserId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Clubs_ClubManagerId",
-                table: "Clubs",
-                column: "ClubManagerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Clubs_Responsible_teacherId",
-                table: "Clubs",
-                column: "Responsible_teacherId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_ClubId",
@@ -370,10 +354,10 @@ namespace WebApi.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Clubs");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Clubs");
         }
     }
 }

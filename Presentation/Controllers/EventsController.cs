@@ -58,6 +58,7 @@ namespace Presentation.Controllers
                 Ok(result.linkResponse.LinkedEntities) :
                 Ok(result.linkResponse.ShapedEntities);
         }
+        //Çalışıyor ama dto yollamıyor
         [Authorize]
         [HttpGet("byid/{id:int}")]
         public async Task<IActionResult> GetOneEventAsync([FromRoute(Name = "id")] int id)
@@ -68,6 +69,7 @@ namespace Presentation.Controllers
 
             return Ok(clubEvent);
         }
+
         [Authorize(Roles = "Admin, Academician")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [HttpPost(Name = "CreateOneEventAsync")]
@@ -93,7 +95,7 @@ namespace Presentation.Controllers
             var clubEvent = await _manager.EventService.CreateOneEventAsync(eventDto, userId);
             return StatusCode(201, clubEvent); // CreatedAtRoute()
         }
-
+        //çalıştı
         [Authorize(Roles = "Admin, Academician,Club Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [HttpPut("update/{id:int}")]
@@ -112,7 +114,7 @@ namespace Presentation.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin, Academician,Club Manager")]
+        [Authorize]
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PartiallyUpdateOneEventAsync([FromRoute(Name = "id")] int id,
             [FromBody] JsonPatchDocument<EventDtoForUpdate> eventPatch)
@@ -130,7 +132,7 @@ namespace Presentation.Controllers
             if (!ModelState.IsValid)
                 return UnprocessableEntity(ModelState);
 
-            await _manager.EventService.SaveChangesForPatchAsync(result.eventDtoForUpdate, result.clubEvent);
+            await _manager.EventService.SaveChangesForPatchAsync(result.eventDtoForUpdate, result.clubEvent,true);
 
             return NoContent(); // 204
         }
@@ -193,7 +195,7 @@ namespace Presentation.Controllers
             return Ok(clubEvents);
         }
 
-        [Authorize("Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpPut("approved/{id:int}")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> approveeventasync([FromRoute] int id)

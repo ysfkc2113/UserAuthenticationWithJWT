@@ -16,8 +16,9 @@ namespace Entities.DataTransferObjects
         public string? ApprovedById { get; set; }
         public DateTime ApprovedTime { get; set; }
         public DateTime CreatedTime { get; set; }
-        public int ClubId { get; set; }//fk
         public Club Club { get; set; }// navigator prop
+        public int ClubId { get; set; }//fk
+        
 
 
     }

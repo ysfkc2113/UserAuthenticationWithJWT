@@ -20,13 +20,31 @@ namespace Repositories.EFCore
         }
 
         public void Create(T entity) => _context.Set<T>().Add(entity);
-        
+
         public void Delete(T entity) => _context.Set<T>().Remove(entity);
 
         public IQueryable<T> FindAll(bool trackChanges) =>
             !trackChanges ?
             _context.Set<T>().AsNoTracking() :
             _context.Set<T>();
+        //ilişkili
+        public IQueryable<T> FindAllByRelation(bool trackChanges,
+            params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = !trackChanges ?
+                _context.Set<T>().AsNoTracking() :
+                _context.Set<T>();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return query;
+        }
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
             bool trackChanges) =>
@@ -34,7 +52,7 @@ namespace Repositories.EFCore
             _context.Set<T>().Where(expression).AsNoTracking() :
             _context.Set<T>().Where(expression);
 
-        public void Update(T entity) => _context.Set<T>().Update(entity);   
-       
+        public void Update(T entity) => _context.Set<T>().Update(entity);
+
     }
 }

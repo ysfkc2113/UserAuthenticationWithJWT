@@ -147,9 +147,10 @@ namespace Services
 
         }
 
-        public async Task SaveChangesForPatchAsync(EventDtoForUpdate eventDtoForUpdate, Event clubEvent)
+        public async Task SaveChangesForPatchAsync(EventDtoForUpdate eventDtoForUpdate, Event clubEvent , bool trackChanges)
         {
             _mapper.Map(eventDtoForUpdate, clubEvent);
+            _manager.Event.Update(clubEvent);
             await _manager.SaveAsync();
         }
 
@@ -158,7 +159,7 @@ namespace Services
             bool trackChanges)
         {
             var entity = await GetOneEventByIdAndCheckExists(id, trackChanges);
-            entity = _mapper.Map<Event>(eventDto);
+            entity = _mapper.Map(eventDto,entity);
             _manager.Event.Update(entity);
             await _manager.SaveAsync();
         }

@@ -12,8 +12,8 @@ using Repositories.EFCore;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250502131840_UpdateEvent")]
-    partial class UpdateEvent
+    [Migration("20250504125805_Start")]
+    partial class Start
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,7 +65,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 1,
                             ClubName = "satranç kulübü",
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5287),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9878),
                             Description = "Satranç meraklılarına.",
                             Faculty = "Elektronik"
                         },
@@ -73,7 +73,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 2,
                             ClubName = "futbol kulübü",
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5295),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9887),
                             Description = "Boş Gezenler İçin.",
                             Faculty = "BESYO"
                         },
@@ -81,7 +81,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 3,
                             ClubName = "medeniyet tekno kulübü",
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5296),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9888),
                             Description = "Teknoloji Tutkunlarına.",
                             Faculty = "Blgisayar Mühendisliği"
                         },
@@ -89,7 +89,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 4,
                             ClubName = "medeniyet Tiyatro kulübü",
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5297),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9889),
                             Description = "Ölü Ozanlar Derneği Sevenler Kulübü.",
                             Faculty = "Edebiyat Fakultesi"
                         });
@@ -115,10 +115,8 @@ namespace WebApi.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("role_in_club")
@@ -128,7 +126,7 @@ namespace WebApi.Migrations
 
                     b.HasIndex("ClubId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Club_User");
                 });
@@ -194,9 +192,9 @@ namespace WebApi.Migrations
                             Id = 1,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 1,
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5495),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(81),
                             Description = "Gleneksel medeniyet 5.Satranç Müsabakası",
-                            EventDate = new DateTime(2025, 5, 7, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5492),
+                            EventDate = new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(77),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedById = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -208,9 +206,9 @@ namespace WebApi.Migrations
                             Id = 2,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 4,
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5498),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(83),
                             Description = "Tiyatro etkinlikleri buluşması",
-                            EventDate = new DateTime(2025, 5, 8, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5497),
+                            EventDate = new DateTime(2025, 5, 10, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(82),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedById = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -222,9 +220,9 @@ namespace WebApi.Migrations
                             Id = 3,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 2,
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5499),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(85),
                             Description = "Futbol Turnuvası Maç Kura Çekimleri",
-                            EventDate = new DateTime(2025, 5, 7, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5499),
+                            EventDate = new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(84),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedById = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -236,9 +234,9 @@ namespace WebApi.Migrations
                             Id = 4,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 2,
-                            CreatedTime = new DateTime(2025, 5, 2, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5500),
+                            CreatedTime = new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(86),
                             Description = "Futbol Turnuvası İlk Maçı",
-                            EventDate = new DateTime(2025, 5, 7, 16, 18, 40, 564, DateTimeKind.Local).AddTicks(5500),
+                            EventDate = new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(86),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedById = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -359,29 +357,29 @@ namespace WebApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c07aea72-c411-403c-9fa3-a5239c2b91fa",
-                            ConcurrencyStamp = "d39a4d66-b0ac-452b-9660-ab52ac0fdd75",
+                            Id = "16613be4-c3f2-4244-9c04-76dca6046810",
+                            ConcurrencyStamp = "2a6d9f8e-479e-4398-9ad5-3d788af8b2ef",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "a636ce4f-8bdf-4bae-9d4d-1dd9b29b0599",
-                            ConcurrencyStamp = "b7765845-0801-4e0e-84bc-e18f7f09f348",
+                            Id = "5d27a15e-4900-43be-93c2-a6b870f835ba",
+                            ConcurrencyStamp = "9853cdb3-a05c-4326-9771-c8283953b505",
                             Name = "Club Manager",
                             NormalizedName = "CLUB MANAGER"
                         },
                         new
                         {
-                            Id = "48234570-0df0-4c7a-8d8d-beea21dffba9",
-                            ConcurrencyStamp = "39dbfe30-5902-451f-b2d3-ebe1bc0600dd",
+                            Id = "bdd4082a-e194-43e2-b81f-8b923166d091",
+                            ConcurrencyStamp = "fa7fbf20-accb-4175-94f9-463bb49178c5",
                             Name = "Academician",
                             NormalizedName = "ACADEMICIAN"
                         },
                         new
                         {
-                            Id = "fe924581-2464-42df-b8e7-a182f473bdda",
-                            ConcurrencyStamp = "0a83d8a9-66fb-431b-b997-0e1fbb763d4c",
+                            Id = "9e0d454c-2827-472e-ab08-e484122f5165",
+                            ConcurrencyStamp = "fb57e699-7759-4403-9c39-aae5d4f3fb79",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -496,14 +494,16 @@ namespace WebApi.Migrations
             modelBuilder.Entity("Entities.Models.Club_User", b =>
                 {
                     b.HasOne("Entities.Models.Club", "Club")
-                        .WithMany("Club_Users")
+                        .WithMany()
                         .HasForeignKey("ClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Entities.Models.User", "User")
-                        .WithMany("Club_Users")
-                        .HasForeignKey("UserId1");
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Club");
 
@@ -513,7 +513,7 @@ namespace WebApi.Migrations
             modelBuilder.Entity("Entities.Models.Event", b =>
                 {
                     b.HasOne("Entities.Models.Club", "Club")
-                        .WithMany("Events")
+                        .WithMany()
                         .HasForeignKey("ClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -570,18 +570,6 @@ namespace WebApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Entities.Models.Club", b =>
-                {
-                    b.Navigation("Club_Users");
-
-                    b.Navigation("Events");
-                });
-
-            modelBuilder.Entity("Entities.Models.User", b =>
-                {
-                    b.Navigation("Club_Users");
                 });
 #pragma warning restore 612, 618
         }

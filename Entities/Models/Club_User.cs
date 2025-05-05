@@ -12,7 +12,7 @@ namespace Entities.Models
         public Club Club { get; set; }//fk club
         public int ClubId { get; set; }
         public User User { get; set; }//fk user 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public bool Approved  { get; set; }=false;
         public string? role_in_club { get; set; }
         public DateTime? ApprovedTime { get; set; }//onaylanma tarihi

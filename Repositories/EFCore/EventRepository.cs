@@ -38,7 +38,7 @@ namespace Repositories.EFCore
         public async Task<PagedList<Event>> GetAllEventsAsync(EventParameters eventParameters,
             bool trackChanges)
         {
-            var clubEvents = await FindAll(trackChanges)
+            var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
                 //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
                 .Search(eventParameters.SearchTerm)
                 .Sort(eventParameters.OrderBy)
@@ -52,27 +52,28 @@ namespace Repositories.EFCore
 
         //public async Task<List<Event>> GetAllEventsAsync(bool trackChanges)//
         //{
-        //    var clubEvents= await FindAll(trackChanges).OrderBy(m=> m.Id).ToListAsync();
+        //    var clubEvents = await FindAllByRelation(trackChanges, e => e.Club).OrderBy(m => m.Id).ToListAsync();
         //    return clubEvents;
         //}
 
         public async Task<List<Event>> GetAllEventsWithDetailsAsync(bool trackChanges)//ilişkili dto haline getirilebili,r
         {
-            return await _context.Events.Include(m=>m.Club).OrderBy(m => m.Id).ToListAsync();
+            return await FindAllByRelation(trackChanges, e => e.Club).OrderBy(m => m.Id).ToListAsync();
         }
+
+
+
 
 
         public async Task<Event> GetOneEventByIdAsync(int id, bool trackChanges) =>
             await FindByCondition(b => b.Id.Equals(id), trackChanges)
             .SingleOrDefaultAsync();
 
-       
-
 
 
         public async Task<PagedList<Event>> GetPendingApprovalEventsAsync(EventParameters eventParameters, bool trackChanges)
         {
-            var clubEvents = await FindAll(trackChanges)
+            var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
                //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
                .Where(y=> !y.IsApproved)
                .Search(eventParameters.SearchTerm)
@@ -89,7 +90,7 @@ namespace Repositories.EFCore
 
         public async Task<PagedList<Event>> GetApprovedEventsAsync(EventParameters eventParameters, bool trackChanges)
         {
-            var clubEvents = await FindAll(trackChanges)
+            var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
                //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
                .Where(y => y.IsApproved)
                .Search(eventParameters.SearchTerm)
@@ -104,9 +105,7 @@ namespace Repositories.EFCore
 
         public async Task<Event> GetEventByIdWithDetailsAsync(int id, bool trackChanges)
         {
-            //await FindByCondition(b => b.Id.Equals(id), trackChanges)
-            //.SingleOrDefaultAsync();
-            return await _context.Events.Include(m => m.Club).Where(y=> y.Id.Equals(id)).FirstOrDefaultAsync();
+            return await FindAllByRelation(trackChanges, e => e.Club).Where(y=> y.Id.Equals(id)).FirstOrDefaultAsync();
         }
 
         public async Task<PagedList<Event>> GetEventsByClubIdAsync(int clubId, EventParameters eventParameters, bool trackChanges)
@@ -123,11 +122,17 @@ namespace Repositories.EFCore
 
         public void ChangeApprovedEvent(Event clubEvent, string userId)
         {
-            if (clubEvent.IsApproved == true)
+            if (clubEvent.IsApproved == false)
             {
+                clubEvent.IsApproved = true;
                 clubEvent.ApprovedTime = DateTime.Now;
-                clubEvent.ApprovedById= userId;
+                clubEvent.ApprovedById = userId;
             }
+            else
+            {
+                clubEvent.IsApproved= false;
+            }
+            
             Update(clubEvent);
         }
     }

@@ -22,7 +22,7 @@ namespace Services.Contracts
 
         Task<(EventDtoForUpdate eventDtoForUpdate, Event clubEvent)> GetOneEventForPatchAsync(int id, bool trackChanges);
 
-        Task SaveChangesForPatchAsync(EventDtoForUpdate eventDtoForUpdate, Event clubEvent);
+        Task SaveChangesForPatchAsync(EventDtoForUpdate eventDtoForUpdate, Event clubEvent, bool trackChanges);
         //Task<List<Event>> GetAllEventsAsync(bool trackChanges);
         Task<List<Event>> GetAllEventsWithDetailsAsync(bool trackChanges);
 
