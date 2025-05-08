@@ -39,7 +39,7 @@ namespace Repositories.EFCore
             bool trackChanges)
         {
             var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
-                //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
+                .FilterEvents(eventParameters.StartDate, eventParameters.EndDate,eventParameters.IsApproved)
                 .Search(eventParameters.SearchTerm)
                 .Sort(eventParameters.OrderBy)
                 .ToListAsync();

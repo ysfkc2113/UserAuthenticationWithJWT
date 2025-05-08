@@ -11,5 +11,8 @@ namespace Entities.DataTransferObjects
     public record EventDtoForUpdate : EventDtoForManipulation
     {
         [Required]
-        public int Id { get; set; }  }
+        public int Id { get; set; }
+        
+        public bool IsApproved {  get; set; }=false;
+    }
 }

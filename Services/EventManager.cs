@@ -153,11 +153,26 @@ namespace Services
             _manager.Event.Update(clubEvent);
             await _manager.SaveAsync();
         }
+        //For Admin
+        public async Task UpdateEventForAdminAsync(int id,
+         EventDtoForUpdateAdmin eventDtoForUpdateAdmin,
+         bool trackChanges)
+        {
+            if (id != eventDtoForUpdateAdmin.Id)
+                throw new EventNotFoundException(id);
 
+            var entity = await GetOneEventByIdAndCheckExists(id, trackChanges);
+            entity = _mapper.Map(eventDtoForUpdateAdmin, entity);
+            _manager.Event.Update(entity);
+            await _manager.SaveAsync();
+        }
         public async Task UpdateOneEventAsync(int id,
             EventDtoForUpdate eventDto,
             bool trackChanges)
         {
+            if (id != eventDto.Id)
+                throw new EventNotFoundException(id);
+
             var entity = await GetOneEventByIdAndCheckExists(id, trackChanges);
             entity = _mapper.Map(eventDto,entity);
             _manager.Event.Update(entity);

@@ -12,6 +12,10 @@ namespace WebApi.Utilities.AutoMapper
             CreateMap<Event, EventDto>();
             CreateMap<EventDtoForInsertion, Event>();
             CreateMap<UserForRegistrationDto, User>();
+            //For Admin
+            CreateMap<EventDtoForUpdateAdmin, Event>()
+                     .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
         }
     }
 }

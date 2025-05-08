@@ -18,6 +18,8 @@ namespace Services.Contracts
         Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges);
         Task<EventDto> CreateOneEventAsync(EventDtoForInsertion clubEvent,string userId);
         Task UpdateOneEventAsync(int id, EventDtoForUpdate eventDto, bool trackChanges);
+        //For Admin
+        Task UpdateEventForAdminAsync(int id, EventDtoForUpdateAdmin eventDtoForUpdateAdmin, bool trackChanges);
         Task DeleteOneEventAsync(int id, bool trackChanges);
 
         Task<(EventDtoForUpdate eventDtoForUpdate, Event clubEvent)> GetOneEventForPatchAsync(int id, bool trackChanges);

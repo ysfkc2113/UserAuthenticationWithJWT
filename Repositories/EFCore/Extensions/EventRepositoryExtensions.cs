@@ -7,13 +7,22 @@ namespace Repositories.EFCore.Extensions
 {
     public static class EventRepositoryExtensions
     {
-    //    public static IQueryable<Event> FilterEvents(this IQueryable<Event> events,
-    //        uint minPrice, uint maxPrice) =>
-    //        events.Where(clubEvent =>
-    //        clubEvent.Price >= minPrice &&
-    //        clubEvent.Price <= maxPrice);
+        public static IQueryable<Event> FilterEvents(this IQueryable<Event> events,
+            DateTime? startDate, DateTime? endDate, bool? isApproved)
+        {
+            if (isApproved is null)
+            {
+                return events.Where(clubEvent =>
+               (clubEvent.EventDate >= startDate &&
+               clubEvent.EventDate <= endDate));
+            }
+            return events.Where(clubEvent =>
+            (clubEvent.EventDate >= startDate &&
+            clubEvent.EventDate <= endDate) && clubEvent.IsApproved == isApproved);
+        }
 
-        public static IQueryable<Event> Search(this IQueryable<Event> events, 
+
+        public static IQueryable<Event> Search(this IQueryable<Event> events,
             string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
@@ -26,17 +35,17 @@ namespace Repositories.EFCore.Extensions
                 .Contains(searchTerm));
         }
 
-        public static IQueryable<Event> Sort(this IQueryable<Event> events, 
+        public static IQueryable<Event> Sort(this IQueryable<Event> events,
             string orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return events.OrderBy(b => b.Id);
+                return events.OrderByDescending(b => b.CreatedTime);
 
             var orderQuery = OrderQueryBuilder
                 .CreateOrderQuery<Event>(orderByQueryString);
 
             if (orderQuery is null)
-                return events.OrderBy(b => b.Id);
+                return events.OrderByDescending(b => b.CreatedTime);
 
             return events.OrderBy(orderQuery);
         }
