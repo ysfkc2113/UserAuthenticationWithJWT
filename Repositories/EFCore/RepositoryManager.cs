@@ -12,17 +12,17 @@ namespace Repositories.EFCore
 
         private readonly RepositoryContext _context;
         private readonly IEventRepository _eventRepository;
-        private readonly IClubRepository _club;
+        private readonly IClubRepository _clubRepository;
 
         public RepositoryManager(RepositoryContext context, IEventRepository eventRepository, IClubRepository club)
         {
             _context = context;
             _eventRepository = eventRepository;
-            _club = club;
+            _clubRepository = club;
         }
 
         public IEventRepository Event => _eventRepository;
-        public IClubRepository Club => _club;
+        public IClubRepository Club => _clubRepository;
 
         public async Task SaveAsync()
         {

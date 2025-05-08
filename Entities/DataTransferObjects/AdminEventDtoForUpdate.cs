@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public record EventDtoForUpdateAdmin
+    public record AdminEventDtoForUpdate
     {
         [Required]
         public int Id { get; set; }

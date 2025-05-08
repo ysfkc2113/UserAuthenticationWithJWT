@@ -18,8 +18,8 @@ namespace Services.Contracts
         Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges);
         Task<EventDto> CreateOneEventAsync(EventDtoForInsertion clubEvent,string userId);
         Task UpdateOneEventAsync(int id, EventDtoForUpdate eventDto, bool trackChanges);
-        //For Admin
-        Task UpdateEventForAdminAsync(int id, EventDtoForUpdateAdmin eventDtoForUpdateAdmin, bool trackChanges);
+        
+        
         Task DeleteOneEventAsync(int id, bool trackChanges);
 
         Task<(EventDtoForUpdate eventDtoForUpdate, Event clubEvent)> GetOneEventForPatchAsync(int id, bool trackChanges);
@@ -37,7 +37,11 @@ namespace Services.Contracts
         Task<(LinkResponse linkResponse, MetaData metaData)> GetEventsByClubIdAsync(int clubId, LinkParameters linkParameters, bool trackChanges);
 
         Task ApproveEventAsync(int id, string approvedByUserId, bool trackChanges);
+        //For Admin
+        Task UpdateEventForAdminAsync(int id, AdminEventDtoForUpdate eventDtoForUpdateAdmin, bool trackChanges);
 
+        Task<(EventDtoForPatchApproved eventDtoForUpdate, Event clubEvent)> GetOneEventDtoForPatchApproved(int id, bool trackChanges);
 
+        Task SaveChangesForPatchApprovedAsync(EventDtoForPatchApproved eventDtoForUpdate, Event clubEvent, string userName, bool trackChanges);
     }
 }

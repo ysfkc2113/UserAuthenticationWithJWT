@@ -43,7 +43,7 @@ namespace Services
             var club = await _clubService.GetOneClubByIdAsync(eventDto.ClubId, false);
 
             var entity = _mapper.Map<Event>(eventDto);
-            entity.PublishedById = userId;
+            entity.PublishedByUserName = userId;
             _manager.Event.CreateOneEvent(entity);
             await _manager.SaveAsync();
             return _mapper.Map<EventDto>(entity);
@@ -118,11 +118,10 @@ namespace Services
         public async Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges)
         {
             var clubEvent = await GetOneEventByIdAndCheckExists(id, trackChanges);
-
-            if (clubEvent is null)
-                throw new EventNotFoundException(id);
             return _mapper.Map<EventDto>(clubEvent);
         }
+
+       
 
         public async Task<(EventDtoForUpdate eventDtoForUpdate, Event clubEvent)>
             GetOneEventForPatchAsync(int id, bool trackChanges)
@@ -155,7 +154,7 @@ namespace Services
         }
         //For Admin
         public async Task UpdateEventForAdminAsync(int id,
-         EventDtoForUpdateAdmin eventDtoForUpdateAdmin,
+         AdminEventDtoForUpdate eventDtoForUpdateAdmin,
          bool trackChanges)
         {
             if (id != eventDtoForUpdateAdmin.Id)
@@ -188,6 +187,23 @@ namespace Services
                 throw new EventNotFoundException(id);
 
             return entity;
+        }
+        public async Task<(EventDtoForPatchApproved eventDtoForUpdate, Event clubEvent)> GetOneEventDtoForPatchApproved(int id, bool trackChanges)
+        {
+
+            var clubEvent = await GetOneEventByIdAndCheckExists(id, trackChanges);
+            var eventDtoForUpdate = _mapper.Map<EventDtoForPatchApproved>(clubEvent);
+            return (eventDtoForUpdate, clubEvent);
+        }
+
+        public async Task SaveChangesForPatchApprovedAsync(EventDtoForPatchApproved eventDtoForUpdate, Event clubEvent,string userName, bool trackChanges)
+        {
+
+            clubEvent.ApprovedByUserName = userName;
+            clubEvent.ApprovedTime = DateTime.Now;
+            _mapper.Map(eventDtoForUpdate, clubEvent);
+            _manager.Event.Update(clubEvent);
+            await _manager.SaveAsync();
         }
     }
 }

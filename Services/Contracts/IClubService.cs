@@ -1,4 +1,7 @@
-﻿using Entities.Models;
+﻿using Entities.DataTransferObjects;
+using Entities.LinkModels;
+using Entities.Models;
+using Entities.RequestFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +11,14 @@ using System.Threading.Tasks;
 namespace Services.Contracts
 {
     public interface IClubService
-    {
-        Task<IEnumerable<Club>> GetAllClubsAsync(bool trackChanges);
-        Task<Club> GetOneClubByIdAsync(int id,bool trackChanges);
+    {//for admin
+        
+        Task<ClubDto> GetOneClubByIdAsync(int id,bool trackChanges);
+        Task<(IEnumerable<ClubDto> clubDto, MetaData metaData)> GetAllClubsAsync(ClubParameters clubParameters,
+          bool trackChanges);
+        Task DeleteClubAsync(int id, bool trackChanges);
+        Task<ClubDto> CreateClubAsync(ClubDtoForInsertion clubDtoForInsertion,bool trackchanges);
+        Task<ClubDto> UpdateClubAsync(AdminClubDtoForUpdate clubDtoForUpdate,int id,bool trackChanges);
 
     }
 }

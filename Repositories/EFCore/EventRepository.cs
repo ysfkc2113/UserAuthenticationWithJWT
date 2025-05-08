@@ -126,7 +126,7 @@ namespace Repositories.EFCore
             {
                 clubEvent.IsApproved = true;
                 clubEvent.ApprovedTime = DateTime.Now;
-                clubEvent.ApprovedById = userId;
+                clubEvent.ApprovedByUserName = userId;
             }
             else
             {

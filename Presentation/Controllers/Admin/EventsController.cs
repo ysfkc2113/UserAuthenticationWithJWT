@@ -102,21 +102,40 @@ namespace Presentation.Controllers.Admin
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateEvent([FromRoute] int id, [FromBody] EventDtoForUpdateAdmin dtoForUpdateAdmin)
+        public async Task<IActionResult> UpdateEvent([FromRoute] int id, [FromBody] AdminEventDtoForUpdate dtoForUpdateAdmin)
         {
             await _manager.EventService.UpdateEventForAdminAsync(id, dtoForUpdateAdmin, true);
             return Ok();
         }
 
+        //bu patch sadece approved için.
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PatchEvent([FromRoute(Name = "id")] int id,
-            [FromBody] JsonPatchDocument<EventDtoForUpdate> eventPatch)
+            [FromBody] JsonPatchDocument<EventDtoForPatchApproved> eventPatch)
         {
+            // 1. Get the HttpContext
+            var httpContext = HttpContext;
+
+            // 2. Get the User from HttpContext
+            var user = httpContext.User;
+
+            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
+            {
+                return Unauthorized("User is not authenticated.");
+            }
+
+            // 3. Get the User's ID from the JWT token's claims
+            var userName = user.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                return BadRequest("User ID claim is missing in the JWT token.");
+            }
 
             if (eventPatch is null)
                 return BadRequest(); // 400
 
-            var result = await _manager.EventService.GetOneEventForPatchAsync(id, false);
+            var result = await _manager.EventService.GetOneEventDtoForPatchApproved(id, false);
 
             eventPatch.ApplyTo(result.eventDtoForUpdate, ModelState);
 
@@ -124,8 +143,7 @@ namespace Presentation.Controllers.Admin
 
             if (!ModelState.IsValid)
                 return UnprocessableEntity(ModelState);
-
-            await _manager.EventService.SaveChangesForPatchAsync(result.eventDtoForUpdate, result.clubEvent, true);
+            await _manager.EventService.SaveChangesForPatchApprovedAsync(result.eventDtoForUpdate, result.clubEvent,  userName, true);
 
             return NoContent(); // 204
         }

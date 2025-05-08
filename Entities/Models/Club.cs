@@ -14,9 +14,9 @@ namespace Entities.Models
         public string? Logo_url { get; set; }
         public string Faculty { get; set; }
         //public User Responsible_teacher { get; set; }//
-        public int? Responsible_teacher_id { get; set; }//danışman
+        public string? Responsible_teacher { get; set; }//danışman
         //public User ClubManager { get; set; }
-        public int? Created_by { get; set; }//lider
+        public string? ClubManager { get; set; }//lider
 
         public DateTime CreatedTime { get; set; }
 

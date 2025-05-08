@@ -11,9 +11,9 @@ namespace Entities.DataTransferObjects
         public DateTime EventDate { get; set; }
         public String Location { get; set; }
         public string Visibility { get; set; }
-        public string PublishedById { get; set; }
+        public string PublishedByUserName { get; set; }
         public bool IsApproved { get; set; } = false;
-        public string? ApprovedById { get; set; }
+        public string? ApprovedByUserName { get; set; }
         public DateTime ApprovedTime { get; set; }
         public DateTime CreatedTime { get; set; }
         public Club Club { get; set; }// navigator prop

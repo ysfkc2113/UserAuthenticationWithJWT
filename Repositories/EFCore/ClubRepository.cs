@@ -1,6 +1,9 @@
-﻿using Entities.Models;
+﻿using Entities.Exceptions;
+using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
+using Repositories.EFCore.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,24 +18,28 @@ namespace Repositories.EFCore
         public ClubRepository(RepositoryContext context) : base(context)
         {
         }
-
-        public void CreateOneClub(Club club)=> Create(club);
-
-        public void DeleteOneClub(Club club) => Delete(club);
-        public void UpdateOneClub(Club club) => Update(club);
-
-        public async Task<IEnumerable<Club>> GetAllClubsAsync(bool trackChanges)
-        {
-            var clubs = await FindAll(trackChanges).OrderBy(y=> y.ClubName).ToListAsync();
-            return clubs;
-        }
-
+ //for admin
+        public void CreateClub(Club club)=> Create(club);
+        public void DeleteClub(Club club) => Delete(club);
+        public void UpdateClub(Club club) => Update(club); 
         public async Task<Club> GetOneClubByIdAsync(int id, bool trackChanges)
         {
            return await FindByCondition(b => b.ClubId.Equals(id), trackChanges)
            .SingleOrDefaultAsync();
         }
+        public async Task<PagedList<Club>> GetAllClubsAsync(ClubParameters clubParameters, bool trackChanges)
+        {
+            var clubs = await FindAll(trackChanges)
+                  .Search(clubParameters.SearchTerm)
+                  .Sort(clubParameters.OrderBy)
+                  .ToListAsync();
 
+            return PagedList<Club>
+                .ToPagedList(clubs,
+                clubParameters.PageNumber,
+                clubParameters.PageSize);
+
+        }
 
     }
 }

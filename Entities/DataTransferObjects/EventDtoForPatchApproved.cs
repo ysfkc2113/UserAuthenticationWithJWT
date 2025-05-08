@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public  record EventHasOneClubDto
+    public record EventDtoForPatchApproved
     {
+        public bool IsApproved { get; set; } = false;
     }
 }

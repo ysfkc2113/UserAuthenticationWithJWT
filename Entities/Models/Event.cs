@@ -16,9 +16,9 @@ namespace Entities.Models
        // public decimal Price { get; set; }//silebiliriz
         public String Location { get; set; }
         public string Visibility { get; set; } = "private";//0=private(kulüp içi),1=public(herkese açık)
-        public string PublishedById { get; set; }
+        public string PublishedByUserName { get; set; }
         public bool IsApproved { get; set; } = false;
-        public string? ApprovedById { get; set; }
+        public string? ApprovedByUserName { get; set; }
         public DateTime ApprovedTime { get; set; }= DateTime.MinValue;
         public DateTime CreatedTime { get; set; }
         public int ClubId { get; set; }//fk

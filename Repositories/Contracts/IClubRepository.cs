@@ -1,4 +1,5 @@
 ﻿using Entities.Models;
+using Entities.RequestFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,13 @@ using System.Threading.Tasks;
 namespace Repositories.Contracts
 {
     public interface IClubRepository: IRepositoryBase<Club>
-    {
-        Task<IEnumerable<Club>> GetAllClubsAsync(bool trackChanges);
+    {  //Admin
+       
+        Task<PagedList<Club>> GetAllClubsAsync(ClubParameters clubParameters,bool trackChanges);
         Task<Club> GetOneClubByIdAsync(int id, bool trackChanges);
-
-        void CreateOneClub(Club club);
-        void UpdateOneClub(Club club);
-        void DeleteOneClub (Club club);
+        void CreateClub(Club club);
+        void UpdateClub(Club club);
+        void DeleteClub (Club club);   
 
     }
 }
