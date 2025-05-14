@@ -10,6 +10,9 @@ namespace Services.Contracts
     {
         IEventService EventService { get; }
         IClubService ClubService { get; }
+        IClubUserService ClubUserService { get; }
+        IUsersService UsersService { get; }
+        IUserRoleService UserRoleService { get; }
         IAuthenticationService AuthenticationService { get; }
     }
 }

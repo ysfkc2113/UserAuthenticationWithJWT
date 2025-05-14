@@ -20,6 +20,8 @@ namespace WebApi.Utilities.AutoMapper
             CreateMap<ClubDtoForInsertion, Club>();
             CreateMap<AdminClubDtoForUpdate, Club>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Club_User, AdminClubUserDtoRelations>();
+            CreateMap<User, AdminUsersDto>();
         }
     }
 }

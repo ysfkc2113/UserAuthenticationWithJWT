@@ -13,14 +13,23 @@ namespace Services
         private readonly IEventService _eventService;
         private readonly IClubService _clubService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IClubUserService _clubUserService;
+        private readonly IUsersService _usersService;
+        private readonly IUserRoleService _userRoleService;
 
-        public ServiceManager(IEventService eventService, 
-            IClubService clubService, 
-            IAuthenticationService authenticationService)
+        public ServiceManager(IEventService eventService,
+            IClubService clubService,
+            IAuthenticationService authenticationService,
+            IClubUserService clubUserService,
+            IUsersService usersService,
+            IUserRoleService userRoleService)
         {
             _eventService = eventService;
             _clubService = clubService;
             _authenticationService = authenticationService;
+            _clubUserService = clubUserService;
+            _usersService = usersService;
+            _userRoleService = userRoleService;
         }
 
         public IEventService EventService => _eventService;
@@ -28,5 +37,8 @@ namespace Services
         public IAuthenticationService AuthenticationService => _authenticationService;
 
         public IClubService ClubService => _clubService;
+        public IClubUserService ClubUserService => _clubUserService;
+        public IUsersService UsersService => _usersService;
+        public IUserRoleService UserRoleService => _userRoleService;
     }
 }

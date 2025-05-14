@@ -1,4 +1,5 @@
 ﻿using Entities.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Repositories.EFCore.Config;
@@ -21,6 +22,8 @@ namespace Repositories.EFCore
         public DbSet<Event> Events { get; set; }
         public DbSet<Club> Clubs { get; set; }
         public DbSet<Club_User> Club_User { get; set; }
+        public DbSet<IdentityUserRole<string>> UserRoles { get; set; }
+        public DbSet<IdentityRole> Roles { get; set; }
 
 
 

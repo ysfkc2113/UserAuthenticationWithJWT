@@ -15,7 +15,7 @@ namespace Entities.Models
         public string UserId { get; set; }
         public bool Approved  { get; set; }=false;
         public string? role_in_club { get; set; }
-        public DateTime? ApprovedTime { get; set; }//onaylanma tarihi
+        public DateTime? ApprovedTime { get; set; } = DateTime.MinValue;//onaylanma tarihi
         public DateTime CreatedTime  { get; set; }//istek atma tarihi
 
 

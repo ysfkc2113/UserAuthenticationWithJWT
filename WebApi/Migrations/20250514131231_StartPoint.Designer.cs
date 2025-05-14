@@ -12,8 +12,8 @@ using Repositories.EFCore;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250508145058_changeColumnNameForClub")]
-    partial class changeColumnNameForClub
+    [Migration("20250514131231_StartPoint")]
+    partial class StartPoint
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,7 +65,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 1,
                             ClubName = "satranç kulübü",
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(225),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4616),
                             Description = "Satranç meraklılarına.",
                             Faculty = "Elektronik"
                         },
@@ -73,7 +73,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 2,
                             ClubName = "futbol kulübü",
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(233),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4625),
                             Description = "Boş Gezenler İçin.",
                             Faculty = "BESYO"
                         },
@@ -81,7 +81,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 3,
                             ClubName = "medeniyet tekno kulübü",
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(234),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4625),
                             Description = "Teknoloji Tutkunlarına.",
                             Faculty = "Blgisayar Mühendisliği"
                         },
@@ -89,7 +89,7 @@ namespace WebApi.Migrations
                         {
                             ClubId = 4,
                             ClubName = "medeniyet Tiyatro kulübü",
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(235),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4626),
                             Description = "Ölü Ozanlar Derneği Sevenler Kulübü.",
                             Faculty = "Edebiyat Fakultesi"
                         });
@@ -192,9 +192,9 @@ namespace WebApi.Migrations
                             Id = 1,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 1,
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(419),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4772),
                             Description = "Gleneksel medeniyet 5.Satranç Müsabakası",
-                            EventDate = new DateTime(2025, 5, 13, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(416),
+                            EventDate = new DateTime(2025, 5, 19, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4768),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedByUserName = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -206,9 +206,9 @@ namespace WebApi.Migrations
                             Id = 2,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 4,
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(421),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4774),
                             Description = "Tiyatro etkinlikleri buluşması",
-                            EventDate = new DateTime(2025, 5, 14, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(420),
+                            EventDate = new DateTime(2025, 5, 20, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4774),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedByUserName = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -220,9 +220,9 @@ namespace WebApi.Migrations
                             Id = 3,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 2,
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(423),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4776),
                             Description = "Futbol Turnuvası Maç Kura Çekimleri",
-                            EventDate = new DateTime(2025, 5, 13, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(422),
+                            EventDate = new DateTime(2025, 5, 19, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4775),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedByUserName = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -234,9 +234,9 @@ namespace WebApi.Migrations
                             Id = 4,
                             ApprovedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ClubId = 2,
-                            CreatedTime = new DateTime(2025, 5, 8, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(424),
+                            CreatedTime = new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4777),
                             Description = "Futbol Turnuvası İlk Maçı",
-                            EventDate = new DateTime(2025, 5, 13, 17, 50, 58, 283, DateTimeKind.Local).AddTicks(423),
+                            EventDate = new DateTime(2025, 5, 19, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4777),
                             IsApproved = false,
                             Location = "medeniyet university",
                             PublishedByUserName = "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd",
@@ -269,6 +269,9 @@ namespace WebApi.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -357,29 +360,29 @@ namespace WebApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "577e4297-5fc8-4264-8bc9-193e7ed6f4cb",
-                            ConcurrencyStamp = "82d1a11c-2c67-457c-a397-c4b3069d5359",
+                            Id = "5a294df3-17b8-42d6-b989-2ed28b7deeb0",
+                            ConcurrencyStamp = "04ea2290-5b81-46fb-9e38-6d17b55f8ff1",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "b2d3ed31-37ff-4466-9f33-17eeb1f057b8",
-                            ConcurrencyStamp = "b0d64498-1d62-4c09-bfc9-8f81e7edde18",
+                            Id = "de6b4fdc-205d-4a0e-a4e5-d349b2db6fdd",
+                            ConcurrencyStamp = "ab4434f5-561a-4567-9a61-9f7637314d5f",
                             Name = "Club Manager",
                             NormalizedName = "CLUB MANAGER"
                         },
                         new
                         {
-                            Id = "910ec266-5407-42c4-b6a4-3bcb51862ffc",
-                            ConcurrencyStamp = "cd526f72-0ee1-47c2-8085-b503091ed747",
+                            Id = "fbeea87b-cece-4e5b-9946-fa94dc0d62e2",
+                            ConcurrencyStamp = "93885a90-dca5-4af7-8e55-2c03e0b8b882",
                             Name = "Academician",
                             NormalizedName = "ACADEMICIAN"
                         },
                         new
                         {
-                            Id = "626ffa0a-b717-4f73-b741-35cabe33a497",
-                            ConcurrencyStamp = "f8fc3442-b12b-4967-8e7c-812680ee3171",
+                            Id = "c0915b43-d830-4e05-a4e2-278b8962632c",
+                            ConcurrencyStamp = "0b7e4796-f550-4013-b177-e1a59b5053a2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

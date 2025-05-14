@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApi.Migrations
 {
-    public partial class Start : Migration
+    public partial class StartPoint : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,6 +34,7 @@ namespace WebApi.Migrations
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ProfilPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -64,8 +65,8 @@ namespace WebApi.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Logo_url = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Faculty = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Responsible_teacher_id = table.Column<int>(type: "int", nullable: true),
-                    Created_by = table.Column<int>(type: "int", nullable: true),
+                    Responsible_teacher = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClubManager = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -221,9 +222,9 @@ namespace WebApi.Migrations
                     EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Visibility = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PublishedById = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublishedByUserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
-                    ApprovedById = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApprovedByUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ApprovedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ClubId = table.Column<int>(type: "int", nullable: false)
@@ -244,32 +245,32 @@ namespace WebApi.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "16613be4-c3f2-4244-9c04-76dca6046810", "2a6d9f8e-479e-4398-9ad5-3d788af8b2ef", "User", "USER" },
-                    { "5d27a15e-4900-43be-93c2-a6b870f835ba", "9853cdb3-a05c-4326-9771-c8283953b505", "Club Manager", "CLUB MANAGER" },
-                    { "9e0d454c-2827-472e-ab08-e484122f5165", "fb57e699-7759-4403-9c39-aae5d4f3fb79", "Admin", "ADMIN" },
-                    { "bdd4082a-e194-43e2-b81f-8b923166d091", "fa7fbf20-accb-4175-94f9-463bb49178c5", "Academician", "ACADEMICIAN" }
+                    { "5a294df3-17b8-42d6-b989-2ed28b7deeb0", "04ea2290-5b81-46fb-9e38-6d17b55f8ff1", "User", "USER" },
+                    { "c0915b43-d830-4e05-a4e2-278b8962632c", "0b7e4796-f550-4013-b177-e1a59b5053a2", "Admin", "ADMIN" },
+                    { "de6b4fdc-205d-4a0e-a4e5-d349b2db6fdd", "ab4434f5-561a-4567-9a61-9f7637314d5f", "Club Manager", "CLUB MANAGER" },
+                    { "fbeea87b-cece-4e5b-9946-fa94dc0d62e2", "93885a90-dca5-4af7-8e55-2c03e0b8b882", "Academician", "ACADEMICIAN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Clubs",
-                columns: new[] { "ClubId", "ClubName", "CreatedTime", "Created_by", "Description", "Faculty", "Logo_url", "Responsible_teacher_id" },
+                columns: new[] { "ClubId", "ClubManager", "ClubName", "CreatedTime", "Description", "Faculty", "Logo_url", "Responsible_teacher" },
                 values: new object[,]
                 {
-                    { 1, "satranç kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9878), null, "Satranç meraklılarına.", "Elektronik", null, null },
-                    { 2, "futbol kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9887), null, "Boş Gezenler İçin.", "BESYO", null, null },
-                    { 3, "medeniyet tekno kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9888), null, "Teknoloji Tutkunlarına.", "Blgisayar Mühendisliği", null, null },
-                    { 4, "medeniyet Tiyatro kulübü", new DateTime(2025, 5, 4, 15, 58, 5, 67, DateTimeKind.Local).AddTicks(9889), null, "Ölü Ozanlar Derneği Sevenler Kulübü.", "Edebiyat Fakultesi", null, null }
+                    { 1, null, "satranç kulübü", new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4616), "Satranç meraklılarına.", "Elektronik", null, null },
+                    { 2, null, "futbol kulübü", new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4625), "Boş Gezenler İçin.", "BESYO", null, null },
+                    { 3, null, "medeniyet tekno kulübü", new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4625), "Teknoloji Tutkunlarına.", "Blgisayar Mühendisliği", null, null },
+                    { 4, null, "medeniyet Tiyatro kulübü", new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4626), "Ölü Ozanlar Derneği Sevenler Kulübü.", "Edebiyat Fakultesi", null, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Events",
-                columns: new[] { "Id", "ApprovedById", "ApprovedTime", "ClubId", "CreatedTime", "Description", "EventDate", "ImagePath", "IsApproved", "Location", "PublishedById", "Title", "Visibility" },
+                columns: new[] { "Id", "ApprovedByUserName", "ApprovedTime", "ClubId", "CreatedTime", "Description", "EventDate", "ImagePath", "IsApproved", "Location", "PublishedByUserName", "Title", "Visibility" },
                 values: new object[,]
                 {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(81), "Gleneksel medeniyet 5.Satranç Müsabakası", new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(77), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Quin Gambit  ", "private" },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(83), "Tiyatro etkinlikleri buluşması", new DateTime(2025, 5, 10, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(82), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Mesneviden Tiyatrolar", "private" },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(85), "Futbol Turnuvası Maç Kura Çekimleri", new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(84), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Futbolllll", "private" },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 4, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(86), "Futbol Turnuvası İlk Maçı", new DateTime(2025, 5, 9, 15, 58, 5, 68, DateTimeKind.Local).AddTicks(86), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Futbol Turnuvası 1.Tur ", "private" }
+                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4772), "Gleneksel medeniyet 5.Satranç Müsabakası", new DateTime(2025, 5, 19, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4768), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Quin Gambit  ", "private" },
+                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4774), "Tiyatro etkinlikleri buluşması", new DateTime(2025, 5, 20, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4774), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Mesneviden Tiyatrolar", "private" },
+                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4776), "Futbol Turnuvası Maç Kura Çekimleri", new DateTime(2025, 5, 19, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4775), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Futbolllll", "private" },
+                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2025, 5, 14, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4777), "Futbol Turnuvası İlk Maçı", new DateTime(2025, 5, 19, 16, 12, 31, 408, DateTimeKind.Local).AddTicks(4777), null, false, "medeniyet university", "841f3f0b-5f97-4fe0-954b-0eaa2ddd5fbd", "Futbol Turnuvası 1.Tur ", "private" }
                 });
 
             migrationBuilder.CreateIndex(

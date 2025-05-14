@@ -118,7 +118,7 @@ namespace WebApi.Extensions
             services.AddHttpCacheHeaders(expirationOpt =>
             {//public olunca sayfa numarası değişse bile aynı veriler dönüyor.
                 expirationOpt.CacheLocation = CacheLocation.Private;//private olursa age görünmez
-                expirationOpt.MaxAge = 70;
+                expirationOpt.MaxAge = 10;
             },
             validationOpt => { validationOpt.MustRevalidate = false; }
             );
@@ -236,11 +236,16 @@ namespace WebApi.Extensions
         {
             services.AddScoped<IClubRepository, ClubRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IClubUserRepository, ClubUserRepository>();
+            services.AddScoped<IUsersRepository, UsersRepository>();
         }
         public static void RegisterServices(this IServiceCollection services)
         {
             services.AddScoped<IClubService, ClubManager>();
+            services.AddScoped<IClubUserService, ClubUserManager>();
+            services.AddScoped<IUsersService, UsersManager>();
             services.AddScoped<IEventService, EventManager>();
+            services.AddScoped<IUserRoleService, UserRoleManager> ();
             services.AddScoped<IAuthenticationService, AuthenticationManager>();
         }
 

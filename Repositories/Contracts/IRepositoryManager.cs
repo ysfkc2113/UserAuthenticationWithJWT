@@ -10,6 +10,8 @@ namespace Repositories.Contracts
     {
         IClubRepository Club {  get; }
         IEventRepository Event { get; }
+        IClubUserRepository ClubUser { get; }
+        IUsersRepository UsersRepository { get; }
         Task SaveAsync();
     }
 }

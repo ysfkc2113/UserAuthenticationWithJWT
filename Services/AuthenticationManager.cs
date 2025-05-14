@@ -37,7 +37,7 @@ namespace Services
         public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
         {
             var user = _mapper.Map<User>(userForRegistrationDto);
-
+            user.CreatedTime = DateTime.Now;
             var result = await _userManager
                 .CreateAsync(user, userForRegistrationDto.Password);
 
