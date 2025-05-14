@@ -42,24 +42,17 @@ namespace Services
             var clubuser = await _manager.ClubUser.GetAllUsersAsync(clubUserParameters, trackChanges);
 
             var  clubUserDtoWithRelations= _mapper.Map<IEnumerable<AdminClubUserDtoRelations>>(clubuser);
-
-
             return (clubUserDtoWithRelations, metaData: clubuser.MetaData);
         }
         public async Task ChangeApprovedAsync(int id,bool trackChanges)
         {
-            
                 var clubuser = await GetOneClubUserByIdAndCheckExists(id, trackChanges);
                 _manager.ClubUser.ChangeApprovedClubUserAsync(clubuser);
-                await _manager.SaveAsync();
-
-           
+                await _manager.SaveAsync();           
         } 
         private async Task<Club_User> GetOneClubUserByIdAndCheckExists(int id, bool trackChanges)
-            {
-                // check entity 
+            { 
                 var entity = await _manager.ClubUser.GetOneClubUserByIdAsync(id, trackChanges);
-
                 if (entity is null)
                     throw new ClubUserNotFoundException(id);
 
@@ -89,7 +82,7 @@ namespace Services
             {
                 var user= await _userManager.FindByIdAsync(entity.UserId);
                 var club = await _manager.Club.GetOneClubByIdAsync(entity.ClubId, trackChanges);
-                club.ClubManager=user.FirstName+" "+user.LastName;
+                club.ClubManager=user.UserName;
                 _manager.Club.Update(club);
             }
                
@@ -104,7 +97,7 @@ namespace Services
             if (adminClubUserDtoInsertion.role_in_club == "Club Manager")
             {           
                 var club = await _manager.Club.GetOneClubByIdAsync(adminClubUserDtoInsertion.ClubId, trackChanges);
-                club.ClubManager = user.FirstName + " " + user.LastName;
+                club.ClubManager = user.UserName;
                 _manager.Club.Update(club);
             }
 

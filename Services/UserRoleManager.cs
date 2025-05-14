@@ -12,13 +12,13 @@ namespace Services
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-      
+        private readonly Lazy<IClubService> _clubService;
 
-        public UserRoleManager(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public UserRoleManager(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, Lazy<IClubService> clubService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-           
+            _clubService = clubService;
         }
 
         public async Task<List<string>> GetRolesByUserIdAsync(string userName)
@@ -47,6 +47,11 @@ namespace Services
             if (user != null && await _userManager.IsInRoleAsync(user, roleName))
             {
                 await _userManager.RemoveFromRoleAsync(user, roleName);
+            }
+            //DİKKAT döngüye girebilir.
+            if(roleName == "Club Manager" )
+            {// ❗ Dikkat: burada artık Lazy çözülüyor
+                await _clubService.Value.UpdateClubMangerAsync(userName);
             }
         }
 

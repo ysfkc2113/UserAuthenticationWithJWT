@@ -27,6 +27,7 @@ namespace Repositories.EFCore
         {
             var clubuser= await FindAllByRelation(trackChanges, e => e.Club, e => e.User)
                 .Where(y=> y.ClubId == id)
+                .FilterClubUser(clubUserParameters.IsApproved)
                 .SearchClubUser(clubUserParameters.SearchTerm)
                 .SortClubUser(clubUserParameters.OrderBy)
                 .ToListAsync();

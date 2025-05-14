@@ -20,7 +20,20 @@ namespace Repositories.EFCore
         }
  //for admin
         public void CreateClub(Club club)=> Create(club);
-        public void DeleteClub(Club club) => Delete(club);
+        public void DeleteClub(Club club) {
+            if(club.IsDeleted == true)
+            {
+                 club.DeletedTime= DateTime.Now;
+                 club.IsDeleted = true;
+            }
+            else if(club.IsDeleted == false) 
+            {
+                club.IsDeleted = true;
+                club.DeletedTime = null;
+            }
+            
+            Update(club); 
+        }
         public void UpdateClub(Club club) => Update(club); 
         public async Task<Club> GetOneClubByIdAsync(int id, bool trackChanges)
         {
@@ -30,8 +43,9 @@ namespace Repositories.EFCore
         public async Task<PagedList<Club>> GetAllClubsAsync(ClubParameters clubParameters, bool trackChanges)
         {
             var clubs = await FindAll(trackChanges)
-                  .Search(clubParameters.SearchTerm)
-                  .Sort(clubParameters.OrderBy)
+                  .FilterClub(clubParameters.Faculty)
+                  .SearchClub(clubParameters.SearchTerm)
+                  .SortClub(clubParameters.OrderBy)
                   .ToListAsync();
 
             return PagedList<Club>

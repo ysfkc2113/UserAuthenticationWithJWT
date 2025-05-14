@@ -1487,3 +1487,39 @@
 2025-05-14 17:31:14.7237 Info Message Template Auto Format enabled
 2025-05-14 17:31:14.8005 Info Adding target FileTarget(Name=logfile)
 2025-05-14 17:31:14.8324 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 18:17:25.1353 Info Message Template Auto Format enabled
+2025-05-14 18:17:25.2298 Info Adding target FileTarget(Name=logfile)
+2025-05-14 18:17:25.2600 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 18:29:27.3398 Info Message Template Auto Format enabled
+2025-05-14 18:29:27.4318 Info Adding target FileTarget(Name=logfile)
+2025-05-14 18:29:27.4555 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 18:42:44.0740 Info Message Template Auto Format enabled
+2025-05-14 18:42:44.1947 Info Adding target FileTarget(Name=logfile)
+2025-05-14 18:42:44.2227 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 20:53:41.9032 Info Message Template Auto Format enabled
+2025-05-14 20:53:41.9881 Info Adding target FileTarget(Name=logfile)
+2025-05-14 20:53:42.0106 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 20:57:03.9988 Info Message Template Auto Format enabled
+2025-05-14 20:57:04.1056 Info Adding target FileTarget(Name=logfile)
+2025-05-14 20:57:04.1301 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 21:00:16.9642 Info Message Template Auto Format enabled
+2025-05-14 21:00:17.0489 Info Adding target FileTarget(Name=logfile)
+2025-05-14 21:00:17.0706 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 21:00:37.3516 Info Message Template Auto Format enabled
+2025-05-14 21:00:37.4340 Info Adding target FileTarget(Name=logfile)
+2025-05-14 21:00:37.4560 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 21:01:19.0560 Info Message Template Auto Format enabled
+2025-05-14 21:01:19.1594 Info Adding target FileTarget(Name=logfile)
+2025-05-14 21:01:19.1858 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 21:06:36.9689 Info Message Template Auto Format enabled
+2025-05-14 21:06:37.0421 Info Adding target FileTarget(Name=logfile)
+2025-05-14 21:06:37.0663 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 21:13:08.9708 Info Message Template Auto Format enabled
+2025-05-14 21:13:09.0724 Info Adding target FileTarget(Name=logfile)
+2025-05-14 21:13:09.1030 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 21:17:27.1387 Info Message Template Auto Format enabled
+2025-05-14 21:17:27.2444 Info Adding target FileTarget(Name=logfile)
+2025-05-14 21:17:27.2757 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config
+2025-05-14 21:25:44.3241 Info Message Template Auto Format enabled
+2025-05-14 21:25:44.4227 Info Adding target FileTarget(Name=logfile)
+2025-05-14 21:25:44.4606 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\Asus\Desktop\btk_api\btk-akademi-aspnet-core-web-api-ch_20_hateoas\bsStoreApp\WebApi\nlog.config

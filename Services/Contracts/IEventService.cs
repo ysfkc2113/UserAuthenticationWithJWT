@@ -16,7 +16,7 @@ namespace Services.Contracts
         Task<(LinkResponse linkResponse, MetaData metaData)> GetAllEventsAsync(LinkParameters linkParameters,
             bool trackChanges);
         Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges);
-        Task<EventDto> CreateOneEventAsync(EventDtoForInsertion clubEvent,string userId);
+        Task<EventDto> CreateOneEventAsync(EventDtoForInsertion clubEvent,string userName);
         Task UpdateOneEventAsync(int id, EventDtoForUpdate eventDto, bool trackChanges);
         
         

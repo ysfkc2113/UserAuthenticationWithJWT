@@ -50,6 +50,8 @@ namespace Presentation.Controllers.Admin
             var club=await _manager.ClubService.GetOneClubByIdAsync(id, true);
             return Ok(club);
         }
+
+        //bir clubu siler, silinmiş clubu aktif eder
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteClub([FromRoute]int id)
         {

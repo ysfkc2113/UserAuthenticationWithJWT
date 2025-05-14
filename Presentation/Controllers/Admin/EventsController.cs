@@ -71,26 +71,9 @@ namespace Presentation.Controllers.Admin
         [HttpPost]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> CreateEvent([FromBody] EventDtoForInsertion eventDtoForInsertion)
-        {
-            // 1. Get the HttpContext
-            var httpContext = HttpContext;
-
-            // 2. Get the User from HttpContext
-            var user = httpContext.User;
-
-            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
-            {
-                return Unauthorized("User is not authenticated.");
-            }
-
-            // 3. Get the User's ID from the JWT token's claims
-            var userId = user.FindFirst(ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID claim is missing in the JWT token.");
-            }
-            var clubEvent = await _manager.EventService.CreateOneEventAsync(eventDtoForInsertion, userId);
+        {         
+            var contextUserName = await _manager.UsersService.GetUserNameByHttpContextAsync(HttpContext);
+            var clubEvent = await _manager.EventService.CreateOneEventAsync(eventDtoForInsertion, contextUserName);
             return StatusCode(201, clubEvent); // CreatedAtRoute()
         }
 
@@ -113,25 +96,8 @@ namespace Presentation.Controllers.Admin
         public async Task<IActionResult> PatchEvent([FromRoute(Name = "id")] int id,
             [FromBody] JsonPatchDocument<EventDtoForPatchApproved> eventPatch)
         {
-            // 1. Get the HttpContext
-            var httpContext = HttpContext;
-
-            // 2. Get the User from HttpContext
-            var user = httpContext.User;
-
-            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
-            {
-                return Unauthorized("User is not authenticated.");
-            }
-
-            // 3. Get the User's ID from the JWT token's claims
-            var userName = user.FindFirst(ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userName))
-            {
-                return BadRequest("User ID claim is missing in the JWT token.");
-            }
-
+            
+            var contextUserName = await _manager.UsersService.GetUserNameByHttpContextAsync(HttpContext);
             if (eventPatch is null)
                 return BadRequest(); // 400
 
@@ -143,7 +109,7 @@ namespace Presentation.Controllers.Admin
 
             if (!ModelState.IsValid)
                 return UnprocessableEntity(ModelState);
-            await _manager.EventService.SaveChangesForPatchApprovedAsync(result.eventDtoForUpdate, result.clubEvent,  userName, true);
+            await _manager.EventService.SaveChangesForPatchApprovedAsync(result.eventDtoForUpdate, result.clubEvent, contextUserName, true);
 
             return NoContent(); // 204
         }

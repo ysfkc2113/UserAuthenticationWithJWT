@@ -2,6 +2,7 @@
 {
     public class EventParameters : RequestParameters
     {
+        public int? ClubId { get; set; }
         public bool? IsApproved {  get; set; }
         public DateTime? StartDate { get; set; }= DateTime.MinValue;
         public DateTime? EndDate { get; set; }=DateTime.MaxValue;

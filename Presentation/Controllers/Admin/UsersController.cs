@@ -43,6 +43,7 @@ namespace Presentation.Controllers.Admin
         public async Task<IActionResult> DeleteUser([FromBody] string userName)
         {
             await _manager.UsersService.DeleteUsersAsync(userName, true);
+            
             return Ok();
         }
         //delete edilmişleri true ya çevirir.

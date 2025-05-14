@@ -8,6 +8,7 @@ namespace Entities.RequestFeatures
 {
     public class ClubParameters : RequestParameters
     {
+        public string? Faculty { get; set; }
         public string? SearchTerm { get; set; }
 
         public ClubParameters()

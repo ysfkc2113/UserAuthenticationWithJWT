@@ -20,5 +20,7 @@ namespace Services.Contracts
         Task<ClubDto> CreateClubAsync(ClubDtoForInsertion clubDtoForInsertion,bool trackchanges);
         Task<ClubDto> UpdateClubAsync(AdminClubDtoForUpdate clubDtoForUpdate,int id,bool trackChanges);
 
+        Task UpdateClubMangerAsync(string userName);
+
     }
 }

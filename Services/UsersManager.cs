@@ -3,11 +3,13 @@ using Entities.DataTransferObjects;
 using Entities.Exceptions;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +19,13 @@ namespace Services
     {
         private readonly IRepositoryManager _manager;
         private readonly IMapper _mapper;
-       
+        private readonly IClubService _clubService;
 
-        public UsersManager(IRepositoryManager repositoryManager, IMapper mapper)
+        public UsersManager(IRepositoryManager repositoryManager, IMapper mapper, IClubService clubService)
         {
             _manager = repositoryManager;
             _mapper = mapper;
+            _clubService = clubService;
         }
 
         public async Task DeleteUsersAsync(string userName, bool trackChanges)
@@ -32,6 +35,8 @@ namespace Services
                 throw new UserNotFoundException(userName);
             }
             await _manager.UsersRepository.DeleteAsync(userName, trackChanges);
+            //club Servis ClubManager waiting
+            await _clubService.UpdateClubMangerAsync(userName);
             await _manager.SaveAsync();
         }
 
@@ -65,5 +70,24 @@ namespace Services
 
         }
 
+        public async Task<string> GetUserNameByHttpContextAsync(HttpContext httpContext)
+        {
+            // 2. Get the User from HttpContext
+            var user = httpContext.User;
+
+            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            // 3. Get the User's ID from the JWT token's claims
+            var userName = user.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                throw new Exception("User ID claim is missing in the JWT token.");
+            }
+            return userName;
+        }
     }
 }

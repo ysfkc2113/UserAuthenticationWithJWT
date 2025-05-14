@@ -8,17 +8,30 @@ namespace Repositories.EFCore.Extensions
     public static class EventRepositoryExtensions
     {
         public static IQueryable<Event> FilterEvents(this IQueryable<Event> events,
-            DateTime? startDate, DateTime? endDate, bool? isApproved)
+            DateTime? startDate, DateTime? endDate, bool? isApproved,int? clubId)
         {
-            if (isApproved is null)
+            if (isApproved is null && clubId == null)
             {
                 return events.Where(clubEvent =>
                (clubEvent.EventDate >= startDate &&
                clubEvent.EventDate <= endDate));
             }
+            else if (isApproved is null && clubId != null)
+            {
+                return events.Where(clubEvent =>
+               (clubEvent.EventDate >= startDate &&
+               clubEvent.EventDate <= endDate)&& clubEvent.ClubId == clubId);
+            }
+            else if ((!isApproved is null) && clubId == null)
+            {
+                return events.Where(clubEvent =>
+               (clubEvent.EventDate >= startDate &&
+               clubEvent.EventDate <= endDate)&& clubEvent.IsApproved == isApproved);
+            }
+
             return events.Where(clubEvent =>
             (clubEvent.EventDate >= startDate &&
-            clubEvent.EventDate <= endDate) && clubEvent.IsApproved == isApproved);
+            clubEvent.EventDate <= endDate) && clubEvent.IsApproved == isApproved && clubEvent.ClubId==clubId);
         }
 
 

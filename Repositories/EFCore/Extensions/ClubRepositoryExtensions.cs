@@ -10,7 +10,15 @@ namespace Repositories.EFCore.Extensions
 {
     public static class ClubRepositoryExtensions
     {
-        public static IQueryable<Club> Search(this IQueryable<Club> clubs,
+        public static IQueryable<Club> FilterClub(this IQueryable<Club> club,string? Faculty)
+        {
+            if (Faculty is null)
+            {
+                return club;
+            }
+            return club.Where(club => club.Faculty == Faculty);
+        }
+        public static IQueryable<Club> SearchClub(this IQueryable<Club> clubs,
             string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
@@ -23,7 +31,7 @@ namespace Repositories.EFCore.Extensions
                 .Contains(searchTerm));
         }
 
-        public static IQueryable<Club> Sort(this IQueryable<Club> clubs,
+        public static IQueryable<Club> SortClub(this IQueryable<Club> clubs,
             string orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))

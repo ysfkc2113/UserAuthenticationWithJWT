@@ -4,6 +4,8 @@ using Entities.Exceptions;
 using Entities.LinkModels;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Contracts;
 using Services.Contracts;
 using System;
@@ -18,11 +20,15 @@ namespace Services
     {
         private readonly IRepositoryManager _manager;
         private readonly IMapper _mapper;
+        //private readonly UserRoleManager _roleManager;
 
-        public ClubManager(IRepositoryManager repositoryManager, IMapper mapper)
+        private readonly IUserRoleService _userRoleService;
+
+        public ClubManager(IRepositoryManager manager, IMapper mapper, IUserRoleService userRoleService)
         {
-            _manager = repositoryManager;
+            _manager = manager;
             _mapper = mapper;
+            _userRoleService = userRoleService;
         }
 
         public async Task<ClubDto> GetOneClubByIdAsync(int id, bool trackChanges)
@@ -49,13 +55,14 @@ namespace Services
             var entity = _mapper.Map<Club>(clubDto);
             entity.CreatedTime = DateTime.Now;
             _manager.Club.CreateClub(entity);
+            if (clubDto.ClubManager != null)
+                await _userRoleService.AssignRoleToUserAsync(clubDto.ClubManager, "Club Manager");
+            clubDto.ClubManager = "Waiting";
             await _manager.SaveAsync();
             return _mapper.Map<ClubDto>(entity);
         }
         private async Task<Club> GetOneClubByIdAndCheckExists(int id, bool trackChanges)
         {
-
-            // check entity 
             var entity = await _manager.Club.GetOneClubByIdAsync(id, trackChanges);
 
             if (entity is null)
@@ -76,10 +83,29 @@ namespace Services
             {
                 throw new ClubNotFoundException(id);
             }
+            if (clubDtoForUpdate.ClubManager != null)
+                    await _userRoleService.AssignRoleToUserAsync(clubDtoForUpdate.ClubManager, "Club Manager");
             _mapper.Map(clubDtoForUpdate, club);
             _manager.Club.UpdateClub(club);
+
             await _manager.SaveAsync();
             return _mapper.Map<ClubDto>(club);
         }
+
+
+        //admin delete userManger için
+        public async Task UpdateClubMangerAsync(string userName)
+        {
+            var club = await _manager.Club.FindByCondition(m=>m.ClubManager.Equals(userName),true).FirstOrDefaultAsync();
+            if (club != null)
+                {
+                club.ClubManager = "Waiting";
+                await _userRoleService.RemoveRoleFromUserAsync(userName,"Club Manager");
+            }
+                
+        }
+
+
+
     }
 }
