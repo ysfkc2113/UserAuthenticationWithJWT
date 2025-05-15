@@ -24,6 +24,7 @@ namespace Repositories.EFCore
             clubEvent.ApprovedTime = DateTime.MinValue;
             clubEvent.CreatedTime = DateTime.Now;
             Create(clubEvent); } 
+        //bunu academician da kullanıyor.
         public void DeleteOneEvent(Event clubEvent) => Delete(clubEvent);
         public void UpdateOneEvent(Event clubEvent)
         {
@@ -60,9 +61,6 @@ namespace Repositories.EFCore
         {
             return await FindAllByRelation(trackChanges, e => e.Club).OrderBy(m => m.Id).ToListAsync();
         }
-
-
-
 
 
         public async Task<Event> GetOneEventByIdAsync(int id, bool trackChanges) =>
@@ -135,5 +133,36 @@ namespace Repositories.EFCore
             
             Update(clubEvent);
         }
+
+
+
+
+
+        //academician
+        public async Task<PagedList<Event>> GetAllEventsForAcademicianAsync(AcademicianEventParameters academicianEventParameters,
+            int ClubId,bool trackChanges)
+        {
+            var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
+                .FilterEvents(academicianEventParameters.StartDate, academicianEventParameters.EndDate, academicianEventParameters.IsApproved, ClubId)
+                .Search(academicianEventParameters.SearchTerm)
+                .Sort(academicianEventParameters.OrderBy)
+                .ToListAsync();
+
+            return PagedList<Event>
+                .ToPagedList(clubEvents,
+                academicianEventParameters.PageNumber,
+                academicianEventParameters.PageSize);
+        }
+        public void CreateOneEventForAcademician(Event clubEvent,string userName,int clubId)
+        {
+            clubEvent.IsApproved = true;
+            clubEvent.ApprovedTime = DateTime.Now;
+            clubEvent.CreatedTime = DateTime.Now;
+            clubEvent.PublishedByUserName = userName;
+            clubEvent.ApprovedByUserName = userName;
+            clubEvent.ClubId = clubId;
+            Create(clubEvent);
+        }
+
     }
 }

@@ -9,3 +9,6 @@ namespace Entities.DataTransferObjects
         public int ClubId { get; init; }
     }
 }
+
+
+

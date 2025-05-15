@@ -49,7 +49,7 @@ namespace Services
         public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuthDto)
         {
             _user = await _userManager.FindByNameAsync(userForAuthDto.UserName);
-            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuthDto.Password));
+            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuthDto.Password)&&_user.IsActive==true);
             if (!result)
             {
                 _loggerService.LogWarning($"{nameof(ValidateUser)} : Authentication failed. Wrong username or password.");
@@ -115,8 +115,10 @@ namespace Services
             {
               //  new Claim(ClaimTypes.NameIdentifier, _user.Id),
                 new Claim(ClaimTypes.Name, _user.UserName)
-            };
 
+            };
+            var id = _user.Id;
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, id));
             var roles = await _userManager
                 .GetRolesAsync(_user);
 

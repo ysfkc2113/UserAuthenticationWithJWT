@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Services.Contracts.AcademcianService;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,7 @@ namespace Services.Contracts
         IUsersService UsersService { get; }
         IUserRoleService UserRoleService { get; }
         IAuthenticationService AuthenticationService { get; }
+        //Academician
+        IEventServiceAcademician EventServiceAcademician { get; }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Entities.Exceptions;
+using Repositories.Contracts;
 
 namespace Services
 {
@@ -13,6 +14,7 @@ namespace Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly Lazy<IClubService> _clubService;
+        private readonly IRepositoryManager _manager;
 
         public UserRoleManager(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, Lazy<IClubService> clubService)
         {
@@ -39,6 +41,7 @@ namespace Services
             {
                 await _userManager.AddToRoleAsync(user, roleName);
             }
+            await _manager.SaveAsync();
         }
 
         public async Task RemoveRoleFromUserAsync(string userName, string roleName)
@@ -53,6 +56,7 @@ namespace Services
             {// ❗ Dikkat: burada artık Lazy çözülüyor
                 await _clubService.Value.UpdateClubMangerAsync(userName);
             }
+            await _manager.SaveAsync();
         }
 
         public async Task<IList<string>> GetAllRolesAsync()

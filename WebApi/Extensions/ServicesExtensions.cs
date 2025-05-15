@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Services.Contracts.AcademcianService;
+using Services.AcademicianManagers;
 
 namespace WebApi.Extensions
 {
@@ -247,6 +249,7 @@ namespace WebApi.Extensions
             services.AddScoped<IEventService, EventManager>();
             services.AddScoped<IUserRoleService, UserRoleManager> ();
             services.AddScoped<IAuthenticationService, AuthenticationManager>();
+            services.AddScoped<IEventServiceAcademician, EventManagerAcademician>();
 
             services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>)); // bunu ekle
         }

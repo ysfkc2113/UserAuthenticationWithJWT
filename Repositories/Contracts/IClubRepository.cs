@@ -9,13 +9,16 @@ using System.Threading.Tasks;
 namespace Repositories.Contracts
 {
     public interface IClubRepository: IRepositoryBase<Club>
-    {  //Admin
-       
+    {
+        //Admin
         Task<PagedList<Club>> GetAllClubsAsync(ClubParameters clubParameters,bool trackChanges);
         Task<Club> GetOneClubByIdAsync(int id, bool trackChanges);
         void CreateClub(Club club);
         void UpdateClub(Club club);
-        void DeleteClub (Club club);   
+        void DeleteClub (Club club);
 
+
+        //Academician
+        Task<Club> GetOneClubByAcademicianName(string userNama, bool trackChanges);
     }
 }

@@ -81,6 +81,7 @@ namespace Services
             }
 
             // 3. Get the User's ID from the JWT token's claims
+            //var userName = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var userName = user.FindFirst(ClaimTypes.Name)?.Value;
 
             if (string.IsNullOrEmpty(userName))

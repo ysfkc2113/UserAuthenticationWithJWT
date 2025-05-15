@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Repositories.Contracts;
 using Services.Contracts;
+using Services.Contracts.AcademcianService;
 
 
 namespace Services
@@ -16,13 +17,15 @@ namespace Services
         private readonly IClubUserService _clubUserService;
         private readonly IUsersService _usersService;
         private readonly IUserRoleService _userRoleService;
+        private readonly IEventServiceAcademician _eventServiceAcademician;
 
         public ServiceManager(IEventService eventService,
             IClubService clubService,
             IAuthenticationService authenticationService,
             IClubUserService clubUserService,
             IUsersService usersService,
-            IUserRoleService userRoleService)
+            IUserRoleService userRoleService,
+            IEventServiceAcademician eventServiceAcademician)
         {
             _eventService = eventService;
             _clubService = clubService;
@@ -30,6 +33,7 @@ namespace Services
             _clubUserService = clubUserService;
             _usersService = usersService;
             _userRoleService = userRoleService;
+            _eventServiceAcademician = eventServiceAcademician;
         }
 
         public IEventService EventService => _eventService;
@@ -40,5 +44,8 @@ namespace Services
         public IClubUserService ClubUserService => _clubUserService;
         public IUsersService UsersService => _usersService;
         public IUserRoleService UserRoleService => _userRoleService;
+
+        //academician
+        public IEventServiceAcademician  EventServiceAcademician => _eventServiceAcademician;
     }
 }

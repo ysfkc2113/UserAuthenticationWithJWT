@@ -55,5 +55,12 @@ namespace Repositories.EFCore
 
         }
 
+        //Academician 
+        public async Task<Club> GetOneClubByAcademicianName(string userNama, bool trackChanges)
+        {
+            var club = await FindByCondition(m=> m.Responsible_teacher.Equals(userNama), trackChanges).FirstOrDefaultAsync();
+            return club;
+        } 
+
     }
 }

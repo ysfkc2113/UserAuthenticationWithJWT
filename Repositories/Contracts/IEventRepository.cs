@@ -26,5 +26,12 @@ namespace Repositories.Contracts
         Task<PagedList<Event>> GetPendingApprovalEventsAsync(EventParameters eventParameters, bool trackChanges);
         void ChangeApprovedEvent(Event clubEvent,string userId);
 
+
+
+        //academician
+        Task<PagedList<Event>> GetAllEventsForAcademicianAsync(AcademicianEventParameters academicianEventParameters,
+            int ClubId, bool trackChanges);
+        void CreateOneEventForAcademician(Event clubEvent, string userName, int clubId);
+
     }
 }

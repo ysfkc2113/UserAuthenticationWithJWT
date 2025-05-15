@@ -8,11 +8,12 @@ using Services.Contracts;
 using System.Security.Claims;
 using System.Text.Json;
 
+
 namespace Presentation.Controllers.Academician
 {
     [ServiceFilter(typeof(LogFilterAttribute))]
     [ApiController]
-   // [Authorize(Roles = "Academician")]
+    [Authorize(Roles = "Academician")]
     [Route("api/academician/events")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class EventsController : ControllerBase
@@ -26,15 +27,15 @@ namespace Presentation.Controllers.Academician
 
         [HttpGet]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-        public async Task<IActionResult> GetAllEvents([FromQuery] EventParameters eventParameters)
+        public async Task<IActionResult> GetAllEvents([FromQuery] AcademicianEventParameters academicianEventParameters)
         {
             var linkParameters = new LinkParameters()
             {
-                EventParameters = eventParameters,
+                AcademicianEventParameters = academicianEventParameters,
                 HttpContext = HttpContext
             };
             var result = await _manager
-              .EventService
+              .EventServiceAcademician
               .GetAllEventsAsync(linkParameters, false);
 
             Response.Headers.Add("X-Pagination",
@@ -51,47 +52,33 @@ namespace Presentation.Controllers.Academician
         public async Task<IActionResult> GetEventById([FromRoute] int id)
         {
             var result = await _manager
-                .EventService
-                .GetOneEventByIdAsync(id, false);
+                .EventServiceAcademician
+                .GetOneEventByIdAcedemicianAsync(HttpContext,id, false);
             return Ok(result);
         }
 
         [HttpPost]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-        public async Task<IActionResult> CreateEvent([FromBody] EventDtoForInsertion eventDtoForInsertion)
+        public async Task<IActionResult> CreateEvent([FromBody] AcademicianEventDtoForInsertion academicianEventDtoForInsertion)
         {
-            // 1. Get the HttpContext
-            var httpContext = HttpContext;
-
-            // 2. Get the User from HttpContext
-            var user = httpContext.User;
-
-            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
-            {
-                return Unauthorized("User is not authenticated.");
-            }
-
-            // 3. Get the User's ID from the JWT token's claims
-            var userId = user.FindFirst(ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID claim is missing in the JWT token.");
-            }
-            var clubEvent = await _manager.EventService.CreateOneEventAsync(eventDtoForInsertion, userId);
+            
+            var clubEvent = await _manager.EventServiceAcademician.CreateOneEventForAcademicianAsync(academicianEventDtoForInsertion, HttpContext,true);
             return StatusCode(201, clubEvent); // CreatedAtRoute()
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteEvent([FromRoute(Name = "id")] int id)
         {
-            await _manager.EventService.DeleteOneEventAsync(id, true);
+
+            await _manager.EventServiceAcademician.DeleteOneEventForAcademicianAsync(id,HttpContext, true);
             return Ok();
         }
+
+        //Update işleminden sonra girilmezse Event Date bozuluyor
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateEvent([FromRoute] int id, [FromBody] AdminEventDtoForUpdate dtoForUpdateAdmin)
+        public async Task<IActionResult> UpdateEvent([FromRoute] int id, [FromBody] AcademicianEventDtoForUpdate  academicianEventDtoForUpdate)
         {
-            await _manager.EventService.UpdateEventForAdminAsync(id, dtoForUpdateAdmin, true);
+            await _manager.EventServiceAcademician.UpdateEventForAcademicianAsync(id, academicianEventDtoForUpdate, HttpContext, true);
             return Ok();
         }
 
@@ -100,29 +87,11 @@ namespace Presentation.Controllers.Academician
         public async Task<IActionResult> PatchEvent([FromRoute(Name = "id")] int id,
             [FromBody] JsonPatchDocument<EventDtoForPatchApproved> eventPatch)
         {
-            // 1. Get the HttpContext
-            var httpContext = HttpContext;
-
-            // 2. Get the User from HttpContext
-            var user = httpContext.User;
-
-            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
-            {
-                return Unauthorized("User is not authenticated.");
-            }
-
-            // 3. Get the User's ID from the JWT token's claims
-            var userName = user.FindFirst(ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userName))
-            {
-                return BadRequest("User ID claim is missing in the JWT token.");
-            }
-
             if (eventPatch is null)
                 return BadRequest(); // 400
 
-            var result = await _manager.EventService.GetOneEventDtoForPatchApproved(id, false);
+            var result = await _manager.EventServiceAcademician
+                .GetOneEventDtoForPatchApprovedForAcademician(HttpContext, id, false);
 
             eventPatch.ApplyTo(result.eventDtoForUpdate, ModelState);
 
@@ -130,7 +99,7 @@ namespace Presentation.Controllers.Academician
 
             if (!ModelState.IsValid)
                 return UnprocessableEntity(ModelState);
-            await _manager.EventService.SaveChangesForPatchApprovedAsync(result.eventDtoForUpdate, result.clubEvent, userName, true);
+            await _manager.EventServiceAcademician.SaveChangesForPatchApprovedForAcademicianAsync(result.eventDtoForUpdate, result.clubEvent, HttpContext, true);
 
             return NoContent(); // 204
         }
