@@ -250,6 +250,7 @@ namespace WebApi.Extensions
             services.AddScoped<IUserRoleService, UserRoleManager> ();
             services.AddScoped<IAuthenticationService, AuthenticationManager>();
             services.AddScoped<IEventServiceAcademician, EventManagerAcademician>();
+            services.AddScoped<IClubServiceAcademician, ClubManagerAcademician>();
 
             services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>)); // bunu ekle
         }

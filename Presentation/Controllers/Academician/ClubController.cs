@@ -28,34 +28,26 @@ namespace Presentation.Controllers.Academician
             _manager = manager;
         }
 
+
         [HttpGet]
-        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-        public async Task<IActionResult> GetAllClubs([FromQuery] ClubParameters clubParameters)
+        public async Task<IActionResult> GetOneClubById()
         {
-            var result = await _manager
-                .ClubService
-                .GetAllClubsAsync(clubParameters, false);
-
-            Response.Headers.Add("X-Pagination",
-                JsonSerializer.Serialize(result.metaData));
-
-            return Ok(result.clubDto);
-
-        }
-        [HttpGet("{id:int}")]
-        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-        public async Task<IActionResult> GetOneClubById([FromRoute] int id)
-        {
-            var club = await _manager.ClubService.GetOneClubByIdAsync(id, true);
+            var club = await _manager.ClubServiceAcademician.GetOneClubByIdForAcademicianAsync(HttpContext, true);
             return Ok(club);
         }
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateClub([FromBody] AdminClubDtoForUpdate adminClubDtoForUpdate, [FromRoute] int id)
+
+        //Bir clubü sadece admin(sekreter) silip ekleyebilir.
+        //[HttpDelete("{id:int}")]
+       
+ //Bir Clubun Club Manager ı Silinirse İlişkili Yerlerden de Silmemiz Gerekiyor
+        [HttpPut]
+        public async Task<IActionResult> UpdateClub([FromBody] AdminClubDtoForUpdate adminClubDtoForUpdate)
         {
 
-            var club = await _manager.ClubService.UpdateClubAsync(adminClubDtoForUpdate, id, true);
+            var club = await _manager.ClubServiceAcademician.UpdateClubForAcademicianAsync(adminClubDtoForUpdate,HttpContext ,true);
             return Ok(club);
         }
+
 
 
     }

@@ -17,5 +17,6 @@ namespace Services.Contracts
         IAuthenticationService AuthenticationService { get; }
         //Academician
         IEventServiceAcademician EventServiceAcademician { get; }
+        IClubServiceAcademician ClubServiceAcademician { get; }
     }
 }
