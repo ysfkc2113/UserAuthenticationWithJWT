@@ -84,6 +84,41 @@ namespace Repositories.EFCore
             };
             Create(clubuser);
         }
+
+
+
+
+        //academician
+        public async Task<PagedList<Club_User>> GetAllUsersByClubIdForAcademicianAsync
+            (int id, UsersParametersAcademician usersParametersAcademician, bool trackChanges)
+        {
+            var clubuser = await FindAllByRelation(trackChanges, e => e.Club, e => e.User)
+                .Where(y => y.ClubId == id)
+                //.FilterClubUser(usersParameters.IsApproved)//isActive Users tablosunda
+                .SearchClubUser(usersParametersAcademician.SearchTerm)
+                .SortClubUser(usersParametersAcademician.OrderBy)
+                .ToListAsync();
+
+            return PagedList<Club_User>
+                .ToPagedList(clubuser,
+                usersParametersAcademician.PageNumber,
+                usersParametersAcademician.PageSize);
+        }
+
+        public void CreateClubUserForAcademician(string UserId, AcademicianClubUserDtoInsertion academicianClubUserDtoInsertion, int ClubId, bool trackChanges)
+        {
+            var clubuser = new Club_User()
+            {
+                ClubId = ClubId,
+                role_in_club = academicianClubUserDtoInsertion.role_in_club,
+                UserId = UserId,
+                CreatedTime = DateTime.Now,
+                Approved = true,
+                ApprovedTime = DateTime.Now,
+
+            };
+            Create(clubuser);
+        }
     }
     
 }

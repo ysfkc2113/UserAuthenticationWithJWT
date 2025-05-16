@@ -138,12 +138,6 @@ namespace Services.AcademicianManagers
             _manager.Event.UpdateOneEvent(clubEvent);
             await _manager.SaveAsync();
         }
-
-        public Task UpdateEventForAcademicianAsync(int id, AcademicianEventDtoForInsertion academicianEventDtoForInsertion, HttpContext httpContext, bool trackChanges)
-        {
-            throw new NotImplementedException();
-        }
-
         private async Task<Event> GetOneEventByIdAndCheckExists(int id, bool trackChanges)
         {
             // check entity 

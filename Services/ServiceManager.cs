@@ -19,6 +19,9 @@ namespace Services
         private readonly IUserRoleService _userRoleService;
         private readonly IEventServiceAcademician _eventServiceAcademician;
         private readonly IClubServiceAcademician _clubServiceAcademician;
+        private readonly IUsersServiceAcademician  _usersServiceAcademician;
+        private readonly IClubUserServiceAcademician  _clubUserServiceAcademician;
+
 
         public ServiceManager(IEventService eventService,
             IClubService clubService,
@@ -27,7 +30,9 @@ namespace Services
             IUsersService usersService,
             IUserRoleService userRoleService,
             IEventServiceAcademician eventServiceAcademician,
-            IClubServiceAcademician clubServiceAcademician)
+            IClubServiceAcademician clubServiceAcademician,
+            IUsersServiceAcademician usersServiceAcademician,
+            IClubUserServiceAcademician clubUserServiceAcademician)
         {
             _eventService = eventService;
             _clubService = clubService;
@@ -37,6 +42,8 @@ namespace Services
             _userRoleService = userRoleService;
             _eventServiceAcademician = eventServiceAcademician;
             _clubServiceAcademician = clubServiceAcademician;
+            _usersServiceAcademician = usersServiceAcademician;
+            _clubUserServiceAcademician = clubUserServiceAcademician;
         }
 
         public IEventService EventService => _eventService;
@@ -51,5 +58,7 @@ namespace Services
         //academician
         public IEventServiceAcademician  EventServiceAcademician => _eventServiceAcademician;
         public IClubServiceAcademician  ClubServiceAcademician => _clubServiceAcademician;
+        public IClubUserServiceAcademician  ClubUserServiceAcademician => _clubUserServiceAcademician;
+        public IUsersServiceAcademician UsersServiceAcademician => _usersServiceAcademician;
     }
 }

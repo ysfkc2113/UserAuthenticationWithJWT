@@ -249,8 +249,11 @@ namespace WebApi.Extensions
             services.AddScoped<IEventService, EventManager>();
             services.AddScoped<IUserRoleService, UserRoleManager> ();
             services.AddScoped<IAuthenticationService, AuthenticationManager>();
+            //academician
             services.AddScoped<IEventServiceAcademician, EventManagerAcademician>();
             services.AddScoped<IClubServiceAcademician, ClubManagerAcademician>();
+            services.AddScoped<IClubUserServiceAcademician, ClubUserManagerAcademician>();
+            services.AddScoped<IUsersServiceAcademician, UsersManagerAcademician>();
 
             services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>)); // bunu ekle
         }

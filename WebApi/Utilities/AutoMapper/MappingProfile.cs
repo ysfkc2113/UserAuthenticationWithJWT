@@ -59,7 +59,8 @@ namespace WebApi.Utilities.AutoMapper
                             return dateTimeValue != default(DateTime); // 0001-01-01T00:00:00
                         return true; 
                     }));
-                   
+                  
+            CreateMap<Club_User,AdminUsersDto>();
         }
     }
 }
