@@ -119,6 +119,56 @@ namespace Repositories.EFCore
             };
             Create(clubuser);
         }
+       
+        //ClubManager
+        public async Task<PagedList<Club_User>> GetAllUsersByClubIdForClubManagerAsync
+           (int id, UsersParametersClubManager usersParametersClubManager, bool trackChanges)
+        {
+            var clubuser = await FindAllByRelation(trackChanges, e => e.Club,e => e.User )
+                .Where(y => y.ClubId == id)
+                .Where(y=> y.User.IsActive==true)
+                //.FilterClubUser(usersParameters.IsApproved)//isActive Users tablosunda
+                .SearchClubUser(usersParametersClubManager.SearchTerm)
+                .SortClubUser(usersParametersClubManager.OrderBy)
+                .ToListAsync();
+
+            return PagedList<Club_User>
+                .ToPagedList(clubuser,
+                usersParametersClubManager.PageNumber,
+                usersParametersClubManager.PageSize);
+        }
+        //Users
+        public void CreateClubUserForUsers(string UserId, int clubId, bool trackChanges)
+        {
+            var clubuser = new Club_User()
+            {
+                ClubId = clubId,
+                UserId = UserId,
+                CreatedTime = DateTime.Now,
+                Approved = false
+            };
+            Create(clubuser);
+        }
+        public async Task<List<Club_User>> GetClubsByUserIdAsync(string id, bool trackChanges) 
+        {
+           var clubusers= await FindAllByRelation(trackChanges,e => e.Club, e => e.User )
+                .Where(y=> y.User.Id.Equals(id)).ToListAsync();
+            return clubusers;
+        }
+        public async Task<PagedList<Club_User>> GetMyClubsByUserIdAsync(string id, ClubUserParameters clubUserParameters, bool trackChanges)
+        {
+            var clubuser = await FindAllByRelation(trackChanges, e => e.Club, e => e.User)
+                .Where(y => y.UserId == id)
+                .FilterClubUser(clubUserParameters.IsApproved)
+                .SearchClubUser(clubUserParameters.SearchTerm)
+                .SortClubUser(clubUserParameters.OrderBy)
+                .ToListAsync();
+
+            return PagedList<Club_User>
+                .ToPagedList(clubuser,
+                clubUserParameters.PageNumber,
+                clubUserParameters.PageSize);
+        }
     }
     
 }

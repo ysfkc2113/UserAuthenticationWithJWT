@@ -61,6 +61,16 @@ namespace WebApi.Utilities.AutoMapper
                     }));
                   
             CreateMap<Club_User,AdminUsersDto>();
+            //ClubLeader
+            CreateMap<ClubManagerDtoForUpdate, Club>()
+                .ForAllMembers(opts =>
+                   opts.Condition((src, dest, srcMember, destMember, context) =>
+                   {
+                       if (srcMember == null) return false;
+                       if (srcMember is DateTime dateTimeValue)
+                           return dateTimeValue != default(DateTime); // 0001-01-01T00:00:00
+                       return true;
+                   }));
         }
     }
 }

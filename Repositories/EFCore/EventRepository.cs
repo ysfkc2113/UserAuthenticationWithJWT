@@ -15,7 +15,7 @@ namespace Repositories.EFCore
     {
         public EventRepository(RepositoryContext context) : base(context)
         {
-            
+
         }
 
         public void CreateOneEvent(Event clubEvent)
@@ -23,24 +23,25 @@ namespace Repositories.EFCore
             clubEvent.IsApproved = false;
             clubEvent.ApprovedTime = DateTime.MinValue;
             clubEvent.CreatedTime = DateTime.Now;
-            Create(clubEvent); } 
+            Create(clubEvent);
+        }
         //bunu academician da kullanıyor.
         public void DeleteOneEvent(Event clubEvent) => Delete(clubEvent);
         public void UpdateOneEvent(Event clubEvent)
         {
 
-            if (clubEvent.IsApproved && clubEvent.ApprovedTime==DateTime.MinValue) 
+            if (clubEvent.IsApproved && clubEvent.ApprovedTime == DateTime.MinValue)
             {
                 clubEvent.ApprovedTime = DateTime.Now;
-              //herkesin onaylamaması lazım sadece admin ve hoca yapabilir.
+                //herkesin onaylamaması lazım sadece admin ve hoca yapabilir.
             }
             Update(clubEvent);
-        } 
+        }
         public async Task<PagedList<Event>> GetAllEventsAsync(EventParameters eventParameters,
             bool trackChanges)
         {
             var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
-                .FilterEvents(eventParameters.StartDate, eventParameters.EndDate,eventParameters.IsApproved,eventParameters.ClubId)
+                .FilterEvents(eventParameters.StartDate, eventParameters.EndDate, eventParameters.IsApproved, eventParameters.ClubId)
                 .Search(eventParameters.SearchTerm)
                 .Sort(eventParameters.OrderBy)
                 .ToListAsync();
@@ -73,7 +74,7 @@ namespace Repositories.EFCore
         {
             var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
                //.FilterEvents(eventParameters.MinPrice, eventParameters.MaxPrice)
-               .Where(y=> !y.IsApproved)
+               .Where(y => !y.IsApproved)
                .Search(eventParameters.SearchTerm)
                .Sort(eventParameters.OrderBy)
                .ToListAsync();
@@ -84,7 +85,7 @@ namespace Repositories.EFCore
                 eventParameters.PageSize);
         }
 
-      
+
 
         public async Task<PagedList<Event>> GetApprovedEventsAsync(EventParameters eventParameters, bool trackChanges)
         {
@@ -103,15 +104,15 @@ namespace Repositories.EFCore
 
         public async Task<Event> GetEventByIdWithDetailsAsync(int id, bool trackChanges)
         {
-            return await FindAllByRelation(trackChanges, e => e.Club).Where(y=> y.Id.Equals(id)).FirstOrDefaultAsync();
+            return await FindAllByRelation(trackChanges, e => e.Club).Where(y => y.Id.Equals(id)).FirstOrDefaultAsync();
         }
 
         public async Task<PagedList<Event>> GetEventsByClubIdAsync(int clubId, EventParameters eventParameters, bool trackChanges)
         {
-           var clubEvents = await FindByCondition(m=>m.ClubId.Equals(clubId),trackChanges)
-                .Search(eventParameters.SearchTerm)
-                .Sort(eventParameters.OrderBy)
-                .ToListAsync();
+            var clubEvents = await FindByCondition(m => m.ClubId.Equals(clubId), trackChanges)
+                 .Search(eventParameters.SearchTerm)
+                 .Sort(eventParameters.OrderBy)
+                 .ToListAsync();
             return PagedList<Event>
                 .ToPagedList(clubEvents,
                 eventParameters.PageNumber,
@@ -128,9 +129,9 @@ namespace Repositories.EFCore
             }
             else
             {
-                clubEvent.IsApproved= false;
+                clubEvent.IsApproved = false;
             }
-            
+
             Update(clubEvent);
         }
 
@@ -140,7 +141,7 @@ namespace Repositories.EFCore
 
         //academician
         public async Task<PagedList<Event>> GetAllEventsForAcademicianAsync(AcademicianEventParameters academicianEventParameters,
-            int ClubId,bool trackChanges)
+            int ClubId, bool trackChanges)
         {
             var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
                 .FilterEvents(academicianEventParameters.StartDate, academicianEventParameters.EndDate, academicianEventParameters.IsApproved, ClubId)
@@ -153,7 +154,7 @@ namespace Repositories.EFCore
                 academicianEventParameters.PageNumber,
                 academicianEventParameters.PageSize);
         }
-        public void CreateOneEventForAcademician(Event clubEvent,string userName,int clubId)
+        public void CreateOneEventForAcademician(Event clubEvent, string userName, int clubId)
         {
             clubEvent.IsApproved = true;
             clubEvent.ApprovedTime = DateTime.Now;
@@ -163,6 +164,32 @@ namespace Repositories.EFCore
             clubEvent.ClubId = clubId;
             Create(clubEvent);
         }
+        //ClubLeader
+        public async Task<PagedList<Event>> GetAllEventsForClubManagerAsync(ClubManagerEventParameters clubManagerEventParameters,
+           int ClubId, bool trackChanges)
+        {
+            var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
+                .FilterEvents(clubManagerEventParameters.StartDate, clubManagerEventParameters.EndDate, true, ClubId)
+                .Search(clubManagerEventParameters.SearchTerm)
+                .Sort(clubManagerEventParameters.OrderBy)
+                .ToListAsync();
 
+            return PagedList<Event>
+                .ToPagedList(clubEvents,
+                clubManagerEventParameters.PageNumber,
+                clubManagerEventParameters.PageSize);
+        }
+        public void CreateOneEventForClubManager(Event clubEvent, string userName, int clubId)
+        {
+            clubEvent.IsApproved = false;
+            clubEvent.CreatedTime = DateTime.Now;
+            clubEvent.PublishedByUserName = userName;
+            clubEvent.ClubId = clubId;
+            Create(clubEvent);
+        }
+        public void UpdateOneEventForClubManager(Event clubEvent)
+        {
+            Update(clubEvent);
+        }
     }
 }

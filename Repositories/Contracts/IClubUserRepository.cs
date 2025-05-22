@@ -26,6 +26,14 @@ namespace Repositories.Contracts
                 (int id, UsersParametersAcademician usersParametersAcademician, bool trackChanges);
 
         void CreateClubUserForAcademician(string UserId, AcademicianClubUserDtoInsertion  academicianClubUserDtoInsertion,int ClubId, bool trackChanges);
+        //ClubManager
+        Task<PagedList<Club_User>> GetAllUsersByClubIdForClubManagerAsync
+              (int id, UsersParametersClubManager usersParametersClubManager, bool trackChanges);
+        //Users
+        void CreateClubUserForUsers(string UserId, int clubId, bool trackChanges);
+        Task<List<Club_User>> GetClubsByUserIdAsync(string id, bool trackChanges);
+        Task<PagedList<Club_User>> GetMyClubsByUserIdAsync(string id, ClubUserParameters clubUserParameters, bool trackChanges);
+
 
     }
 }

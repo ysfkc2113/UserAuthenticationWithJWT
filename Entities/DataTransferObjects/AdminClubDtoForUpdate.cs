@@ -17,6 +17,5 @@ namespace Entities.DataTransferObjects
         public string? Faculty { get; set; }
         public string? Responsible_teacher { get; set; }
         public string? ClubManager { get; set; }
-
     }
 }

@@ -9,6 +9,7 @@ using Repositories.Contracts;
 using Services.Contracts.AcademcianService;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
@@ -121,11 +122,25 @@ namespace Services.AcademicianManagers
             // rütbe yükseltme
             if (clubuser.role_in_club == "Club Manager")
             {
-              
-                if ((userName_club.club.ClubManager != "Waiting") && (userName_club.club.ClubManager != null))
-                    throw new Exception("Bu kulünün mevcut bir yöneticisi vardır.");
-                userName_club.club.ClubManager = user.UserName;
-                _manager.Club.Update(userName_club.club);
+
+                if (userName_club.club.ClubManager != "Waiting")
+                    {
+                    if (userName_club.club.ClubManager == null)
+                    {
+                        userName_club.club.ClubManager = user.UserName;
+                        _manager.Club.Update(userName_club.club);
+                    }
+                    else if (userName_club.club.ClubManager != null)
+                            { throw new Exception("Bu kulünün mevcut bir yöneticisi vardır."); }
+                       
+                }
+                if (userName_club.club.ClubManager == "Waiting")
+                {
+                    userName_club.club.ClubManager = user.UserName;
+                    _manager.Club.Update(userName_club.club);
+                }
+
+
                 //role tablosunada kayıt edilecek
                 if (!await _userManager.IsInRoleAsync(user, adminClubUserDtoChangeRole.role_in_club))
                 {

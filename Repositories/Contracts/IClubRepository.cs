@@ -20,5 +20,7 @@ namespace Repositories.Contracts
 
         //Academician
         Task<Club> GetOneClubByAcademicianName(string userNama, bool trackChanges);
+        //ClubLeader
+        Task<Club> GetOneClubByClubManagerName(string userNama, bool trackChanges);
     }
 }

@@ -1,15 +1,15 @@
 ﻿namespace Entities.RequestFeatures
 {
-    public class UsersParametersAcademician : RequestParameters
+    public class UsersParametersClubManager : RequestParameters
     {
         public string? Role { get; set; }
-        public bool? IsActive { get; set; }
         public string? SearchTerm { get; set; }
 
         //çalışmıyor boş olduğunda düzgün çalışıyor
-        public UsersParametersAcademician()
+        public UsersParametersClubManager()
         {
             OrderBy = "Id";
         }
     }
+
 }

@@ -32,6 +32,12 @@ namespace Repositories.Contracts
         Task<PagedList<Event>> GetAllEventsForAcademicianAsync(AcademicianEventParameters academicianEventParameters,
             int ClubId, bool trackChanges);
         void CreateOneEventForAcademician(Event clubEvent, string userName, int clubId);
+        //ClubLeader
+        Task<PagedList<Event>> GetAllEventsForClubManagerAsync(ClubManagerEventParameters clubManagerEventParameters,
+         int ClubId, bool trackChanges);
+        void CreateOneEventForClubManager(Event clubEvent, string userName, int clubId);
+        void UpdateOneEventForClubManager(Event clubEvent);
+
 
     }
 }

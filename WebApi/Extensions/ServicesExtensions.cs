@@ -21,6 +21,10 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Services.Contracts.AcademcianService;
 using Services.AcademicianManagers;
+using Services.ClubLeaderManagers;
+using Services.Contracts.ClubLeaderService;
+using Services.Contracts.UsersService;
+using Services.UsersManagers;
 
 namespace WebApi.Extensions
 {
@@ -254,6 +258,14 @@ namespace WebApi.Extensions
             services.AddScoped<IClubServiceAcademician, ClubManagerAcademician>();
             services.AddScoped<IClubUserServiceAcademician, ClubUserManagerAcademician>();
             services.AddScoped<IUsersServiceAcademician, UsersManagerAcademician>();
+            services.AddScoped<IUserRoleServiceAcademician, UserRoleManagerAcademician>();
+            //ClubLeader
+            services.AddScoped<IEventServiceClubLeader, EventManagerClubLeader>();
+            services.AddScoped<IClubServiceClubLeader, ClubManagerClubLeader>();
+            services.AddScoped<IUsersServiceClubLeader, UsersManagerClubLeader>();
+            services.AddScoped<IClubUserServiceClubLeader, ClubUserManagerClubLeader>();
+            //Users
+            services.AddScoped<IClubUserServiceUsers, ClubUserManagerUsers>();
 
             services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>)); // bunu ekle
         }

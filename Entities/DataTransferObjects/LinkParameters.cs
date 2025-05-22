@@ -7,6 +7,7 @@ namespace Entities.DataTransferObjects
     {
         public EventParameters? EventParameters { get; init; }
         public AcademicianEventParameters? AcademicianEventParameters { get; init; }
+        public ClubManagerEventParameters? ClubManagerEventParameters { get; init; }
         //public ClubParameters? ClubParameters { get; init; }
         public HttpContext HttpContext { get; init; }
     }

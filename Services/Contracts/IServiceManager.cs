@@ -1,4 +1,6 @@
 ﻿using Services.Contracts.AcademcianService;
+using Services.Contracts.ClubLeaderService;
+using Services.Contracts.UsersService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +22,13 @@ namespace Services.Contracts
         IClubServiceAcademician ClubServiceAcademician { get; }
         IUsersServiceAcademician UsersServiceAcademician { get; }
         IClubUserServiceAcademician ClubUserServiceAcademician { get; }
+        IUserRoleServiceAcademician UserRoleServiceAcademician { get; }
+        //ClubLeader
+        IEventServiceClubLeader EventServiceClubLeader { get; }
+        IClubServiceClubLeader ClubServiceClubLeader { get; }
+        IUsersServiceClubLeader UsersServiceClubLeader { get; }
+        IClubUserServiceClubLeader ClubUserServiceClubLeader { get; }
+        //Users
+        IClubUserServiceUsers ClubUserServiceUsers { get; }
     }
 }

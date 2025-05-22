@@ -18,7 +18,7 @@ namespace Presentation.Controllers.ClubManager
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    [Authorize(Roles = "Admin,Club Manager")]
+    //[Authorize(Roles = "Club Manager")]
     [Route("api/clubmanager/events")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class EventsController : ControllerBase
@@ -31,7 +31,7 @@ namespace Presentation.Controllers.ClubManager
         }
 
 
-        [HttpGet]
+        [HttpGet("all")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetAllEvents([FromQuery] EventParameters eventParameters)
         {
@@ -76,7 +76,26 @@ namespace Presentation.Controllers.ClubManager
                 Ok(result.linkResponse.ShapedEntities);
 
         }
+        [HttpGet("myclub")]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        public async Task<IActionResult> GetAllEventsMyClub([FromQuery] AcademicianEventParameters academicianEventParameters)
+        {
+            var linkParameters = new LinkParameters()
+            {
+                AcademicianEventParameters = academicianEventParameters,
+                HttpContext = HttpContext
+            };
+            var result = await _manager
+              .EventServiceClubLeader
+              .GetAllEventsForClubManagerAsync(linkParameters, false);
 
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(result.metaData));
+
+            return result.linkResponse.HasLinks ?
+                Ok(result.linkResponse.LinkedEntities) :
+                Ok(result.linkResponse.ShapedEntities);
+        }
 
         [HttpGet("{id:int}")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
@@ -90,6 +109,30 @@ namespace Presentation.Controllers.ClubManager
             return Ok(result);
         }
 
+        [HttpPost]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        public async Task<IActionResult> CreateEvent([FromBody] AcademicianEventDtoForInsertion academicianEventDtoForInsertion)
+        {
 
+            var clubEvent = await _manager.EventServiceClubLeader.CreateOneEventForClubLeaderAsync(academicianEventDtoForInsertion, HttpContext, true);
+            return StatusCode(201, clubEvent); // CreatedAtRoute()
+        }
+
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteEvent([FromRoute(Name = "id")] int id)
+        {
+
+            await _manager.EventServiceClubLeader.DeleteOneEventForClubManagerAsync(id, HttpContext, true);
+            return Ok();
+        }
+
+        //Update işleminden sonra girilmezse Event Date bozuluyor
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateEvent([FromRoute] int id, [FromBody] AcademicianEventDtoForUpdate academicianEventDtoForUpdate)
+        {
+            await _manager.EventServiceClubLeader.UpdateEventForClubManagerAsync(id, academicianEventDtoForUpdate, HttpContext, true);
+            return Ok();
+        }
     }
 }
