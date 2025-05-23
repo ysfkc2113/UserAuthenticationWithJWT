@@ -6,8 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Entities.Exceptions;
 using Repositories.Contracts;
+using Services.Contracts.AdminService;
 
-namespace Services
+namespace Services.AdminManagers
 {
     public class UserRoleManager : IUserRoleService
     {

@@ -23,6 +23,7 @@ namespace Presentation.Controllers.Admin
     [Authorize(Roles = "Admin")]
     [Route("api/admin/events")]
     [ApiExplorerSettings(GroupName = "v1")]
+    //[ResponseCache(CacheProfileName="5min")]
     public class EventsController : ControllerBase
 
     {
@@ -112,6 +113,18 @@ namespace Presentation.Controllers.Admin
             await _manager.EventService.SaveChangesForPatchApprovedAsync(result.eventDtoForUpdate, result.clubEvent, contextUserName, true);
 
             return NoContent(); // 204
+        }
+
+
+        //[HttpCacheExpiration(CacheLocation =CacheLocation.Private,MaxAge = 40)]
+        //[ResponseCache(Duration = 60)]
+        [Authorize]
+       // [HttpHead]//respons body siz sadece header ile oluşturulur
+        [HttpOptions]
+        public IActionResult OptionsEvents()
+        {
+            Response.Headers.Add("Allow", "Get,Put,Post,Patch,Delete,Options");
+            return Ok();
         }
     }
 }

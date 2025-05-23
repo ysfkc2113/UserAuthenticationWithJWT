@@ -6,8 +6,9 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Repositories.Contracts;
 using Services.Contracts;
+using Services.Contracts.AdminService;
 
-namespace Services
+namespace Services.AdminManagers
 {
     public class EventManager : IEventService
     {
@@ -35,7 +36,7 @@ namespace Services
             var event1 = await GetOneEventByIdAndCheckExists(id, trackChanges);
             _manager.Event.ChangeApprovedEvent(event1, approvedByUserId);
             await _manager.SaveAsync();
-
+            
         }
 
         public async Task<EventDto> CreateOneEventAsync(EventDtoForInsertion eventDto,string userName)

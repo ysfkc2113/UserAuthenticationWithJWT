@@ -1,6 +1,7 @@
 ﻿using Entities.LinkModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Presentation.Controllers.Admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,14 +38,14 @@ namespace Presentation.Controllers
                     },
                     new Link
                     {
-                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (EventsController.GetAllEventsAsync),new{}),
+                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (EventsController.GetAllEvents),new{}),
                         Rel="events",
                         Method = "GET",
 
                     },
                     new Link
                     {
-                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (EventsController.CreateOneEventAsync),new{}),
+                        Href = _linkGenerator.GetUriByName(HttpContext,nameof (EventsController.GetEventById),new{}),
                         Rel="events",
                         Method = "Post",
 

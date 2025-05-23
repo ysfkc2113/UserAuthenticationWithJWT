@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Presentation.Controllers.User
+namespace Presentation.Controllers.Member
 {
 
     [ServiceFilter(typeof(LogFilterAttribute))]
@@ -42,7 +42,7 @@ namespace Presentation.Controllers.User
             };
 
             var result = await _manager
-                .EventService
+                .EventServiceUsers
                 .GetAllEventsAsync(linkParameters, false);
 
             Response.Headers.Add("X-Pagination",
@@ -60,7 +60,7 @@ namespace Presentation.Controllers.User
         public async Task<IActionResult> GetEventById([FromRoute] int id)
         {
             var result = await _manager
-                .EventService
+                .EventServiceUsers
                 .GetOneEventByIdAsync(id, false);
             if (result.IsApproved == false)
                 return NotFound("Etkinlik bulunamadı.");

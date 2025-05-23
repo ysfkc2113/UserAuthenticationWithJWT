@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
@@ -64,6 +65,17 @@ namespace WebApi.Utilities.AutoMapper
             //ClubLeader
             CreateMap<ClubManagerDtoForUpdate, Club>()
                 .ForAllMembers(opts =>
+                   opts.Condition((src, dest, srcMember, destMember, context) =>
+                   {
+                       if (srcMember == null) return false;
+                       if (srcMember is DateTime dateTimeValue)
+                           return dateTimeValue != default(DateTime); // 0001-01-01T00:00:00
+                       return true;
+                   }));
+            //Users
+            CreateMap<UserDtoForMember,User>()
+                .ReverseMap()
+                 .ForAllMembers(opts =>
                    opts.Condition((src, dest, srcMember, destMember, context) =>
                    {
                        if (srcMember == null) return false;

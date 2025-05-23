@@ -4,8 +4,10 @@ using Entities.Exceptions;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Repositories.Contracts;
 using Services.Contracts;
+using Services.Contracts.AdminService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,19 +15,21 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services
+namespace Services.AdminManagers
 {
     public class UsersManager : IUsersService
     {
         private readonly IRepositoryManager _manager;
         private readonly IMapper _mapper;
         private readonly IClubService _clubService;
+        private readonly UserManager<User> _userManager;
 
-        public UsersManager(IRepositoryManager repositoryManager, IMapper mapper, IClubService clubService)
+        public UsersManager(IRepositoryManager repositoryManager, IMapper mapper, IClubService clubService, UserManager<User> userManager)
         {
             _manager = repositoryManager;
             _mapper = mapper;
             _clubService = clubService;
+            _userManager = userManager;
         }
 
         public async Task DeleteUsersAsync(string userName, bool trackChanges)
@@ -90,5 +94,6 @@ namespace Services
             }
             return userName;
         }
+       
     }
 }

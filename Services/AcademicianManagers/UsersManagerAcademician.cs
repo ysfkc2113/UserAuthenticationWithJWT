@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Repositories.Contracts;
 using Services.Contracts;
 using Services.Contracts.AcademcianService;
+using Services.Contracts.AdminService;
 using System;
 using System.Collections.Generic;
 using System.Linq;

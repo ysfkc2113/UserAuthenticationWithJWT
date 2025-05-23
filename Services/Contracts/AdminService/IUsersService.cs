@@ -19,7 +19,5 @@ namespace Services.Contracts
 
 
         Task<string> GetUserNameByHttpContextAsync(HttpContext httpContext);
-
-   
     }
 }

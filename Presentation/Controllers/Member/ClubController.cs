@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Presentation.Controllers.User
+namespace Presentation.Controllers.Member
 {
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
@@ -32,7 +32,7 @@ namespace Presentation.Controllers.User
         public async Task<IActionResult> GetAllClubs([FromQuery] ClubParameters clubParameters)
         {
             var result = await _manager
-                .ClubService
+                .ClubServiceUsers
                 .GetAllClubsAsync(clubParameters, false);
 
             Response.Headers.Add("X-Pagination",

@@ -25,6 +25,8 @@ using Services.ClubLeaderManagers;
 using Services.Contracts.ClubLeaderService;
 using Services.Contracts.UsersService;
 using Services.UsersManagers;
+using Services.Contracts.AdminService;
+using Services.AdminManagers;
 
 namespace WebApi.Extensions
 {
@@ -107,10 +109,10 @@ namespace WebApi.Extensions
                    opt.AssumeDefaultVersionWhenUnspecified = true;
                    opt.DefaultApiVersion = new ApiVersion(1, 0);
                    opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
-                   opt.Conventions.Controller<EventsController>()
-                        .HasApiVersion(new ApiVersion(1, 0));
-                   opt.Conventions.Controller<EventsV2Controller>()
-                        .HasDeprecatedApiVersion(new ApiVersion(2, 0));
+                   //opt.Conventions.Controller<EventsController>()
+                   //     .HasApiVersion(new ApiVersion(1, 0));
+                   //opt.Conventions.Controller<EventsV2Controller>()
+                   //     .HasDeprecatedApiVersion(new ApiVersion(2, 0));
                });
 
         }
@@ -266,6 +268,9 @@ namespace WebApi.Extensions
             services.AddScoped<IClubUserServiceClubLeader, ClubUserManagerClubLeader>();
             //Users
             services.AddScoped<IClubUserServiceUsers, ClubUserManagerUsers>();
+            services.AddScoped<IUserServiceUsers, UserManagerUsers>();
+            services.AddScoped<IEventServiceUsers, EventManagerUsers>();
+            services.AddScoped<IClubServiceUsers, ClubManagerUsers>();
 
             services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>)); // bunu ekle
         }

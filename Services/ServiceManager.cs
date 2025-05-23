@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Repositories.Contracts;
 using Services.Contracts;
 using Services.Contracts.AcademcianService;
+using Services.Contracts.AdminService;
 using Services.Contracts.ClubLeaderService;
 using Services.Contracts.UsersService;
 
@@ -29,6 +30,9 @@ namespace Services
         private readonly IUsersServiceClubLeader _usersServiceClubLeader;
         private readonly IClubUserServiceClubLeader _clubUserServiceClubLeader;
         private readonly IClubUserServiceUsers _clubUserServiceUsers;
+        private readonly IUserServiceUsers _userServiceUsers;
+        private readonly IEventServiceUsers _eventServiceUsers;
+        private readonly IClubServiceUsers _clubServiceUsers;
 
 
         public ServiceManager(IEventService eventService,
@@ -46,7 +50,10 @@ namespace Services
             IClubServiceClubLeader clubServiceClubLeader,
             IUsersServiceClubLeader usersServiceClubLeader,
             IClubUserServiceClubLeader clubUserServiceClubLeader,
-            IClubUserServiceUsers clubUserServiceUsers)
+            IClubUserServiceUsers clubUserServiceUsers,
+            IUserServiceUsers userServiceUsers,
+            IEventServiceUsers eventServiceUsers,
+            IClubServiceUsers clubServiceUsers)
         {
             _eventService = eventService;
             _clubService = clubService;
@@ -64,6 +71,9 @@ namespace Services
             _usersServiceClubLeader = usersServiceClubLeader;
             _clubUserServiceClubLeader = clubUserServiceClubLeader;
             _clubUserServiceUsers = clubUserServiceUsers;
+            _userServiceUsers = userServiceUsers;
+            _eventServiceUsers = eventServiceUsers;
+            _clubServiceUsers = clubServiceUsers;
         }
 
         public IEventService EventService => _eventService;
@@ -89,5 +99,10 @@ namespace Services
         //Users
         public IClubUserServiceUsers ClubUserServiceUsers => _clubUserServiceUsers;
 
+        public IUserServiceUsers UserServiceUsers => _userServiceUsers;
+
+        public IEventServiceUsers EventServiceUsers => _eventServiceUsers;
+
+        IClubServiceUsers IServiceManager.ClubServiceUsers => _clubServiceUsers;
     }
 }
