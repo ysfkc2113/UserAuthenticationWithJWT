@@ -15,7 +15,7 @@ namespace Presentation.Controllers.Member
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    //[Authorize(Roles = "User")]
+    //[Authorize]
     [Route("api/user/profil")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ProfilController:ControllerBase

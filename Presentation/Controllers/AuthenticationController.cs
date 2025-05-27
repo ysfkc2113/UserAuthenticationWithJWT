@@ -1,10 +1,12 @@
 ﻿using Entities.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
 using Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,6 +21,26 @@ namespace Presentation.Controllers
         public AuthenticationController(IServiceManager service)
         {
             _service = service;
+        }
+
+
+
+        [HttpGet("verify")]
+        [Authorize]
+        public IActionResult Verify()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userName = User.Identity?.Name;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            return Ok(new
+            {
+                Message = "Kimlik doğrulandı.",
+                UserId = userId,
+                UserName = userName
+            });
         }
 
         [HttpPost]

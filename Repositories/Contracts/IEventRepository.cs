@@ -38,6 +38,10 @@ namespace Repositories.Contracts
         void CreateOneEventForClubManager(Event clubEvent, string userName, int clubId);
         void UpdateOneEventForClubManager(Event clubEvent);
 
+        //user
+        Task<PagedList<Event>> GetAllEventsUserAsync(EventParameters eventParameters,
+         bool trackChanges);
+
 
     }
 }

@@ -191,5 +191,22 @@ namespace Repositories.EFCore
         {
             Update(clubEvent);
         }
+
+        //user
+        public async Task<PagedList<Event>> GetAllEventsUserAsync(EventParameters eventParameters,
+            bool trackChanges)
+        {
+            var clubEvents = await FindAllByRelation(trackChanges, e => e.Club)
+                .FilterEvents(eventParameters.StartDate, eventParameters.EndDate, eventParameters.IsApproved, eventParameters.ClubId)
+                .Search(eventParameters.SearchTerm)
+                .Sort(eventParameters.OrderBy)
+                .ToListAsync();
+
+            return PagedList<Event>
+                .ToPagedList(clubEvents,
+                eventParameters.PageNumber,
+                eventParameters.PageSize);
+        }
+
     }
 }

@@ -1,0 +1,346 @@
+﻿<!--<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">KulüpPro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Etkinlikler</a></li>
+                    <li class="nav-item"><a class="nav-link" href="clubs.html">Kulüpler</a></li>
+                    <li class="nav-item"><a class="nav-link" href="my-clubs.html">Kulüplerim</a></li>
+                    <li class="nav-item"><a class="nav-link" href="my-events.html">Etkinliklerim</a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Giriş</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+        <h1>Profil</h1><p>Kullanıcı bilgileri ve düzenleme formu burada olacak.</p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilim - Kulüp Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #007bff;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Kulüp Yönetim Sistemi</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="events.html">Etkinlikler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="clubs.html">Kulüpler</a>
+                    </li>
+                    <li class="nav-item dropdown" id="dashboardDropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dashboard
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownDashboard">
+                            <li><a class="dropdown-item" href="admin-dashboard.html">Admin Dashboard</a></li>
+                            <li><a class="dropdown-item" href="academician-dashboard.html">Academician Dashboard</a></li>
+                            <li><a class="dropdown-item" href="club-manager-dashboard.html">Club Manager Dashboard</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" id="myClubsNav" style="display: none;">
+                        <a class="nav-link" href="my-clubs.html">Kulüplerim</a>
+                    </li>
+                    <li class="nav-item" id="myEventsNav" style="display: none;">
+                        <a class="nav-link" href="my-events.html">Etkinliklerim</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" aria-current="page" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> <span id="usernameDisplay">Kullanıcı Adı</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
+                            <li><a class="dropdown-item" href="profile.html">Profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutButton">Çıkış</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm p-4">
+                    <h2 class="text-center mb-4">Profil Bilgilerim</h2>
+                    <div class="text-center mb-4">
+                        <img src="https://via.placeholder.com/150" class="profile-img" alt="Profil Resmi">
+                        <h4 class="mt-3" id="profileName"></h4>
+                        <p class="text-muted" id="profileUsername"></p>
+                    </div>
+
+                    <form id="profileForm">
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">Ad</label>
+                            <input type="text" class="form-control" id="firstName" value="" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Soyad</label>
+                            <input type="text" class="form-control" id="lastName" value="" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-posta</label>
+                            <input type="email" class="form-control" id="email" value="" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefon</label>
+                            <input type="tel" class="form-control" id="phone" value="" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Hakkımda</label>
+                            <textarea class="form-control" id="bio" rows="3" readonly></textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary" id="editProfileBtn">Bilgileri Düzenle</button>
+                            <button type="submit" class="btn btn-success" id="saveProfileBtn" style="display: none;">Kaydet</button>
+                            <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display: none;">İptal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Kulüp Yönetim Sistemi. Tüm Hakları Saklıdır.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar için JWT Token ve Kullanıcı Bilgileri Yönetimi (index.html ile aynı)
+        const getAuthToken = () => localStorage.getItem('jwtToken');
+        const getUserData = () => {
+            const token = getAuthToken();
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    return { username: payload.username, role: payload.role };
+                } catch (e) {
+                    console.error("JWT token decode hatası:", e);
+                    localStorage.removeItem('jwtToken');
+                    return null;
+                }
+            }
+            return null;
+        };
+
+        const updateNavbar = () => {
+            const user = getUserData();
+            const loginButton = document.getElementById('loginButton'); // This should not exist on profile page if logged in
+            const userMenu = document.getElementById('userMenu');
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            const dashboardDropdown = document.getElementById('dashboardDropdown');
+            const myClubsNav = document.getElementById('myClubsNav');
+            const myEventsNav = document.getElementById('myEventsNav');
+
+            if (user) {
+                if (loginButton) loginButton.style.display = 'none'; // Ensure login button is hidden
+                userMenu.style.display = 'block';
+                usernameDisplay.textContent = user.username;
+                if (user.role === 'admin' || user.role === 'academician' || user.role === 'club_manager') {
+                    dashboardDropdown.style.display = 'block';
+                } else {
+                    dashboardDropdown.style.display = 'none';
+                }
+                myClubsNav.style.display = 'block';
+                myEventsNav.style.display = 'block';
+                loadProfileData(); // Giriş yapılmışsa profil verilerini yükle
+            } else {
+                alert('Profilinizi görüntülemek için giriş yapmalısınız.');
+                window.location.href = 'login.html'; // Giriş yapılmamışsa login sayfasına yönlendir
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', updateNavbar);
+
+        document.getElementById('logoutButton').addEventListener('click', function (e) {
+            e.preventDefault();
+            localStorage.removeItem('jwtToken');
+            alert('Çıkış yapılıyor...');
+            window.location.href = 'index.html';
+        });
+
+        // Profil verilerini yükleme (JWT ile)
+        const loadProfileData = () => {
+            const token = getAuthToken();
+            if (!token) {
+                console.warn('JWT token bulunamadı, profil verileri yüklenemiyor.');
+                return;
+            }
+
+            // Gerçek uygulamada: Backend'den kullanıcı profil verilerini çek
+            // fetch('/api/profile', {
+            //     method: 'GET',
+            //     headers: {
+            //         'Authorization': `Bearer ${token}`
+            //     }
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+            //         document.getElementById('profileName').textContent = data.firstName + ' ' + data.lastName;
+            //         document.getElementById('profileUsername').textContent = '@' + data.username;
+            //         document.getElementById('firstName').value = data.firstName;
+            //         document.getElementById('lastName').value = data.lastName;
+            //         document.getElementById('email').value = data.email;
+            //         document.getElementById('phone').value = data.phone || '';
+            //         document.getElementById('bio').value = data.bio || '';
+            //     } else {
+            //         alert('Profil verileri yüklenirken bir hata oluştu: ' + data.message);
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error('Profil verisi çekme hatası:', error);
+            //     alert('Profil verileri yüklenirken bir ağ hatası oluştu.');
+            // });
+
+            // Örnek statik verilerle doldurma
+            const user = getUserData();
+            if (user) {
+                document.getElementById('profileName').textContent = 'Örnek Ad Soyad';
+                document.getElementById('profileUsername').textContent = `@${user.username}`;
+                document.getElementById('firstName').value = 'Örnek Ad';
+                document.getElementById('lastName').value = 'Örnek Soyad';
+                document.getElementById('email').value = 'ornek@example.com';
+                document.getElementById('phone').value = '5xx xxx xx xx';
+                document.getElementById('bio').value = 'Bu, örnek bir kullanıcı biyografisidir. Kullanıcı ilgi alanları ve hakkında bilgiler burada yer alabilir.';
+            }
+        };
+
+        // Profil düzenleme işlevselliği
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const profileForm = document.getElementById('profileForm');
+        const formInputs = profileForm.querySelectorAll('input, textarea');
+
+        editProfileBtn.addEventListener('click', () => {
+            formInputs.forEach(input => input.readOnly = false);
+            editProfileBtn.style.display = 'none';
+            saveProfileBtn.style.display = 'block';
+            cancelEditBtn.style.display = 'block';
+        });
+
+        cancelEditBtn.addEventListener('click', () => {
+            formInputs.forEach(input => input.readOnly = true);
+            editProfileBtn.style.display = 'block';
+            saveProfileBtn.style.display = 'none';
+            cancelEditBtn.style.display = 'none';
+            loadProfileData(); // Orijinal verileri tekrar yükle
+        });
+
+        profileForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
+
+            const token = getAuthToken();
+            if (!token) {
+                alert('Giriş yapmalısınız.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const updatedData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                bio: document.getElementById('bio').value
+            };
+
+            // Gerçek uygulamada: Bu verileri backend API'sine gönder
+            // fetch('/api/profile', {
+            //     method: 'PUT', // Genellikle PUT veya PATCH kullanılır
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Authorization': `Bearer ${token}`
+            //     },
+            //     body: JSON.stringify(updatedData)
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+            //         alert('Profil bilgileriniz başarıyla güncellendi!');
+            //         formInputs.forEach(input => input.readOnly = true);
+            //         editProfileBtn.style.display = 'block';
+            //         saveProfileBtn.style.display = 'none';
+            //         cancelEditBtn.style.display = 'none';
+            //         // Navbar'daki kullanıcı adını da güncelleyebiliriz eğer değiştiyse
+            //         const user = getUserData();
+            //         if (user) {
+            //             document.getElementById('usernameDisplay').textContent = user.username; // Kullanıcı adı JWT'den gelir
+            //         }
+            //     } else {
+            //         alert('Profil güncellenirken bir hata oluştu: ' + data.message);
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error('Profil güncelleme hatası:', error);
+            //     alert('Profil güncellenirken bir ağ hatası oluştu.');
+            // });
+
+            alert('Profil bilgileriniz kaydedildi (Örnek)!');
+            formInputs.forEach(input => input.readOnly = true);
+            editProfileBtn.style.display = 'block';
+            saveProfileBtn.style.display = 'none';
+            cancelEditBtn.style.display = 'none';
+            // Mock verilerle güncelleme sonrası tekrar yükleme (sadece görsel)
+            loadProfileData();
+        });
+    </script>
+</body>
+</html>

@@ -14,7 +14,7 @@ namespace Entities.RequestFeatures
 		public int PageNumber { get; set; }
 		
 		// Full-property
-		private int _pageSize=5;
+		private int _pageSize=3;
 
 		public int PageSize
 		{

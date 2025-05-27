@@ -118,10 +118,10 @@ namespace Services
 
             };
             var id = _user.Id;
+            var user = _user;
             claims.Add(new Claim(ClaimTypes.NameIdentifier, id));
-            var roles = await _userManager
-                .GetRolesAsync(_user);
-
+ 
+            var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));

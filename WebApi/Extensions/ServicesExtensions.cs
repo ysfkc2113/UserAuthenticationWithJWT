@@ -9,7 +9,6 @@ using Repositories.EFCore;
 using Services;
 using Services.Contracts;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Presentation.Controllers;
 using Marvin.Cache.Headers;
 using AspNetCoreRateLimit;
 using Entities.Models;
@@ -32,9 +31,9 @@ namespace WebApi.Extensions
 {
     public static class ServicesExtensions
     {
-        public static void ConfigureSqlContext(this IServiceCollection services,
-            IConfiguration configuration) => services.AddDbContext<RepositoryContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
+        public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
+            services.AddDbContext<RepositoryContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
 
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
             services.AddScoped<IRepositoryManager, RepositoryManager>();
@@ -44,7 +43,6 @@ namespace WebApi.Extensions
 
         public static void ConfigureLoggerService(this IServiceCollection services) =>
             services.AddSingleton<ILoggerService, LoggerManager>();
-
 
         public static void ConfigureActionFilters(this IServiceCollection services)
         {
@@ -59,10 +57,9 @@ namespace WebApi.Extensions
             {
                 options.AddPolicy("CorsPolicy", builder =>
                     builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .WithExposedHeaders("X-Pagination")
-                );
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .WithExposedHeaders("X-Pagination"));
             });
         }
 
@@ -75,28 +72,24 @@ namespace WebApi.Extensions
         {
             services.Configure<MvcOptions>(config =>
             {
-                var systemTextJsonOutputFormatter = config
-                .OutputFormatters
-                .OfType<SystemTextJsonOutputFormatter>()?.FirstOrDefault();
+                var systemTextJsonOutputFormatter = config.OutputFormatters
+                    .OfType<SystemTextJsonOutputFormatter>()
+                    .FirstOrDefault();
 
                 if (systemTextJsonOutputFormatter != null)
                 {
-                    systemTextJsonOutputFormatter.SupportedMediaTypes
-                    .Add("application/vnd.medeniyet.hateoas+json");
-                    systemTextJsonOutputFormatter.SupportedMediaTypes
-                    .Add("application/vnd.medeniyet.apiroot+json");
+                    systemTextJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.medeniyet.hateoas+json");
+                    systemTextJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.medeniyet.apiroot+json");
                 }
 
-                var xmlOutputFormatter = config
-                .OutputFormatters
-                .OfType<XmlDataContractSerializerOutputFormatter>()?.FirstOrDefault();
+                var xmlOutputFormatter = config.OutputFormatters
+                    .OfType<XmlDataContractSerializerOutputFormatter>()
+                    .FirstOrDefault();
 
-                if (xmlOutputFormatter is not null)
+                if (xmlOutputFormatter != null)
                 {
-                    xmlOutputFormatter.SupportedMediaTypes
-                    .Add("application/vnd.medeniyet.hateoas+xml");
-                    xmlOutputFormatter.SupportedMediaTypes
-                    .Add("application/vnd.medeniyet.apiroot+xml");
+                    xmlOutputFormatter.SupportedMediaTypes.Add("application/vnd.medeniyet.hateoas+xml");
+                    xmlOutputFormatter.SupportedMediaTypes.Add("application/vnd.medeniyet.apiroot+xml");
                 }
             });
         }
@@ -104,44 +97,45 @@ namespace WebApi.Extensions
         public static void ConfigureVersioning(this IServiceCollection services)
         {
             services.AddApiVersioning(opt =>
-               {
-                   opt.ReportApiVersions = true;
-                   opt.AssumeDefaultVersionWhenUnspecified = true;
-                   opt.DefaultApiVersion = new ApiVersion(1, 0);
-                   opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
-                   //opt.Conventions.Controller<EventsController>()
-                   //     .HasApiVersion(new ApiVersion(1, 0));
-                   //opt.Conventions.Controller<EventsV2Controller>()
-                   //     .HasDeprecatedApiVersion(new ApiVersion(2, 0));
-               });
-
+            {
+                opt.ReportApiVersions = true;
+                opt.AssumeDefaultVersionWhenUnspecified = true;
+                opt.DefaultApiVersion = new ApiVersion(1, 0);
+                opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            });
         }
 
         public static void ConfigureResponseCaching(this IServiceCollection services)
         {
             services.AddResponseCaching();
         }
+
         public static void ConfigureHttpCacheHeaders(this IServiceCollection services)
         {
-            services.AddHttpCacheHeaders(expirationOpt =>
-            {//public olunca sayfa numarası değişse bile aynı veriler dönüyor.
-                expirationOpt.CacheLocation = CacheLocation.Private;//private olursa age görünmez
-                expirationOpt.MaxAge = 10;
-            },
-            validationOpt => { validationOpt.MustRevalidate = false; }
-            );
+            services.AddHttpCacheHeaders(
+                expirationOpt =>
+                {
+                    expirationOpt.CacheLocation = CacheLocation.Private;
+                    expirationOpt.MaxAge = 1;
+                },
+                validationOpt =>
+                {
+                    validationOpt.MustRevalidate = false;
+                });
         }
 
         public static void ConfigureRateLimitingOptions(this IServiceCollection services)
         {
-            var rateLimitRules = new List<RateLimitRule>() {
-                new RateLimitRule()
+            var rateLimitRules = new List<RateLimitRule>
+            {
+                new RateLimitRule
                 {
-                    Endpoint ="*",
+                    Endpoint = "*",
                     Limit = 10,
                     Period = "1m"
                 }
             };
+
             services.Configure<IpRateLimitOptions>(opt =>
             {
                 opt.GeneralRules = rateLimitRules;
@@ -151,34 +145,35 @@ namespace WebApi.Extensions
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
             services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
-
         }
+
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            var builder = services.AddIdentity<User, IdentityRole>(
-                opt =>
-                {
-                    opt.Password.RequireNonAlphanumeric = false;
-                    opt.Password.RequireLowercase = false;
-                    opt.Password.RequireUppercase = false;
-                    opt.Password.RequiredLength = 6;
-                    opt.Password.RequireDigit = true;
+            services.AddIdentity<User, IdentityRole>(opt =>
+            {
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequiredLength = 6;
+                opt.Password.RequireDigit = true;
 
-                    opt.User.RequireUniqueEmail = true;
-                })
+                opt.User.RequireUniqueEmail = true;
+            })
             .AddEntityFrameworkStores<RepositoryContext>()
-             .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["secretKey"];
+
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(opt =>
+            })
+            .AddJwtBearer(opt =>
             {
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -192,28 +187,28 @@ namespace WebApi.Extensions
                 };
             });
         }
+
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(s =>
             {
-                s.SwaggerDoc("v1",
-                    new OpenApiInfo
+                s.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Club's Manager",
+                    Version = "v1",
+                    Description = "Club's Manager ASP.NET Core Web API",
+                    TermsOfService = new Uri("https://github.com/ysfkc2113"),
+                    Contact = new OpenApiContact
                     {
-                        Title = "Club's Manager",
-                        Version = "v1",
-                        Description = "Club's Manager ASP.NET Core Web API",
-                        TermsOfService = new Uri("https://github.com/ysfkc2113"),
-                        Contact = new OpenApiContact
-                        {
-                            Name = "Yusuf Koç",
-                            Email = "ysfkc2113@gmail.com",
-                            Url = new Uri("https://github.com/ysfkc2113")
-                        }
-                    });
+                        Name = "Yusuf Koç",
+                        Email = "ysfkc2113@gmail.com",
+                        Url = new Uri("https://github.com/ysfkc2113")
+                    }
+                });
 
                 s.SwaggerDoc("v2", new OpenApiInfo { Title = "Club's Manager", Version = "v2" });
 
-                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
                     Description = "Place to add JWT with Bearer",
@@ -222,7 +217,7 @@ namespace WebApi.Extensions
                     Scheme = "Bearer"
                 });
 
-                s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
                         new OpenApiSecurityScheme
@@ -230,7 +225,7 @@ namespace WebApi.Extensions
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id="Bearer"
+                                Id = "Bearer"
                             },
                             Name = "Bearer"
                         },
@@ -247,35 +242,38 @@ namespace WebApi.Extensions
             services.AddScoped<IClubUserRepository, ClubUserRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
         }
+
         public static void RegisterServices(this IServiceCollection services)
         {
+            // Core services
             services.AddScoped<IClubService, ClubManager>();
             services.AddScoped<IClubUserService, ClubUserManager>();
             services.AddScoped<IUsersService, UsersManager>();
             services.AddScoped<IEventService, EventManager>();
-            services.AddScoped<IUserRoleService, UserRoleManager> ();
+            services.AddScoped<IUserRoleService, UserRoleManager>();
             services.AddScoped<IAuthenticationService, AuthenticationManager>();
-            //academician
+
+            // Academician services
             services.AddScoped<IEventServiceAcademician, EventManagerAcademician>();
             services.AddScoped<IClubServiceAcademician, ClubManagerAcademician>();
             services.AddScoped<IClubUserServiceAcademician, ClubUserManagerAcademician>();
             services.AddScoped<IUsersServiceAcademician, UsersManagerAcademician>();
             services.AddScoped<IUserRoleServiceAcademician, UserRoleManagerAcademician>();
-            //ClubLeader
+
+            // ClubLeader services
             services.AddScoped<IEventServiceClubLeader, EventManagerClubLeader>();
             services.AddScoped<IClubServiceClubLeader, ClubManagerClubLeader>();
             services.AddScoped<IUsersServiceClubLeader, UsersManagerClubLeader>();
             services.AddScoped<IClubUserServiceClubLeader, ClubUserManagerClubLeader>();
-            //Users
+
+            // Users services
             services.AddScoped<IClubUserServiceUsers, ClubUserManagerUsers>();
             services.AddScoped<IUserServiceUsers, UserManagerUsers>();
             services.AddScoped<IEventServiceUsers, EventManagerUsers>();
             services.AddScoped<IClubServiceUsers, ClubManagerUsers>();
 
-            services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>)); // bunu ekle
+            // Lazy resolver
+            services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>));
         }
-
     }
-
 }
-

@@ -14,5 +14,6 @@ namespace Services.Contracts.UsersService
         Task<(LinkResponse linkResponse, MetaData metaData)> GetAllEventsAsync(LinkParameters linkParameters,
             bool trackChanges);
         Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges);
+        Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> EventsAsync(EventParameters eventParameters,bool trackChanges);
     }
 }

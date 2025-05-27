@@ -11,57 +11,79 @@ using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(),"/nlog.config"));
+// NLog configuration
+LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
+// Add Controllers with options, JSON, XML formatters and custom CSV formatter if needed
 builder.Services.AddControllers(config =>
 {
     config.RespectBrowserAcceptHeader = true;
     config.ReturnHttpNotAcceptable = true;
-    config.CacheProfiles.Add("10sec", new CacheProfile() { Duration = 10 });
+    config.CacheProfiles.Add("10sec", new CacheProfile { Duration = 10 });
 })
-//.AddXmlDataContractSerializerFormatters()
-.AddCustomCsvFormatter()
+// .AddXmlDataContractSerializerFormatters()
+// .AddCustomCsvFormatter()
 .AddApplicationPart(typeof(Presentation.AssemblyRefence).Assembly)
 .AddNewtonsoftJson(opt =>
-opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-
-
+// Suppress automatic model state validation to use custom filter
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
 
-
+// API Documentation and Versioning
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.ConfigureSwagger();//swagger configurasyonu
+builder.Services.ConfigureSwagger();
+
+// Database and Repositories
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
-builder.Services.ConfigureServiceManager();
-builder.Services.ConfigureLoggerService();
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.ConfigureActionFilters();
-builder.Services.ConfigureCors();//farklý kullanýcýlardan isteklere izin
-builder.Services.ConfigureDataShaper();
-builder.Services.AddCustomMediaTypes();// xml cvs json gibi custom veri tipi oluþturma
-builder.Services.AddScoped<IEventLinks, EventLinks>();//kitaplara linkler
-builder.Services.ConfigureVersioning();//proje version 
-builder.Services.ConfigureResponseCaching();//cache
-builder.Services.ConfigureHttpCacheHeaders();//cache
-builder.Services.AddMemoryCache();//Request Limit
-builder.Services.ConfigureRateLimitingOptions();//Request Limit
-builder.Services.AddHttpContextAccessor();//Request Limit
-builder.Services.ConfigureIdentity();//user and password configuration
-builder.Services.ConfigureJWT(builder.Configuration);
-builder.Services.RegisterServices();//servislerin Yaþam döngüsü
-builder.Services.RegisterRepositories();//Repositorilerin yaþam döngüsü
+builder.Services.RegisterRepositories();
 
+// Services
+builder.Services.ConfigureServiceManager();
+builder.Services.RegisterServices();
+builder.Services.ConfigureLoggerService();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
+
+// Filters and CORS
+builder.Services.ConfigureActionFilters();
+builder.Services.ConfigureCors();
+
+// Data shaping and custom media types
+builder.Services.ConfigureDataShaper();
+builder.Services.AddCustomMediaTypes();
+
+// Link service for HATEOAS
+builder.Services.AddScoped<IEventLinks, EventLinks>();
+
+// API Versioning
+builder.Services.ConfigureVersioning();
+
+// Caching
+builder.Services.ConfigureResponseCaching();
+builder.Services.ConfigureHttpCacheHeaders();
+builder.Services.AddMemoryCache();
+
+// Rate Limiting
+builder.Services.ConfigureRateLimitingOptions();
+builder.Services.AddHttpContextAccessor();
+
+// Identity and JWT Authentication
+builder.Services.ConfigureIdentity();
+builder.Services.ConfigureJWT(builder.Configuration);
 
 var app = builder.Build();
 
+// Global Exception Handling
 var logger = app.Services.GetRequiredService<ILoggerService>();
 app.ConfigureExceptionHandler(logger);
 
+// Swagger UI in Development environment
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -72,14 +94,19 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-if(app.Environment.IsProduction())
+// Use HSTS in production
+if (app.Environment.IsProduction())
 {
     app.UseHsts();
 }
 
+// Middleware pipeline
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-app.UseIpRateLimiting();//Request Limit
+app.UseIpRateLimiting();
+
 app.UseCors("CorsPolicy");
 
 app.UseResponseCaching();

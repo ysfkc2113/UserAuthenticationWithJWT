@@ -34,6 +34,21 @@ namespace Services.UsersManagers
             _mapper = mapper;
             _eventLinks = eventLinks;
         }
+
+        public async Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> EventsAsync(EventParameters eventParameters, bool trackChanges)
+        {
+            eventParameters.IsApproved = true; // sadece onaylı etkinlikleri getir
+
+            var eventsWithMetaData = await _manager
+              .Event
+              .GetAllEventsUserAsync(eventParameters, trackChanges);
+
+            var eventDto = _mapper.Map<IEnumerable<EventDto>>(eventsWithMetaData);
+
+
+            return (eventDto, metaData: eventsWithMetaData.MetaData);
+        }
+
         public async Task<(LinkResponse linkResponse, MetaData metaData)> GetAllEventsAsync(LinkParameters linkParameters,bool trackChanges)
         {
             var eventsWithMetaData = await _manager

@@ -1,0 +1,370 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Etkinlikler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .event-card .card-body {
+            flex-grow: 1; /* Card içeriğini dikeyde esnek yapar */
+        }
+    </style>
+</head>
+<body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Kulüp Yönetim Sistemi</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="events.html">Etkinlikler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="clubs.html">Kulüpler</a>
+                    </li>
+                    <li class="nav-item dropdown" id="dashboardDropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dashboard
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownDashboard">
+                            <li><a class="dropdown-item" href="admin-dashboard.html">Admin Dashboard</a></li>
+                            <li><a class="dropdown-item" href="academician-dashboard.html">Academician Dashboard</a></li>
+                            <li><a class="dropdown-item" href="club-manager-dashboard.html">Club Manager Dashboard</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" id="myClubsNav" style="display: none;">
+                        <a class="nav-link" href="my-clubs.html">Kulüplerim</a>
+                    </li>
+                    <li class="nav-item" id="myEventsNav" style="display: none;">
+                        <a class="nav-link" href="my-events.html">Etkinliklerim</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" id="loginButton">
+                        <a class="btn btn-outline-light" href="login.html">Giriş</a>
+                    </li>
+                    <li class="nav-item dropdown" id="userMenu" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> <span id="usernameDisplay">Kullanıcı Adı</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
+                            <li><a class="dropdown-item" href="profile.html">Profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutButton">Çıkış</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        // API Base URL - Backend API'nizin doğru adresini kontrol edin
+        const API_BASE_URL = 'https://localhost:7222/api';
+        const EVENTS_API_URL = `${API_BASE_URL}/user/events`; // Etkinlik API endpoint'i
+
+        // JWT payload'ını çözen fonksiyon (kullanıcı adı ve rolü almak için)
+        function decodeJwtPayload(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("JWT payload çözme hatası:", e);
+                return null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // localStorage'dan token ve kullanıcı bilgilerini al
+            const accessToken = localStorage.getItem('accessToken');
+            let username = localStorage.getItem('username');
+            let role = localStorage.getItem('role');
+
+            console.log("events.html yüklendi.");
+            console.log("localStorage'dan okunan accessToken:", accessToken ? accessToken.substring(0, 30) + '...' : 'Yok');
+            console.log("localStorage'dan okunan username:", username);
+            console.log("localStorage'dan okunan role:", role);
+
+            // Eğer accessToken varsa ancak username veya role eksikse, token'dan çözmeye çalış
+            if (accessToken && (!username || !role)) {
+                const payload = decodeJwtPayload(accessToken);
+                if (payload) {
+                    username = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+                    const roles = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+                    role = Array.isArray(roles) ? roles[0] : roles; // Birden fazla rol varsa ilkini al
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('role', role);
+                    console.log("Token'dan çözümlenen ve kaydedilen username:", username);
+                    console.log("Token'dan çözümlenen ve kaydedilen role:", role);
+                }
+            }
+
+            // Navbar'ı kullanıcının oturum durumuna ve rolüne göre ayarla
+            function setupNavbar() {
+                if (accessToken) {
+                    document.getElementById('loginButton').style.display = 'none';
+                    document.getElementById('userMenu').style.display = 'block';
+                    document.getElementById('usernameDisplay').textContent = username || 'Kullanıcı';
+
+                    // Dashboard görünürlüğü rollere göre. Backend'deki rol isimlerinin büyük/küçük harf duyarlılığına dikkat edin.
+                    if (role === 'Admin' || role === 'Academician' || role === 'ClubManager') {
+                        document.getElementById('dashboardDropdown').style.display = 'block';
+                    } else {
+                        document.getElementById('dashboardDropdown').style.display = 'none';
+                    }
+
+                    // Kulüplerim/Etkinliklerim görünürlüğü rollere göre
+                    if (role === 'ClubManager' || role === 'Academician' || role === 'User') { // 'User' rolü de kendi kulüp/etkinliklerini görebilir
+                        document.getElementById('myClubsNav').style.display = 'block';
+                        document.getElementById('myEventsNav').style.display = 'block';
+                    } else {
+                        document.getElementById('myClubsNav').style.display = 'none';
+                        document.getElementById('myEventsNav').style.display = 'none';
+                    }
+                } else {
+                    document.getElementById('loginButton').style.display = 'block';
+                    document.getElementById('userMenu').style.display = 'none';
+                    document.getElementById('dashboardDropdown').style.display = 'none';
+                    document.getElementById('myClubsNav').style.display = 'none';
+                    document.getElementById('myEventsNav').style.display = 'none';
+                }
+            }
+
+            setupNavbar(); // Navbar'ı hemen ayarla
+
+            // Çıkış (Logout) butonu dinleyicisi
+            document.getElementById('logoutButton').addEventListener('click', (e) => {
+                e.preventDefault();
+                // localStorage'dan tüm token ve kullanıcı bilgilerini sil
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('username');
+                localStorage.removeItem('role');
+                window.location.href = 'login.html'; // Giriş sayfasına yönlendir
+            });
+
+            // Etkinlikleri DOM yüklendikten sonra getir
+            fetchEvents(); // İlk yüklemede etkinlikleri getir
+        });
+    </script>
+
+    <div class="container py-4">
+        <h1 class="mb-4">Etkinlikler</h1>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input id="searchInput" type="text" class="form-control" placeholder="Etkinlik ara..." />
+            </div>
+            <div class="col-md-3">
+                <input id="startDateFilter" type="date" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <input id="endDateFilter" type="date" class="form-control" />
+            </div>
+        </div>
+
+        <div id="eventList" class="row"></div>
+        <ul id="pagination" class="pagination justify-content-center mt-4"></ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const eventList = document.getElementById("eventList");
+        const pagination = document.getElementById("pagination");
+        const searchInput = document.getElementById("searchInput");
+        const startDateFilter = document.getElementById("startDateFilter");
+        const endDateFilter = document.getElementById("endDateFilter");
+
+        let currentPage = 1;
+        const pageSize = 3; // Fixed to 3 events per page
+        let totalPages = 1;
+        let searchQuery = "";
+
+        searchInput.addEventListener("input", debounce(() => {
+            searchQuery = searchInput.value.trim();
+            currentPage = 1;
+            fetchEvents();
+        }, 300));
+
+        [startDateFilter, endDateFilter].forEach(input => {
+            input.addEventListener("change", () => {
+                currentPage = 1;
+                fetchEvents();
+            });
+        });
+
+        async function fetchEvents() {
+            try {
+                // Ensure only approved events are fetched and use the correct pageNumber for your backend
+                // If your backend expects 0-indexed, then send currentPage - 1 if currentPage is 1-indexed.
+                // Assuming your backend automatically maps 1-indexed frontend pageNumber to its 0-indexed if necessary.
+                let url = `${EVENTS_API_URL}?pageNumber=${currentPage}&pageSize=${pageSize}&isApproved=true`;
+
+                if (searchQuery) url += `&searchTerm=${encodeURIComponent(searchQuery)}`;
+                if (startDateFilter.value) url += `&startDate=${startDateFilter.value}`;
+                if (endDateFilter.value) url += `&endDate=${endDateFilter.value}`;
+
+                const accessToken = localStorage.getItem('accessToken');
+                const headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                };
+
+                if (accessToken) {
+                    headers['Authorization'] = `Bearer ${accessToken}`;
+                    console.log("Etkinlik isteği için Authorization başlığı gönderiliyor.");
+                } else {
+                    console.warn("accessToken bulunamadı. Etkinlik isteği yetkilendirilmemiş olarak gönderilecek.");
+                }
+
+                const response = await fetch(url, {
+                    headers: headers
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        console.warn('Etkinliklere yetkisiz erişim. Token yenileme deneniyor...');
+                        const refreshToken = localStorage.getItem('refreshToken');
+
+                        if (refreshToken) {
+                            console.log("Token yenileme isteği gönderiliyor.");
+                            const refreshResponse = await fetch(`${API_BASE_URL}/authentication/refresh`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken })
+                            });
+
+                            if (refreshResponse.ok) {
+                                const newTokens = await refreshResponse.json();
+                                localStorage.setItem('accessToken', newTokens.accessToken);
+                                localStorage.setItem('refreshToken', newTokens.refreshToken);
+                                console.log('Tokenlar başarıyla yenilendi. Etkinlik isteği yeniden deneniyor...');
+                                await fetchEvents();
+                                return;
+                            } else {
+                                const errorText = await refreshResponse.text();
+                                console.error('Token yenileme başarısız:', refreshResponse.status, errorText);
+                                localStorage.removeItem('accessToken');
+                                localStorage.removeItem('refreshToken');
+                                localStorage.removeItem('username');
+                                localStorage.removeItem('role');
+                                alert('Oturum süresi doldu veya geçersiz. Lütfen tekrar giriş yapın.');
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                        } else {
+                            alert('Etkinlikleri görüntülemek için yetkiniz yok veya oturumunuz sona erdi. Lütfen giriş yapın.');
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                    }
+                    throw new Error(`HTTP hatası! Durum: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const paginationHeader = response.headers.get("X-Pagination");
+                const metaData = paginationHeader ? JSON.parse(paginationHeader) : null;
+
+                // **CRITICAL CHANGE HERE:** Calculate totalPages based on TotalCount and PageSize
+                if (metaData && metaData.TotalCount !== undefined && metaData.PageSize !== undefined) {
+                    totalPages = Math.ceil(metaData.TotalCount / metaData.PageSize);
+                } else {
+                    totalPages = 1; // Default to 1 if pagination metadata is missing
+                }
+
+                renderEvents(data);
+                renderPagination();
+            } catch (error) {
+                console.error("Hata:", error.message);
+                eventList.innerHTML = "<p class='text-center text-danger'>Etkinlikler alınamadı.</p>";
+                pagination.innerHTML = "";
+            }
+        }
+
+        function renderEvents(events) {
+            eventList.innerHTML = "";
+
+            if (!events || events.length === 0) {
+                eventList.innerHTML = "<p class='text-center'>Etkinlik bulunamadı.</p>";
+                return;
+            }
+
+            events.forEach(event => {
+                const date = new Date(event.eventDate).toLocaleDateString("tr-TR");
+
+                eventList.innerHTML += `
+                                                <div class="col-md-4 mb-4">
+                                                    <div class="card h-100 shadow-sm">
+                                                        <div class="card-body d-flex flex-column">
+                                                            <h5 class="card-title">${event.name}</h5>
+                                                            <h6 class="card-subtitle mb-2 text-muted">${event.clubName ?? ""}</h6>
+                                                            <p class="card-text">${event.description ?? ""}</p>
+                                                            <p class="card-text"><small class="text-muted">Tarih: ${date}</small></p>
+                                                            <a href="event-detail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
+            });
+        }
+
+        function renderPagination() {
+            pagination.innerHTML = "";
+
+            const createPageItem = (page, text, active = false) => {
+                const li = document.createElement("li");
+                li.className = `page-item ${active ? "active" : ""}`;
+                const a = document.createElement("a");
+                a.className = "page-link";
+                a.href = "#";
+                a.textContent = text;
+                a.onclick = e => {
+                    e.preventDefault();
+                    if (page !== currentPage) {
+                        currentPage = page;
+                        fetchEvents();
+                    }
+                };
+                li.appendChild(a);
+                return li;
+            };
+
+            if (currentPage > 1) pagination.appendChild(createPageItem(currentPage - 1, "«"));
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.appendChild(createPageItem(i, i, i === currentPage));
+            }
+            if (currentPage < totalPages) pagination.appendChild(createPageItem(currentPage + 1, "»"));
+        }
+
+        function debounce(func, delay) {
+            let timer;
+            return function (...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+    </script>
+</body>
+</html>

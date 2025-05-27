@@ -17,7 +17,7 @@ namespace Presentation.Controllers.Member
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    [Authorize(Roles = "User")]
+    [Authorize]
     [Route("api/user/events")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class EventsController:ControllerBase
@@ -30,29 +30,46 @@ namespace Presentation.Controllers.Member
         }
 
 
-        [HttpGet]
-        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-        public async Task<IActionResult> GetAllEvents([FromQuery] EventParameters eventParameters)
-        {
-            eventParameters.IsApproved= true;//kullanıcılar sadece onaylanmış etkinlikleri görebilir.
-            var linkParameters = new LinkParameters()
-            {
-                EventParameters = eventParameters,
-                HttpContext = HttpContext
-            };
+        //[HttpGet]
+        //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        //public async Task<IActionResult> GetAllEvents([FromQuery] EventParameters eventParameters)
+        //{
+        //    eventParameters.IsApproved= true;//kullanıcılar sadece onaylanmış etkinlikleri görebilir.
+        //    var linkParameters = new LinkParameters()
+        //    {
+        //        EventParameters = eventParameters,
+        //        HttpContext = HttpContext
+        //    };
 
+        //    var result = await _manager
+        //        .EventServiceUsers
+        //        .GetAllEventsAsync(linkParameters, false);
+
+        //    Response.Headers.Add("X-Pagination",
+        //        JsonSerializer.Serialize(result.metaData));
+
+        //    return result.linkResponse.HasLinks ?
+        //        Ok(result.linkResponse.LinkedEntities) :
+        //        Ok(result.linkResponse.ShapedEntities);
+
+        //}
+        [HttpGet]
+        //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> Events([FromQuery] EventParameters eventParameters)
+        {
+            
             var result = await _manager
                 .EventServiceUsers
-                .GetAllEventsAsync(linkParameters, false);
+                .EventsAsync(eventParameters, false);
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(result.metaData));
 
-            return result.linkResponse.HasLinks ?
-                Ok(result.linkResponse.LinkedEntities) :
-                Ok(result.linkResponse.ShapedEntities);
+            return Ok(result.eventDto);
 
         }
+
 
 
         [HttpGet("{id:int}")]
