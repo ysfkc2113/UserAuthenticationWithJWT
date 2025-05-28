@@ -16,7 +16,7 @@ namespace Presentation.Controllers.Member
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Route("api/user/clubuser")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ClubUserController:ControllerBase
@@ -41,7 +41,7 @@ namespace Presentation.Controllers.Member
         public async Task<IActionResult> CreateClubUser([FromRoute]int id)
         {
             await _manager.ClubUserServiceUsers.CreateClubUserForUsersAsync(id, HttpContext, true);
-            return Ok();
+            return NoContent();
         }
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteClubUser([FromRoute] int id)

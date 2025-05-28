@@ -21,7 +21,7 @@
     <script src="navbar.js"></script>
     <script>
         // API Base URL - Backend API'nizin doğru adresini kontrol edin
-        const API_BASE_URL = 'https://localhost:7222/api';
+       // const API_BASE_URL = 'https://localhost:7222/api';
         const EVENTS_API_URL = `${API_BASE_URL}/user/events`; // Etkinlik API endpoint'i
 
         // JWT payload'ını çözen fonksiyon (kullanıcı adı ve rolü almak için)
@@ -268,7 +268,7 @@
                                                                 <h6 class="card-subtitle mb-2 text-muted">${event.clubName ?? ""}</h6>
                                                                 <p class="card-text">${event.description ?? ""}</p>
                                                                 <p class="card-text"><small class="text-muted">Tarih: ${date}</small></p>
-                                                                <a href="event-detail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
+                                                                <a href="eventdetail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
                                                             </div>
                                                         </div>
                                                     </div>

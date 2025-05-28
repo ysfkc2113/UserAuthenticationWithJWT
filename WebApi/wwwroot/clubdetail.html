@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulüp Detayı</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .club-detail-header {
+            background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('https://source.unsplash.com/1600x400/?university,club') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .club-logo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            margin-top: -75px; /* Yarısı dışarıda kalacak şekilde */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex; /* İçindeki badge'i hizalamak için */
+            align-items: center; /* İçindeki badge'i hizalamak için */
+        }
+
+        .member-card {
+            display: flex;
+            align-items: center;
+        }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        /* Custom style for event cards within club detail to adjust height if needed */
+        .club-event-card .card-body {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <script src="navbar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="club-detail-header">
+        <div class="container">
+            <h1 class="display-4" id="clubNameHeader">Kulüp Adı Yükleniyor...</h1>
+            <p class="lead" id="clubSlogan"></p>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="text-center">
+            <img src="https://via.placeholder.com/150" alt="Kulüp Logosu" class="club-logo" id="clubLogo">
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h3 class="section-title">Kulüp Hakkında</h3>
+                        <p id="clubDescription" class="card-text"></p>
+                        <ul class="list-group list-group-flush mt-3">
+                            <li class="list-group-item"><i class="fas fa-university me-2"></i> Fakülte: <span id="clubFaculty"></span></li>
+                            <li class="list-group-item"><i class="fas fa-tags me-2"></i> Kategori: <span id="clubCategory"></span></li>
+                            <li class="list-group-item"><i class="fas fa-envelope me-2"></i> E-posta: <span id="clubEmail"></span></li>
+                            <li class="list-group-item"><i class="fas fa-phone me-2"></i> Telefon: <span id="clubPhone"></span></li>
+                            <li class="list-group-item"><i class="fas fa-user-tie me-2"></i> Sorumlu Öğretmen: <span id="clubResponsibleTeacher"></span></li>
+                            <li class="list-group-item"><i class="fas fa-user-shield me-2"></i> Kulüp Yöneticisi: <span id="clubManager"></span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h3 class="section-title">Kulübün Etkinlikleri <span class="badge bg-primary ms-2" id="eventCountBadge"></span></h3>
+                        <div id="clubEventsContainer" class="row g-3">
+                            <p class="text-center w-100">Etkinlikler yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="section-title">Kulüp Üyeleri <span class="badge bg-primary ms-2" id="memberCountBadge"></span></h3>
+                        <div id="clubMembersContainer" class="row g-3">
+                            <p class="text-center w-100">Üyeler yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API_BASE_URL is defined in navbar.js and should be loaded before this script.
+        const CLUBS_DETAIL_API_URL = `${API_BASE_URL}/user/clubs`; // Assuming /{id} for details
+
+        async function fetchClubDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clubId = urlParams.get('id');
+
+            if (!clubId) {
+                document.getElementById('clubNameHeader').textContent = 'Kulüp bulunamadı!';
+                document.getElementById('clubDescription').textContent = 'Geçersiz kulüp ID\'si. Lütfen geçerli bir kulüp seçtiğinizden emin olun.';
+                document.getElementById('clubEventsContainer').innerHTML = '<p class="text-center w-100 text-danger">Kulüp ID\'si bulunamadığı için etkinlikler yüklenemedi.</p>';
+                document.getElementById('clubMembersContainer').innerHTML = '<p class="text-center w-100 text-danger">Kulüp ID\'si bulunamadığı için üyeler yüklenemedi.</p>';
+                console.error("URL'de clubId bulunamadı.");
+                return;
+            }
+
+            console.log(`Kulüp detayları için API çağrılıyor: ${CLUBS_DETAIL_API_URL}/${clubId}`);
+
+            try {
+                const accessToken = localStorage.getItem('accessToken');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                if (accessToken) {
+                    headers['Authorization'] = `Bearer ${accessToken}`;
+                    console.log("Authorization başlığı ile istek gönderiliyor.");
+                } else {
+                    console.warn("accessToken bulunamadı. Kulüp detay isteği yetkilendirilmemiş olarak gönderilecek.");
+                }
+
+                const response = await fetch(`${CLUBS_DETAIL_API_URL}/${clubId}`, { headers: headers });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        console.warn('Kulüp detaylarına yetkisiz erişim. Token yenileme deneniyor...');
+                        const refreshToken = localStorage.getItem('refreshToken');
+                        if (refreshToken) {
+                            console.log("Token yenileme isteği gönderiliyor.");
+                            const refreshResponse = await fetch(`${API_BASE_URL}/authentication/refresh`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken })
+                            });
+
+                            if (refreshResponse.ok) {
+                                const newTokens = await refreshResponse.json();
+                                localStorage.setItem('accessToken', newTokens.accessToken);
+                                localStorage.setItem('refreshToken', newTokens.refreshToken);
+                                console.log('Tokenlar başarıyla yenilendi. Kulüp detay isteği yeniden deneniyor...');
+                                await fetchClubDetails(); // Retry the fetch
+                                return;
+                            } else {
+                                const errorText = await refreshResponse.text();
+                                console.error('Token yenileme başarısız:', refreshResponse.status, errorText);
+                                alert('Oturum süresi doldu veya geçersiz. Lütfen tekrar giriş yapın.');
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                        } else {
+                            alert('Kulüp detaylarını görüntülemek için yetkiniz yok veya oturumunuz sona erdi. Lütfen giriş yapın.');
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                    }
+                    throw new Error(`HTTP hatası! Durum: ${response.status} - ${response.statusText}`);
+                }
+
+                // Beklenen: { Club: { ...ClubDto }, Events: [...EventDto], EventCount: int, MemberCount: int } şeklinde bir JSON objesi
+                const data = await response.json();
+                console.log("API'dan gelen veri (clubdetaildto):", data); // Log the entire data object
+
+                // Populate Club Details (data.Club üzerinden erişiyoruz)
+                const club = data.club; // 'Club' property'si DTO'da büyük harfle başlıyor
+                if (club) {
+                    document.getElementById('clubNameHeader').textContent = club.clubName || 'N/A';
+                    document.getElementById('clubSlogan').textContent = club.slogan || 'Slogan bulunmamaktadır.'; // Slogan, ClubDto'da yoksa API'den gelmeyebilir.
+                    document.getElementById('clubLogo').src = club.logo_url || 'https://via.placeholder.com/150'; // 'logo_url' olarak güncellendi
+                    document.getElementById('clubDescription').textContent = club.description || 'Bu kulüp için henüz bir açıklama bulunmamaktadır.';
+                    document.getElementById('clubFaculty').textContent = club.faculty || 'Belirtilmemiş';
+                    document.getElementById('clubCategory').textContent = club.clubType || 'Belirtilmemiş'; // clubType, ClubDto'da yoksa API'den gelmeyebilir.
+                    document.getElementById('clubEmail').textContent = club.email || 'Belirtilmemiş'; // Email, ClubDto'da yoksa API'den gelmeyebilir.
+                    document.getElementById('clubPhone').textContent = club.phoneNumber || 'Belirtilmemiş'; // Phone, ClubDto'da yoksa API'den gelmeyebilir.
+
+                    // Yeni Eklenen Alanlar
+                    document.getElementById('clubResponsibleTeacher').textContent = club.responsible_teacher || 'Belirtilmemiş';
+                    document.getElementById('clubManager').textContent = club.clubManager || 'Belirtilmemiş';
+
+                } else {
+                    console.error("API yanıtında 'club' objesi bulunamadı:", data);
+                    document.getElementById('clubNameHeader').textContent = 'Kulüp Detayları Yüklenemedi';
+                }
+
+                // Etkinlik Sayısı
+                document.getElementById('eventCountBadge').textContent = data.eventCount !== undefined ? `${data.eventCount} Etkinlik` : '';
+
+                // Populate Club Events (data.Events üzerinden erişiyoruz)
+                const eventsContainer = document.getElementById('clubEventsContainer');
+                eventsContainer.innerHTML = ''; // Clear loading message
+                if (data.events && Array.isArray(data.events) && data.events.length > 0) {
+                    console.log("Kulübe ait etkinlikler:", data.events);
+                    data.events.forEach(event => {
+                        // Ensure event.eventDate is a valid date string
+                        const eventDate = event.eventDate ? new Date(event.eventDate).toLocaleDateString('tr-TR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }) : 'Tarih Belirtilmemiş';
+
+                        // Ensure event.id exists for the detail link
+                        const eventDetailLink = event.id ? `eventdetail.html?id=${event.id}` : '#';
+
+                        eventsContainer.innerHTML += `
+                                <div class="col-md-6">
+                                    <div class="card h-100 shadow-sm club-event-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${event.title || 'Başlık Yok'}</h5>
+                                            <p class="card-text text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i> ${event.location || 'Konum Belirtilmemiş'}</p>
+                                            <p class="card-text text-muted mb-1"><i class="fas fa-calendar-alt me-1"></i> ${eventDate}</p>
+                                            <a href="${eventDetailLink}" class="btn btn-sm btn-outline-primary mt-auto">Detaylar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                    });
+                } else {
+                    console.log("Bu kulübe ait etkinlik bulunamadı veya 'events' alanı boş/eksik.");
+                    eventsContainer.innerHTML = '<p class="text-center w-100">Bu kulübün henüz bir etkinliği bulunmamaktadır.</p>';
+                }
+
+                // Üye Sayısı
+                document.getElementById('memberCountBadge').textContent = data.memberCount !== undefined ? `${data.memberCount} Üye` : '';
+
+                // Populate Club Members (club.clubUsers üzerinden erişiyoruz, eğer API response'unda bu şekilde geliyorsa)
+                const membersContainer = document.getElementById('clubMembersContainer');
+                membersContainer.innerHTML = ''; // Clear loading message
+                // Not: ClubDto yapısında doğrudan clubUsers bulunmuyor. Eğer üyeler club objesinin içindeyse,
+                // veya ClubDetailDtoUsers içinde ayrı bir 'Members' listesi varsa burayı ona göre ayarlayın.
+                // Şimdilik önceki koddaki club.clubUsers varsayımını koruyorum.
+                if (club && club.clubUsers && Array.isArray(club.clubUsers) && club.clubUsers.length > 0) {
+                    console.log("Kulübe ait üyeler:", club.clubUsers);
+                    club.clubUsers.forEach(member => {
+                        membersContainer.innerHTML += `
+                                <div class="col-md-6">
+                                    <div class="card member-card shadow-sm p-3">
+                                        <img src="${member.userImageUrl || 'https://via.placeholder.com/50'}" alt="${member.userName || 'Üye Resmi'}" class="member-avatar">
+                                        <div>
+                                            <h6 class="mb-0">${member.userName || 'İsimsiz Üye'}</h6>
+                                            <small class="text-muted">${member.role || 'Rol Belirtilmemiş'}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                    });
+                } else {
+                    console.log("Bu kulübün üyesi bulunamadı veya 'clubUsers' alanı boş/eksik.");
+                    membersContainer.innerHTML = '<p class="text-center w-100">Bu kulübün henüz üyesi bulunmamaktadır.</p>';
+                }
+
+            } catch (error) {
+                console.error('Kulüp detayları yüklenirken kritik bir hata oluştu:', error);
+                document.getElementById('clubNameHeader').textContent = 'Hata!';
+                document.getElementById('clubDescription').textContent = 'Kulüp detayları yüklenemedi. Lütfen daha sonra tekrar deneyin veya URL\'deki kulüp ID\'sini kontrol edin.';
+                document.getElementById('clubEventsContainer').innerHTML = '<p class="text-center w-100 text-danger">Etkinlikler yüklenemedi. Detaylar için konsola bakın.</p>';
+                document.getElementById('clubMembersContainer').innerHTML = '<p class="text-center w-100 text-danger">Üyeler yüklenemedi. Detaylar için konsola bakın.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchClubDetails);
+    </script>
+</body>
+</html>

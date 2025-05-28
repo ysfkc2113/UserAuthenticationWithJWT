@@ -28,6 +28,14 @@
         .event-card .card-body {
             flex-grow: 1; /* Card içeriğini dikeyde esnek yapar */
         }
+
+ 
+        .event-card-img {
+            height: 180px;
+            object-fit: cover;
+        }
+
+   
     </style>
 </head>
 <body>
@@ -51,7 +59,7 @@
     <script>
         // API_BASE_URL is now defined in navbar.js, so it's globally available if navbar.js loads first.
         // Or you can redefine it here if you need it specifically for this page's scripts.
-        const API_BASE_URL = 'https://localhost:7222/api';
+        // const API_BASE_URL = 'https://localhost:7222/api';
 
 
         // Etkinlikleri getiren asenkron fonksiyon
@@ -130,17 +138,19 @@
                     });
 
                     container.innerHTML += `
-                            <div class="col-md-4 mb-4">
-                                <div class="card event-card h-100 shadow-sm">
-                                    <img src="${event.imageUrl || 'https://source.unsplash.com/400x200/?event'}" class="card-img-top" alt="${event.title}">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">${event.title}</h5>
-                                        <p class="card-text"><strong>Yer:</strong> ${event.location}</p>
-                                        <p class="card-text"><strong>Tarih:</strong> ${eventDate}</p>
-                                        <p class="card-text"><strong>Kulüp:</strong> ${event.clubName || 'Belirtilmemiş'}</p>
-                                    </div>
-                                </div>
-                            </div>`;
+                                   <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <img src="${event.imageUrl || 'https://www.google.com/imgres?q=top&imgurl=https%3A%2F%2Fcdn.armaganoyuncak.com.tr%2Fmedia%2Fcatalog%2Fproduct%2Fc%2Ff%2Fcff4626990b111d1f076ace8fac0a9f44455e65221ba79dc12d32a6ad3673793.jpeg&imgrefurl=https%3A%2F%2Fwww.armaganoyuncak.com.tr%2Fdema-stil-pvc-baskili-top-12-cm-p-150118dempp120&docid=pXLzHuy8SbvyaM&tbnid=9Jt5JnuIcu-F2M&vet=12ahUKEwjU-IS2pMaNAxXYA9sEHbkYFKEQM3oECDcQAA..i&w=700&h=700&hcb=2&ved=2ahUKEwjU-IS2pMaNAxXYA9sEHbkYFKEQM3oECDcQAA'}" class="card-img-top" alt="${event.title}">
+                                            <div class="card-body d-flex flex-column">
+                                                <h5 class="card-title">${event.title}</h5>
+                                                <p class="card-text text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i> ${event.location}</p>
+                                                <p class="card-text text-muted mb-1"><i class="fas fa-calendar-alt me-1"></i> ${eventDate}</p>
+                                                <p class="card-text flex-grow-1">${event.clubClubName || 'Belirtilmemiş'}</p>
+                                                <a href="eventdetail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
+                                            </div>
+                                        </div>
+                                    </div>`;
+
                 });
             } catch (error) {
                 console.error('Etkinlikler yüklenirken bir hata oluştu:', error);
@@ -149,7 +159,11 @@
             }
         }
         // Call fetchEvents after the DOM is loaded
-        document.addEventListener('DOMContentLoaded', fetchEvents);
+        // document.addEventListener('DOMContentLoaded', fetchEvents);
+        // window.onload ile sayfa tamamen yüklendikten sonra çağır
+        window.onload = function () {
+            fetchEvents();
+        };
     </script>
 </body>
 </html>

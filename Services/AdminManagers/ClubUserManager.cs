@@ -103,5 +103,15 @@ namespace Services.AdminManagers
 
             await _manager.SaveAsync();
         }
+        //club member count
+        public async Task<int> GetAllUsersByClubIdAsync(int id)
+        {
+            var clubusercount = await _manager.ClubUser.GetAllUsersByClubIdAsync(id);
+
+
+            return clubusercount;
+        }
+
+
     }
 }

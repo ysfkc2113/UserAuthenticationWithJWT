@@ -15,7 +15,7 @@ namespace Presentation.Controllers.Member
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Route("api/user/profil")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ProfilController:ControllerBase
@@ -28,7 +28,7 @@ namespace Presentation.Controllers.Member
             _manager = manager;
         }
         [HttpGet]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        //[ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> GetMyProfil()
         {
             var myprofil=await _manager.UserServiceUsers.GetMyProfilAsync(HttpContext, false);

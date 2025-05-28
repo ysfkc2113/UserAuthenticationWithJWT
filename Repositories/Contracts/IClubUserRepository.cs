@@ -33,6 +33,7 @@ namespace Repositories.Contracts
         void CreateClubUserForUsers(string UserId, int clubId, bool trackChanges);
         Task<List<Club_User>> GetClubsByUserIdAsync(string id, bool trackChanges);
         Task<PagedList<Club_User>> GetMyClubsByUserIdAsync(string id, ClubUserParameters clubUserParameters, bool trackChanges);
+        Task<int> GetAllUsersByClubIdAsync(int id);
 
 
     }

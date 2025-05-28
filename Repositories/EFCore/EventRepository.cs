@@ -13,6 +13,7 @@ namespace Repositories.EFCore
 {
     public sealed class EventRepository : RepositoryBase<Event>, IEventRepository
     {
+       
         public EventRepository(RepositoryContext context) : base(context)
         {
 
@@ -65,7 +66,8 @@ namespace Repositories.EFCore
 
 
         public async Task<Event> GetOneEventByIdAsync(int id, bool trackChanges) =>
-            await FindByCondition(b => b.Id.Equals(id), trackChanges)
+            await FindAllByRelation(trackChanges,y=> y.Club)
+            .Where(y=> y.Id==id)
             .SingleOrDefaultAsync();
 
 

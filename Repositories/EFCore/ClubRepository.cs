@@ -68,5 +68,8 @@ namespace Repositories.EFCore
             var club = await FindByCondition(m => m.ClubManager.Equals(userNama), trackChanges).FirstOrDefaultAsync();
             return club;
         }
+
+      
+
     }
 }

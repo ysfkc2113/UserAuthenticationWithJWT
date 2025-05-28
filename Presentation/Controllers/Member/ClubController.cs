@@ -1,4 +1,7 @@
-﻿using Entities.RequestFeatures;
+﻿using AutoMapper;
+using Entities.DataTransferObjects;
+using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
@@ -21,10 +24,12 @@ namespace Presentation.Controllers.Member
     public class ClubController:ControllerBase
     {
         private readonly IServiceManager _manager;
+        private readonly IMapper _mapper;
 
-        public ClubController(IServiceManager manager)
+        public ClubController(IServiceManager manager, IMapper mapper)
         {
             _manager = manager;
+            _mapper = mapper;
         }
 
 
@@ -42,6 +47,26 @@ namespace Presentation.Controllers.Member
             return Ok(result.clubDto);
 
         }
+        //kulüp detay sayfası için kullanılıyor
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetOneClubById([FromRoute] int id)
+        {
+            var club = await _manager.ClubService.GetOneClubByIdAsync(id,false);
+            EventParameters eventParameters = new EventParameters() { PageNumber = 1,PageSize=3 };
+            var result = await _manager
+            .EventServiceUsers
+                       .GetEventsByOneClub(id, eventParameters, false);
+            if (club == null)
+                throw new Exception("Böyle bir kulüp bulunamadı.");
+            var memberscount= await _manager.ClubUserService.GetAllUsersByClubIdAsync(id);
+            
+            var clubdetaildto = new ClubDetailDtoUsers() {
+                Club=club,Events= result.eventDto.ToList() ,
+                MemberCount=memberscount,
+                EventCount= result .metaData.TotalCount};
+            return Ok(clubdetaildto);
+        }
+        
 
 
     }

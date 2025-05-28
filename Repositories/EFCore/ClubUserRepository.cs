@@ -169,6 +169,14 @@ namespace Repositories.EFCore
                 clubUserParameters.PageNumber,
                 clubUserParameters.PageSize);
         }
+        //user
+        public async Task<int> GetAllUsersByClubIdAsync(int id) 
+        {
+            var membercount= await FindByCondition(y=> y.ClubId.Equals(id),false)
+                .Where(y=> y.Approved.Equals(true))
+                .CountAsync();
+            return membercount;
+        }
     }
     
 }

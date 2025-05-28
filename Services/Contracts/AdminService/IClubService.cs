@@ -12,7 +12,7 @@ namespace Services.Contracts.AdminService
 {
     public interface IClubService
     {//for admin
-        
+        //user da da kullanıldı
         Task<ClubDto> GetOneClubByIdAsync(int id,bool trackChanges);
         
         Task DeleteClubAsync(int id, bool trackChanges);

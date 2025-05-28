@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkinlik Detayı</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .event-header {
+            background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('https://source.unsplash.com/1600x400/?event,party') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .event-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .club-logo-small {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <script src="navbar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="event-header">
+        <div class="container">
+            <h1 class="display-4" id="eventTitleHeader">Etkinlik Adı Yükleniyor...</h1>
+            <p class="lead" id="eventLocationHeader"></p>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <img src="https://source.unsplash.com/800x300/?conference,meeting" alt="Etkinlik Resmi" class="event-image" id="eventImage">
+                        <h3 class="section-title">Etkinlik Bilgileri</h3>
+                        <h5 class="card-title mb-3" id="eventTitle"></h5>
+                        <p class="card-text mb-2"><i class="fas fa-calendar-alt me-2"></i> Tarih: <span id="eventDate"></span></p>
+                        <p class="card-text mb-2"><i class="fas fa-map-marker-alt me-2"></i> Konum: <span id="eventLocation"></span></p>
+                        <p class="card-text mb-2"><i class="fas fa-eye me-2"></i> Görünürlük: <span id="eventVisibility"></span></p>
+                        <p class="card-text mb-2"><i class="fas fa-user-check me-2"></i> Yayımlayan: <span id="eventPublisher"></span></p>
+                        <p class="card-text mb-2"><i class="fas fa-info-circle me-2"></i> Durum: <span id="eventApprovalStatus"></span></p>
+                        <p class="card-text mt-4" id="eventDescription"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm mb-4 text-center">
+                    <div class="card-body">
+                        <h3 class="section-title">Kulüp Bilgileri</h3>
+                        <img src="https://via.placeholder.com/80" alt="Kulüp Logosu" class="club-logo-small" id="clubLogo">
+                        <h5 class="card-title" id="clubName"></h5>
+                        <p class="card-text text-muted mb-2"><i class="fas fa-university me-1"></i> Fakülte: <span id="clubFaculty"></span></p>
+                        <p class="card-text text-muted mb-2"><i class="fas fa-user-tie me-1"></i> Sorumlu Öğretmen: <span id="clubResponsibleTeacher"></span></p>
+                        <p class="card-text text-muted mb-2"><i class="fas fa-user-shield me-1"></i> Kulüp Yöneticisi: <span id="clubManager"></span></p>
+                        <a href="#" class="btn btn-sm btn-outline-primary mt-3" id="clubDetailLink">Kulüp Detayları</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API_BASE_URL, navbar.js'ten gelmektedir.
+        // Endpoint'i güncelledik: user/events/detail/{id}
+        const EVENTS_DETAIL_API_BASE_URL = `${API_BASE_URL}/user/events/detail`;
+
+        async function fetchEventDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('id');
+
+            if (!eventId) {
+                document.getElementById('eventTitleHeader').textContent = 'Etkinlik bulunamadı!';
+                document.querySelector('.container').innerHTML = '<p class="text-center text-danger">Geçersiz etkinlik ID\'si. Lütfen geçerli bir etkinlik seçtiğinizden emin olun.</p>';
+                console.error("URL'de eventId bulunamadı.");
+                return;
+            }
+
+            console.log(`Etkinlik detayları için API çağrılıyor: ${EVENTS_DETAIL_API_BASE_URL}/${eventId}`);
+
+            try {
+                const accessToken = localStorage.getItem('accessToken');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                if (accessToken) {
+                    headers['Authorization'] = `Bearer ${accessToken}`;
+                    console.log("Authorization başlığı ile istek gönderiliyor.");
+                } else {
+                    console.warn("accessToken bulunamadı. Etkinlik detay isteği yetkilendirilmemiş olarak gönderilecek.");
+                }
+
+                // Güncellenmiş API endpoint'ine istek atılıyor
+                const response = await fetch(`${EVENTS_DETAIL_API_BASE_URL}/${eventId}`, { headers: headers });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        console.warn('Etkinlik detaylarına yetkisiz erişim. Token yenileme deneniyor...');
+                        const refreshToken = localStorage.getItem('refreshToken');
+                        if (refreshToken) {
+                            console.log("Token yenileme isteği gönderiliyor.");
+                            const refreshResponse = await fetch(`${API_BASE_URL}/authentication/refresh`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken })
+                            });
+
+                            if (refreshResponse.ok) {
+                                const newTokens = await refreshResponse.json();
+                                localStorage.setItem('accessToken', newTokens.accessToken);
+                                localStorage.setItem('refreshToken', newTokens.refreshToken);
+                                console.log('Tokenlar başarıyla yenilendi. Etkinlik detay isteği yeniden deneniyor...');
+                                await fetchEventDetails(); // Retry the fetch
+                                return;
+                            } else {
+                                const errorText = await refreshResponse.text();
+                                console.error('Token yenileme başarısız:', refreshResponse.status, errorText);
+                                alert('Oturum süresi doldu veya geçersiz. Lütfen tekrar giriş yapın.');
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                        } else {
+                            alert('Etkinlik detaylarını görüntülemek için yetkiniz yok veya oturumunuz sona erdi. Lütfen giriş yapın.');
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                    }
+                    throw new Error(`HTTP hatası! Durum: ${response.status} - ${response.statusText}`);
+                }
+
+                const event = await response.json();
+                console.log("API'dan gelen etkinlik verisi:", event); // Log the entire event object
+
+                // Populate Event Details (Left Side)
+                document.getElementById('eventTitleHeader').textContent = event.title || 'Etkinlik Detayı';
+                document.getElementById('eventLocationHeader').textContent = event.location || 'Konum Belirtilmemiş';
+
+                document.getElementById('eventImage').src = event.imagePath || 'https://source.unsplash.com/800x300/?event,abstract'; // Kullanıcının isteği üzerine örnek resim linki
+                document.getElementById('eventTitle').textContent = event.title || 'Başlık Yok';
+                document.getElementById('eventDate').textContent = event.eventDate ? new Date(event.eventDate).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Tarih Belirtilmemiş';
+                document.getElementById('eventLocation').textContent = event.location || 'Konum Belirtilmemiş';
+                document.getElementById('eventVisibility').textContent = event.visibility || 'Belirtilmemiş';
+                document.getElementById('eventPublisher').textContent = event.publishedByUserName || 'Bilinmiyor';
+                document.getElementById('eventApprovalStatus').textContent = event.isApproved ? 'Onaylandı' : 'Beklemede';
+                document.getElementById('eventDescription').textContent = event.description || 'Etkinlik açıklaması bulunmamaktadır.';
+                
+
+
+                // Populate Club Details (Right Side)
+                const club = event.club;
+                if (club) {
+                    document.getElementById('clubLogo').src = club.logo_url || 'https://via.placeholder.com/80';
+                    document.getElementById('clubName').textContent = club.clubName || 'Kulüp Adı Yok';
+                    document.getElementById('clubFaculty').textContent = club.faculty || 'Belirtilmemiş';
+                    document.getElementById('clubResponsibleTeacher').textContent = club.responsible_teacher || 'Belirtilmemiş';
+                    document.getElementById('clubManager').textContent = club.clubManager || 'Belirtilmemiş';
+
+                    // Kulüp detayları sayfasına yönlendirme linki
+                    const clubDetailLink = document.getElementById('clubDetailLink');
+                    if (club.clubId) {
+                        clubDetailLink.href = `clubdetail.html?id=${club.clubId}`;
+                        clubDetailLink.style.display = 'block'; // Linki göster
+                    } else {
+                        clubDetailLink.style.display = 'none'; // ClubId yoksa linki gizle
+                    }
+
+                } else {
+                    console.warn("API yanıtında kulüp bilgileri (event.club) bulunamadı.");
+                    document.getElementById('clubName').textContent = 'Kulüp bilgileri yok';
+                    document.getElementById('clubDetailLink').style.display = 'none'; // Linki gizle
+                }
+
+            } catch (error) {
+                console.error('Etkinlik detayları yüklenirken kritik bir hata oluştu:', error);
+                document.getElementById('eventTitleHeader').textContent = 'Hata!';
+                document.querySelector('.container').innerHTML = '<p class="text-center text-danger">Etkinlik detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchEventDetails);
+    </script>
+</body>
+</html>

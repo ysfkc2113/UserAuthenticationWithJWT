@@ -20,7 +20,7 @@ namespace Presentation.Controllers.Member
     [Authorize]
     [Route("api/user/events")]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class EventsController:ControllerBase
+    public class EventsController : ControllerBase
     {
         private readonly IServiceManager _manager;
 
@@ -54,11 +54,11 @@ namespace Presentation.Controllers.Member
 
         //}
         [HttpGet]
-        //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Events([FromQuery] EventParameters eventParameters)
         {
-            
+
             var result = await _manager
                 .EventServiceUsers
                 .EventsAsync(eventParameters, false);
@@ -72,7 +72,7 @@ namespace Presentation.Controllers.Member
 
 
 
-        [HttpGet("{id:int}")]
+        [HttpGet("detail/{id:int}")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetEventById([FromRoute] int id)
         {
@@ -83,7 +83,23 @@ namespace Presentation.Controllers.Member
                 return NotFound("Etkinlik bulunamadı.");
             return Ok(result);
         }
+        //bir kulübe ait bütün eventlar.
+        [HttpGet("{clubId:int}")]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> GetEventsByOneClub([FromRoute] int id, [FromQuery] EventParameters eventParameters)
+        {
 
+            var result = await _manager
+                .EventServiceUsers
+                .GetEventsByOneClub(id, eventParameters ,false);
+
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(result.metaData));
+
+            return Ok(result.eventDto);
+
+        }
 
     }
 }

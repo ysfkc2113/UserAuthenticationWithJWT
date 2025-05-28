@@ -6,6 +6,23 @@
     <title>Kulüpler</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        /* Optional: Add some styling for clickable cards */
+        .club-card-link { /* Bu sınıf artık tüm kartı sarmadığı için işlevini yitirdi, ancak stil olarak kalabilir. */
+            text-decoration: none;
+            color: inherit;
+        }
+
+            .club-card-link .card { /* Bu stil hala kartın hover efektini sağlar */
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                cursor: pointer; /* Kartın kendisi link olmasa da hover efekti için cursor pointer kalabilir */
+            }
+
+                .club-card-link .card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                }
+    </style>
 </head>
 <body>
 
@@ -30,9 +47,11 @@
         <div id="clubList" class="row"></div>
         <ul id="clubPagination" class="pagination justify-content-center mt-4"></ul>
     </div>
+
     <script src="navbar.js"></script>
     <script>
         const CLUBS_API_URL = 'https://localhost:7222/api/user/clubs';
+        const JOIN_CLUB_API_URL = 'https://localhost:7222/api/user/clubuser'; // New API endpoint
         const clubList = document.getElementById("clubList");
         const clubPagination = document.getElementById("clubPagination");
         const searchClubInput = document.getElementById("searchClubInput");
@@ -54,6 +73,84 @@
             fetchClubs();
         });
 
+        // Function to handle joining a club
+        async function joinClub(clubId) {
+            const accessToken = localStorage.getItem('accessToken');
+            if (!accessToken) {
+                // Modalsız alert yerine özel bir mesaj kutusu kullanın
+                showCustomMessage("Kulübe katılmak için giriş yapmalısınız.", "warning");
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500); // Kullanıcıya mesajı göstermek için kısa bir gecikme
+                return;
+            }
+
+            try {
+                const response = await fetch(`${JOIN_CLUB_API_URL}/${clubId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) { // HTTP 200-299 arası durum kodları (örneğin 204 No Content)
+                    showCustomMessage("Kulübe başarıyla katıldınız!", "success");
+                    fetchClubs(); // UI'ı güncellemek için kulüp listesini yeniden çek
+                } else if (response.status === 401) {
+                    showCustomMessage("Oturumunuz sona erdi. Lütfen tekrar giriş yapın.", "danger");
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('role');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+
+                } else if (response.status === 500) { // Backend'den gelen 500 hatalarını yakala
+                    let errorData;
+                    try {
+                        errorData = await response.json(); // 500 hatası JSON body ile geleceği için parse et
+                    } catch (e) {
+                        // JSON parse hatası olursa, plain text olarak al
+                        errorData = { message: await response.text() };
+                    }
+                    // Mesajı `Message` alanından veya doğrudan text'ten al
+                    const errorMessage = errorData.message || `Bilinmeyen Hata: ${response.status}`;
+                    showCustomMessage(`Kulübe katılırken bir hata oluştu: ${errorMessage}`, "danger");
+                } else { // Diğer HTTP hata durumları (örneğin 400 Bad Request, eğer backend 400 dönebilirse)
+                    const errorText = await response.text();
+                    console.error(`Kulübe katılırken bir hata oluştu: HTTP ${response.status} - ${errorText}`);
+                    showCustomMessage(`Kulübe katılırken bir hata oluştu: ${response.status} - ${errorText.substring(0, 100)}...`, "danger");
+                }
+
+            } catch (error) {
+                console.error("Kulübe katılma hatası:", error);
+                showCustomMessage("Kulübe katılırken bir ağ hatası oluştu.", "danger");
+            }
+        }
+
+        // Custom message box function (replace alert)
+        function showCustomMessage(message, type = "info") {
+            const messageBox = document.createElement("div");
+            messageBox.className = `alert alert-${type} alert-dismissible fade show fixed-top mx-auto mt-3 text-center rounded-lg shadow-lg`;
+            messageBox.style.maxWidth = "400px";
+            messageBox.style.zIndex = "1050";
+            messageBox.style.left = "0";
+            messageBox.style.right = "0";
+            messageBox.innerHTML = `
+                    <div>${message}</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(messageBox);
+                bsAlert.close();
+            }, 5000); // Mesajı 5 saniye sonra otomatik kapat
+        }
+
+
         async function fetchClubs() {
             try {
                 let url = new URL(CLUBS_API_URL);
@@ -71,7 +168,53 @@
 
                 const response = await fetch(url, { headers });
 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        console.warn('Kulüplere yetkisiz erişim. Token yenileme deneniyor...');
+                        const refreshToken = localStorage.getItem('refreshToken');
+
+                        if (refreshToken) {
+                            console.log("Token yenileme isteği gönderiliyor.");
+                            // API_BASE_URL'in navbar.js'den geldiğini varsayıyoruz
+                            // Eğer navbar.js yoksa veya API_BASE_URL tanımlı değilse, burayı düzeltmelisiniz.
+                            const refreshResponse = await fetch(`${API_BASE_URL}/authentication/refresh`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken })
+                            });
+
+                            if (refreshResponse.ok) {
+                                const newTokens = await refreshResponse.json();
+                                localStorage.setItem('accessToken', newTokens.accessToken);
+                                localStorage.setItem('refreshToken', newTokens.refreshToken);
+                                console.log('Tokenlar başarıyla yenilendi. Kulüp isteği yeniden deneniyor...');
+                                await fetchClubs();
+                                return;
+                            } else {
+                                const errorText = await refreshResponse.text();
+                                console.error('Token yenileme başarısız:', refreshResponse.status, errorText);
+                                localStorage.removeItem('accessToken');
+                                localStorage.removeItem('refreshToken');
+                                localStorage.removeItem('username');
+                                localStorage.removeItem('role');
+                                showCustomMessage('Oturum süresi doldu veya geçersiz. Lütfen tekrar giriş yapın.', "danger");
+                                setTimeout(() => {
+                                    window.location.href = 'login.html';
+                                }, 1500);
+                                return;
+                            }
+                        } else {
+                            showCustomMessage('Kulüpleri görüntülemek için yetkiniz yok veya oturumunuz sona erdi. Lütfen giriş yapın.', "warning");
+                            setTimeout(() => {
+                                window.location.href = 'login.html';
+                            }, 1500);
+                            return;
+                        }
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
 
                 const data = await response.json();
                 const paginationHeader = response.headers.get("X-Pagination");
@@ -79,7 +222,7 @@
                 if (paginationHeader) {
                     const meta = JSON.parse(paginationHeader);
                     totalClubPages = meta.TotalPage;
-                    currentClubPage = meta.CurrentPage + 1; // Çünkü backend'de 0 tabanlı
+                    currentClubPage = meta.CurrentPage ;//burası
                 } else {
                     totalClubPages = 1;
                 }
@@ -105,20 +248,39 @@
                 const col = document.createElement("div");
                 col.className = "col-md-4 mb-4";
 
+                // Tüm kartı sarmalayan <a> etiketini kaldırıldı.
+                // Artık sadece "Detaylar" butonu yönlendirme yapacak.
                 col.innerHTML = `
-                                <div class="card h-100">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">${club.clubName}</h5>
-                                        <p class="card-text">${club.description || "Açıklama yok."}</p>
-                                        <p class="text-muted mt-auto"><i class="fas fa-users me-1"></i> Üye Sayısı: ${club.memberCount ?? 'Bilinmiyor'}</p>
-                                    </div>
-                                    <div class="card-footer text-end bg-light">
-                                        <a href="club-detail.html?id=${club.clubId}" class="btn btn-outline-primary btn-sm">Detay</a>
-                                    </div>
-                                </div>
-                            `;
-
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${club.clubName}</h5>
+                                <p class="card-text">${club.description || "Açıklama yok."}</p>
+                                <p class="text-muted mt-auto"><i class="fas fa-users me-1"></i> Üye Sayısı: ${club.memberCount ?? 'Bilinmiyor'}</p>
+                            </div>
+                            <div class="card-footer text-end bg-light">
+                                <button class="btn btn-primary btn-sm detail-club-btn me-2" data-club-id="${club.clubId}">Detaylar</button>
+                                <button class="btn btn-success btn-sm join-club-btn" data-club-id="${club.clubId}">Kulübe Katıl</button>
+                            </div>
+                        </div>
+                    `;
                 clubList.appendChild(col);
+            });
+
+            // "Kulübe Katıl" butonlarına olay dinleyicileri ekle
+            document.querySelectorAll('.join-club-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Kartın kendisi link olmasa da, gelecekteki olası üst element etkileşimlerini engeller
+                    const clubId = event.target.dataset.clubId;
+                    joinClub(parseInt(clubId));
+                });
+            });
+
+            // Yeni "Detaylar" butonlarına olay dinleyicileri ekle
+            document.querySelectorAll('.detail-club-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const clubId = event.target.dataset.clubId;
+                    window.location.href = `clubdetail.html?id=${clubId}`;
+                });
             });
         }
 
@@ -154,7 +316,6 @@
             fetchClubs();
         });
     </script>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

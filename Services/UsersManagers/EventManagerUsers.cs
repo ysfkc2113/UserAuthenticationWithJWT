@@ -62,10 +62,26 @@ namespace Services.UsersManagers
 
             return (linkResponse: links, metaData: eventsWithMetaData.MetaData);
         }
+
+        public async Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> GetEventsByOneClub(int id, EventParameters eventParameters,bool trackChanges)
+        {
+            eventParameters.IsApproved = true; // sadece onaylı etkinlikleri getir
+
+            var eventsWithMetaData = await _manager
+              .Event
+              .GetEventsByClubIdAsync(id,eventParameters, trackChanges);
+
+            var eventDto = _mapper.Map<IEnumerable<EventDto>>(eventsWithMetaData);
+
+
+            return (eventDto, metaData: eventsWithMetaData.MetaData);
+        }
+
         public async Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges)
         {
             var clubEvent = await GetOneEventByIdAndCheckExists(id, trackChanges);
-            return _mapper.Map<EventDto>(clubEvent);
+            var eventdto = _mapper.Map<EventDto>(clubEvent);
+            return eventdto;
         }
         private async Task<Event> GetOneEventByIdAndCheckExists(int id, bool trackChanges)
         {

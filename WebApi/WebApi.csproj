@@ -38,10 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Media\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\navbar.js" />
   </ItemGroup>
 

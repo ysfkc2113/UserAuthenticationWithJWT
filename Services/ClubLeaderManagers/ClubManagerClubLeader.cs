@@ -23,7 +23,7 @@ namespace Services.ClubLeaderManagers
             _manager = manager;
             _mapper = mapper;
         }
-
+        //lideri olduğu kulübü getirir.
         public async Task<ClubDto> GetOneClubByIdForClubManagerAsync(HttpContext httpContext, bool trackChanges)
         {
             var userName = await GetUserNameByHttpContextAsync(httpContext);

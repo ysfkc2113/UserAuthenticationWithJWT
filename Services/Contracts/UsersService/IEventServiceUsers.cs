@@ -15,5 +15,6 @@ namespace Services.Contracts.UsersService
             bool trackChanges);
         Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges);
         Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> EventsAsync(EventParameters eventParameters,bool trackChanges);
+        Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> GetEventsByOneClub(int id, EventParameters eventParameters, bool trackChanges);
     }
 }

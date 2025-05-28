@@ -17,5 +17,7 @@ namespace Services.Contracts
         Task DeleteClubUserAsync(int id,bool trackChanges);
         Task ChangeClubRoleAsync(AdminClubUserDtoChangeRole adminClubUserDtoChangeRole,bool trackChanges);
         Task CreateClubUserAsync(AdminClubUserDtoInsertion adminClubUserDtoInsertion,bool trackChanges);
+        //member count
+        Task<int> GetAllUsersByClubIdAsync(int id);
     }
 }

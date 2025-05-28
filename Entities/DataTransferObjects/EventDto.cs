@@ -18,8 +18,7 @@ namespace Entities.DataTransferObjects
         public DateTime CreatedTime { get; set; }
         public Club Club { get; set; }// navigator prop
         public int ClubId { get; set; }//fk
-        
-
+        public string ClubClubName { get; set; }
 
     }
 }

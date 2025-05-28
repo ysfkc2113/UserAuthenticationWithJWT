@@ -25,7 +25,7 @@ namespace Presentation.Controllers.ClubManager
             _manager = manager;
         }
 
-
+        //lideri olduğu kulübü getirir.
         [HttpGet]
         public async Task<IActionResult> GetOneClubById()
         {

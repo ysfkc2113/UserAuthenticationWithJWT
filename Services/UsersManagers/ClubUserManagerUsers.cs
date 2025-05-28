@@ -38,11 +38,11 @@ namespace Services.UsersManagers
             var club= await _manager.Club.GetOneClubByIdAsync(id,false);
             if (club is null)
                 throw new Exception("Kulüp bulunamadı.");
-            var my_clubs= await _manager.ClubUser.GetClubsByUserIdAsync(user_club.member.Id,false);
+            var my_clubs= await _manager.ClubUser.GetClubsByUserIdAsync(user_club.Id,false);
             var varmi= my_clubs.Find(x => x.ClubId.Equals(club.ClubId));
             if (varmi is not null)
                 throw new Exception("Zaten üyeliğiniz bulunmaktadır.");
-            _manager.ClubUser.CreateClubUserForUsers(user_club.member.Id, id, trackChanges);
+            _manager.ClubUser.CreateClubUserForUsers(user_club.Id, id, trackChanges);
             await _manager.SaveAsync();
         }
 
@@ -52,7 +52,7 @@ namespace Services.UsersManagers
             var user_club = await GetUserNameByHttpContextAsync(httpContext);
 
             var clubuser = await GetOneClubUserByIdAndCheckExists(id, trackChanges);
-            if (clubuser.UserId != user_club.member.Id)
+            if (clubuser.UserId != user_club.Id)
             {
                 throw new Exception("This user doesn't you.");
             }
@@ -70,11 +70,11 @@ namespace Services.UsersManagers
             GetAllUsersByClubIdForUsersAsync(ClubUserParameters clubUserParameters,HttpContext httpContext, bool trackChanges)
         {
             var user_club = await GetUserNameByHttpContextAsync(httpContext);
-            var my_clubs = await _manager.ClubUser.GetMyClubsByUserIdAsync(user_club.member.Id, clubUserParameters, false);
+            var my_clubs = await _manager.ClubUser.GetMyClubsByUserIdAsync(user_club.Id, clubUserParameters, false);
             var clubs= _mapper.Map<List<AdminClubUserDtoRelations>>( my_clubs);
             return (clubs, my_clubs.MetaData);
         }
-        private async Task<(User member, Club club)> GetUserNameByHttpContextAsync(HttpContext httpContext)
+        private async Task<User> GetUserNameByHttpContextAsync(HttpContext httpContext)
         {
             var user = httpContext.User;
 
@@ -90,10 +90,7 @@ namespace Services.UsersManagers
             {
                 throw new Exception("User ID claim is missing in the JWT token.");
             }
-
-            var club = await _manager.Club.GetOneClubByAcademicianName(userName, false);
-            if (club == null) { throw new Exception("Her hangi bir külübe üye değilsiniz."); }
-            return (member, club);
+            return member;
         }
         private async Task<Club_User> GetOneClubUserByIdAndCheckExists(int id, bool trackChanges)
         {
