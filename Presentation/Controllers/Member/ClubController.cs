@@ -15,7 +15,7 @@ namespace Presentation.Controllers.Member
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Route("api/user/clubs")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ClubController:ControllerBase

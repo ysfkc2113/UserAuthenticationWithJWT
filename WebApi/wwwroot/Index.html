@@ -32,157 +32,8 @@
 </head>
 <body>
 
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">Kulüp Yönetim Sistemi</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="events.html">Etkinlikler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="clubs.html">Kulüpler</a>
-                    </li>
-                    <li class="nav-item dropdown" id="dashboardDropdown" style="display: none;">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dashboard
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownDashboard">
-                            <li><a class="dropdown-item" href="admin-dashboard.html">Admin Dashboard</a></li>
-                            <li><a class="dropdown-item" href="academician-dashboard.html">Academician Dashboard</a></li>
-                            <li><a class="dropdown-item" href="club-manager-dashboard.html">Club Manager Dashboard</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item" id="myClubsNav" style="display: none;">
-                        <a class="nav-link" href="my-clubs.html">Kulüplerim</a>
-                    </li>
-                    <li class="nav-item" id="myEventsNav" style="display: none;">
-                        <a class="nav-link" href="my-events.html">Etkinliklerim</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" id="loginButton">
-                        <a class="btn btn-outline-light" href="login.html">Giriş</a>
-                    </li>
-                    <li class="nav-item dropdown" id="userMenu" style="display: none;">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-1"></i> <span id="usernameDisplay">Kullanıcı Adı</span>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-                            <li><a class="dropdown-item" href="profile.html">Profil</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="logoutButton">Çıkış</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <script>
-        // Set the API base URL - Backend'inizin çalıştığı URL'yi doğru şekilde ayarlayın
-        const API_BASE_URL = 'https://localhost:7222/api';
-
-        // Function to decode JWT payload (JWT'deki kullanıcı bilgilerini okumak için)
-        function decodeJwtPayload(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                console.error("Error decoding JWT payload:", e);
-                return null;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // localStorage'dan token ve kullanıcı bilgilerini al
-            const accessToken = localStorage.getItem('accessToken');
-            let username = localStorage.getItem('username');
-            let role = localStorage.getItem('role');
-
-            console.log("Index.html yüklendi.");
-            console.log("localStorage'dan okunan accessToken:", accessToken ? accessToken.substring(0, 30) + '...' : 'Yok'); // İlk 30 karakteri göster
-            console.log("localStorage'dan okunan username:", username);
-            console.log("localStorage'dan okunan role:", role);
-
-            // Eğer accessToken varsa ancak username veya role eksikse, token'dan çözmeye çalış
-            if (accessToken && (!username || !role)) {
-                const payload = decodeJwtPayload(accessToken);
-                if (payload) {
-                    // Claim isimleri backend'inizdeki JWT oluşturma ile birebir eşleşmeli
-                    username = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-                    const roles = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-                    role = Array.isArray(roles) ? roles[0] : roles; // Birden fazla rol varsa ilkini al
-                    localStorage.setItem('username', username);
-                    localStorage.setItem('role', role);
-                    console.log("Token'dan çözümlenen ve kaydedilen username:", username);
-                    console.log("Token'dan çözümlenen ve kaydedilen role:", role);
-                }
-            }
-
-            // Navbar'ı kullanıcının oturum durumuna ve rolüne göre ayarla
-            function setupNavbar() {
-                if (accessToken) {
-                    document.getElementById('loginButton').style.display = 'none'; // Giriş butonu gizle
-                    document.getElementById('userMenu').style.display = 'block'; // Kullanıcı menüsü göster
-                    document.getElementById('usernameDisplay').textContent = username || 'Kullanıcı'; // Kullanıcı adını göster
-
-                    // Dashboard görünürlüğü rollere göre. Backend'deki rol isimlerinin büyük/küçük harf duyarlılığına dikkat edin.
-                    const dashboardDropdown = document.getElementById('dashboardDropdown');
-                    if (role === 'Admin' || role === 'Academician' || role === 'ClubManager') {
-                        dashboardDropdown.style.display = 'block';
-                    } else {
-                        dashboardDropdown.style.display = 'none';
-                    }
-
-                    // Kulüplerim/Etkinliklerim görünürlüğü rollere göre
-                    const myClubsNav = document.getElementById('myClubsNav');
-                    const myEventsNav = document.getElementById('myEventsNav');
-                    if (role === 'ClubManager' || role === 'Academician' || role === 'User') { // 'User' rolü de kendi kulüp/etkinliklerini görebilir
-                        myClubsNav.style.display = 'block';
-                        myEventsNav.style.display = 'block';
-                    } else {
-                        myClubsNav.style.display = 'none';
-                        myEventsNav.style.display = 'none';
-                    }
-                } else {
-                    // Token yoksa, giriş butonunu göster ve diğer menüleri gizle
-                    document.getElementById('loginButton').style.display = 'block';
-                    document.getElementById('userMenu').style.display = 'none';
-                    document.getElementById('dashboardDropdown').style.display = 'none';
-                    document.getElementById('myClubsNav').style.display = 'none';
-                    document.getElementById('myEventsNav').style.display = 'none';
-                }
-            }
-
-            setupNavbar(); // Navbar'ı hemen ayarla
-
-            // Çıkış (Logout) butonu dinleyicisi
-            document.getElementById('logoutButton').addEventListener('click', (e) => {
-                e.preventDefault();
-                // localStorage'dan tüm token ve kullanıcı bilgilerini sil
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                localStorage.removeItem('username');
-                localStorage.removeItem('role');
-                window.location.href = 'login.html'; // Giriş sayfasına yönlendir
-            });
-
-            // DOM yüklendikten ve navbar ayarlandıktan sonra etkinlikleri getir
-            fetchEvents();
-        });
-    </script>
+    <script src="navbar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <section class="hero">
         <div class="container">
@@ -197,38 +48,36 @@
         <div class="row g-4" id="event-cards-container"></div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // API_BASE_URL ilk script bloğunda tanımlanmıştır.
+        // API_BASE_URL is now defined in navbar.js, so it's globally available if navbar.js loads first.
+        // Or you can redefine it here if you need it specifically for this page's scripts.
+        const API_BASE_URL = 'https://localhost:7222/api';
+
 
         // Etkinlikleri getiren asenkron fonksiyon
         async function fetchEvents() {
             try {
-                const accessToken = localStorage.getItem('accessToken'); // accessToken'ı al
+                const accessToken = localStorage.getItem('accessToken');
                 const headers = {
                     'Content-Type': 'application/json'
                 };
 
                 if (accessToken) {
-                    // Eğer accessToken varsa, Authorization başlığını ekle
                     headers['Authorization'] = `Bearer ${accessToken}`;
                     console.log("Etkinlik isteği için Authorization başlığı gönderiliyor.");
                 } else {
                     console.warn("accessToken bulunamadı. Etkinlik isteği yetkilendirilmemiş olarak gönderilecek.");
                 }
 
-                // Etkinlikleri almak için backend'e istek gönder
                 const response = await fetch(`${API_BASE_URL}/user/events`, { headers: headers });
 
                 if (!response.ok) {
-                    // Yanıt HTTP 2xx değilse hata durumunu ele al
                     if (response.status === 401) {
                         console.warn('Etkinliklere yetkisiz erişim. Token yenileme deneniyor...');
-                        const refreshToken = localStorage.getItem('refreshToken'); // refreshToken'ı al
+                        const refreshToken = localStorage.getItem('refreshToken');
 
-                        if (accessToken) {
+                        if (refreshToken) { // Check for refreshToken presence
                             console.log("Token yenileme isteği gönderiliyor.");
-                            // Token yenileme endpoint'ine istek gönder
                             const refreshResponse = await fetch(`${API_BASE_URL}/authentication/refresh`, {
                                 method: 'POST',
                                 headers: {
@@ -238,19 +87,15 @@
                             });
 
                             if (refreshResponse.ok) {
-                                // Yenileme başarılıysa, yeni tokenları kaydet
                                 const newTokens = await refreshResponse.json();
                                 localStorage.setItem('accessToken', newTokens.accessToken);
                                 localStorage.setItem('refreshToken', newTokens.refreshToken);
                                 console.log('Tokenlar başarıyla yenilendi. Etkinlik isteği yeniden deneniyor...');
-                                // Etkinlikleri yeni token ile tekrar getir
                                 await fetchEvents();
-                                return; // İlk 401 işlemini sonlandır
+                                return;
                             } else {
-                                // Yenileme başarısız olursa
                                 const errorText = await refreshResponse.text();
                                 console.error('Token yenileme başarısız:', refreshResponse.status, errorText);
-                                // Tokenları sil ve login sayfasına yönlendir
                                 localStorage.removeItem('accessToken');
                                 localStorage.removeItem('refreshToken');
                                 localStorage.removeItem('username');
@@ -260,27 +105,23 @@
                                 return;
                             }
                         } else {
-                            // refreshToken yoksa, direkt login sayfasına yönlendir
                             alert('Etkinlikleri görüntülemek için yetkiniz yok veya oturumunuz sona erdi. Lütfen giriş yapın.');
                             window.location.href = 'login.html';
                             return;
                         }
                     }
-                    // Diğer HTTP hataları için genel hata fırlat
                     throw new Error(`HTTP hatası! Durum: ${response.status}`);
                 }
 
-                // Yanıt başarılıysa etkinlikleri işle
                 const events = await response.json();
                 const container = document.getElementById('event-cards-container');
-                container.innerHTML = ''; // Önceki içeriği temizle
+                container.innerHTML = '';
 
                 if (events.length === 0) {
                     container.innerHTML = '<p class="text-center w-100">Henüz yaklaşan bir etkinlik bulunmamaktadır.</p>';
                     return;
                 }
 
-                // Her bir etkinlik için kart oluştur
                 events.forEach(event => {
                     const eventDate = new Date(event.eventDate).toLocaleDateString('tr-TR', {
                         year: 'numeric',
@@ -289,17 +130,17 @@
                     });
 
                     container.innerHTML += `
-                                                <div class="col-md-4 mb-4">
-                                                    <div class="card event-card h-100 shadow-sm">
-                                                        <img src="${event.imageUrl || 'https://source.unsplash.com/400x200/?event'}" class="card-img-top" alt="${event.title}">
-                                                        <div class="card-body d-flex flex-column">
-                                                            <h5 class="card-title">${event.title}</h5>
-                                                            <p class="card-text"><strong>Yer:</strong> ${event.location}</p>
-                                                            <p class="card-text"><strong>Tarih:</strong> ${eventDate}</p>
-                                                            <p class="card-text"><strong>Kulüp:</strong> ${event.clubName || 'Belirtilmemiş'}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>`;
+                            <div class="col-md-4 mb-4">
+                                <div class="card event-card h-100 shadow-sm">
+                                    <img src="${event.imageUrl || 'https://source.unsplash.com/400x200/?event'}" class="card-img-top" alt="${event.title}">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">${event.title}</h5>
+                                        <p class="card-text"><strong>Yer:</strong> ${event.location}</p>
+                                        <p class="card-text"><strong>Tarih:</strong> ${eventDate}</p>
+                                        <p class="card-text"><strong>Kulüp:</strong> ${event.clubName || 'Belirtilmemiş'}</p>
+                                    </div>
+                                </div>
+                            </div>`;
                 });
             } catch (error) {
                 console.error('Etkinlikler yüklenirken bir hata oluştu:', error);
@@ -307,6 +148,8 @@
                     '<p class="text-center w-100 text-danger">Etkinlikler yüklenemedi. Lütfen daha sonra tekrar deneyin.</p>';
             }
         }
+        // Call fetchEvents after the DOM is loaded
+        document.addEventListener('DOMContentLoaded', fetchEvents);
     </script>
 </body>
 </html>

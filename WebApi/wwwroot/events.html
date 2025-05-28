@@ -18,61 +18,7 @@
     </style>
 </head>
 <body>
-
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">Kulüp Yönetim Sistemi</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="events.html">Etkinlikler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="clubs.html">Kulüpler</a>
-                    </li>
-                    <li class="nav-item dropdown" id="dashboardDropdown" style="display: none;">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dashboard
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownDashboard">
-                            <li><a class="dropdown-item" href="admin-dashboard.html">Admin Dashboard</a></li>
-                            <li><a class="dropdown-item" href="academician-dashboard.html">Academician Dashboard</a></li>
-                            <li><a class="dropdown-item" href="club-manager-dashboard.html">Club Manager Dashboard</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item" id="myClubsNav" style="display: none;">
-                        <a class="nav-link" href="my-clubs.html">Kulüplerim</a>
-                    </li>
-                    <li class="nav-item" id="myEventsNav" style="display: none;">
-                        <a class="nav-link" href="my-events.html">Etkinliklerim</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" id="loginButton">
-                        <a class="btn btn-outline-light" href="login.html">Giriş</a>
-                    </li>
-                    <li class="nav-item dropdown" id="userMenu" style="display: none;">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-1"></i> <span id="usernameDisplay">Kullanıcı Adı</span>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-                            <li><a class="dropdown-item" href="profile.html">Profil</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="logoutButton">Çıkış</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+    <script src="navbar.js"></script>
     <script>
         // API Base URL - Backend API'nizin doğru adresini kontrol edin
         const API_BASE_URL = 'https://localhost:7222/api';
@@ -315,18 +261,18 @@
                 const date = new Date(event.eventDate).toLocaleDateString("tr-TR");
 
                 eventList.innerHTML += `
-                                                <div class="col-md-4 mb-4">
-                                                    <div class="card h-100 shadow-sm">
-                                                        <div class="card-body d-flex flex-column">
-                                                            <h5 class="card-title">${event.name}</h5>
-                                                            <h6 class="card-subtitle mb-2 text-muted">${event.clubName ?? ""}</h6>
-                                                            <p class="card-text">${event.description ?? ""}</p>
-                                                            <p class="card-text"><small class="text-muted">Tarih: ${date}</small></p>
-                                                            <a href="event-detail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
+                                                    <div class="col-md-4 mb-4">
+                                                        <div class="card h-100 shadow-sm">
+                                                            <div class="card-body d-flex flex-column">
+                                                                <h5 class="card-title">${event.name}</h5>
+                                                                <h6 class="card-subtitle mb-2 text-muted">${event.clubName ?? ""}</h6>
+                                                                <p class="card-text">${event.description ?? ""}</p>
+                                                                <p class="card-text"><small class="text-muted">Tarih: ${date}</small></p>
+                                                                <a href="event-detail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            `;
+                                                `;
             });
         }
 
