@@ -18,7 +18,7 @@ namespace Presentation.Controllers.ClubManager
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    //[Authorize(Roles = "Club Manager")]
+    [Authorize(Roles = "Club Manager")]
     [Route("api/clubmanager/events")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class EventsController : ControllerBase
@@ -31,70 +31,19 @@ namespace Presentation.Controllers.ClubManager
         }
 
 
-        [HttpGet("all")]
+        
+        [HttpGet]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-        public async Task<IActionResult> GetAllEvents([FromQuery] EventParameters eventParameters)
+        public async Task<IActionResult> GetAllEventsMyClub([FromQuery] ClubManagerEventParameters clubManagerEventParameters)
         {
-            eventParameters.IsApproved = true;//kullanıcılar sadece onaylanmış etkinlikleri görebilir.
-            var linkParameters = new LinkParameters()
-            {
-                EventParameters = eventParameters,
-                HttpContext = HttpContext
-            };
-            
-            // 1. get the httpcontext
-            var httpContext = HttpContext;
-            if (httpContext == null)
-            {
-                return StatusCode(500, "httpcontext is not available.");
-            }
-            // 2. Get the User from HttpContext
-            var user = httpContext.User;
-            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
-            {
-                return Unauthorized("User is not authenticated.");
-            }
-            // 3. Get the User's ID from the JWT token's claims
-            // var userId = user.FindFirst(ClaimTypes.Name)?.Value;
-            var userId = "6891d6cb-f4e2-4f5c-a91e-398b32b09255";
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID claim is missing in the JWT token.");
-            }
-             //hangi kulube üyu bul ıd
-             //bu ıd ile etkinlikleri getir
-
             var result = await _manager
-                .EventService
-                .GetAllEventsAsync(linkParameters, false);
+               .EventServiceClubLeader
+               .GetAllEventsForClubManagerAsync(clubManagerEventParameters, HttpContext, false);
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(result.metaData));
 
-            return result.linkResponse.HasLinks ?
-                Ok(result.linkResponse.LinkedEntities) :
-                Ok(result.linkResponse.ShapedEntities);
-
-        }
-        [HttpGet("myclub")]
-        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-        public async Task<IActionResult> GetAllEventsMyClub([FromQuery] AcademicianEventParameters academicianEventParameters)
-        {
-            var linkParameters = new LinkParameters()
-            {
-                AcademicianEventParameters = academicianEventParameters,
-                HttpContext = HttpContext
-            };
-            var result = await _manager
-              .EventServiceClubLeader
-              .GetAllEventsForClubManagerAsync(linkParameters, false);
-
-            Response.Headers.Add("X-Pagination",
-                JsonSerializer.Serialize(result.metaData));
-
-            return result.linkResponse.HasLinks ?
-                Ok(result.linkResponse.LinkedEntities) :
-                Ok(result.linkResponse.ShapedEntities);
+            return Ok(result.eventDto);
         }
 
         [HttpGet("{id:int}")]

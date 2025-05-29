@@ -102,8 +102,8 @@ namespace Services.ClubLeaderManagers
                 throw new Exception("User ID claim is missing in the JWT token.");
             }
 
-            var club = await _manager.Club.GetOneClubByAcademicianName(userName, false);
-            if (club == null) { throw new Exception("Her hangi bir külübe danışman değilsiniz."); }
+            var club = await _manager.Club.GetOneClubByClubManagerName(userName, false);
+            if (club == null) { throw new Exception("Her hangi bir külüb Yöneticisi değilsiniz."); }
             return (userName, club);
         }
         private async Task<Club_User> GetOneClubUserByIdAndCheckExists(int id, bool trackChanges)

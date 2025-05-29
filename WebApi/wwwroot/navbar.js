@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownDashboard">
                                 <li><a class="dropdown-item" href="admin-dashboard.html">Admin Dashboard</a></li>
                                 <li><a class="dropdown-item" href="academician-dashboard.html">Academician Dashboard</a></li>
-                                <li><a class="dropdown-item" href="club-manager-dashboard.html">Club Manager Dashboard</a></li>
+                                <li><a class="dropdown-item" href="clubManagerDashboard.html">Club Manager Dashboard</a></li>
                             </ul>
                         </li>
                         <li class="nav-item" id="myEventsNav" style="display: none;">
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('usernameDisplay').textContent = username || 'Kullanıcı';
 
             const dashboardDropdown = document.getElementById('dashboardDropdown');
-            if (role === 'Admin' || role === 'Academician' || role === 'ClubManager') {
+            if (role === 'Admin' || role === 'Academician' || role === 'Club Manager') {
                 dashboardDropdown.style.display = 'block';
             } else {
                 dashboardDropdown.style.display = 'none';
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 'Kulüplerim' bağlantısı artık her zaman görünür olduğu için bu kontrol kaldırıldı.
             const myEventsNav = document.getElementById('myEventsNav');
-            if (role === 'ClubManager' || role === 'Academician' || role === 'User') {
+            if (role === 'Club Manager' || role === 'Academician' || role === 'User') {
                 myEventsNav.style.display = 'block';
             } else {
                 myEventsNav.style.display = 'none';

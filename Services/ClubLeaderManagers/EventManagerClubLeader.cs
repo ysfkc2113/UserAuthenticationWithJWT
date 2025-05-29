@@ -31,25 +31,22 @@ namespace Services.ClubLeaderManagers
             _eventLinks = eventLinks;
         }
 
-        public async Task<(LinkResponse linkResponse, MetaData metaData)> GetAllEventsForClubManagerAsync(LinkParameters linkParameters, bool trackChanges)
+        public async Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> 
+            GetAllEventsForClubManagerAsync(ClubManagerEventParameters clubManagerEventParameters, HttpContext httpContext, bool trackChanges)
         {
-            var userName = await GetUserNameByHttpContextAsync(linkParameters.HttpContext);
+            var userName_club = await GetUserNameAndCLubByHttpContextAsync(httpContext);
             //EventParameters eventParameters = _mapper.Map<EventParameters>(linkParameters.AcademicianEventParameters);
 
-            var club = await _manager.Club.GetOneClubByClubManagerName(userName, trackChanges);
-            if (club == null) { throw new Exception("Her hangi bir külüpte yönetici değilsiniz."); }
-
-            //eventParameters.ClubId = club.ClubId;
+           
+  
             var eventsWithMetaData = await _manager
                 .Event
-                .GetAllEventsForClubManagerAsync(linkParameters.ClubManagerEventParameters, club.ClubId, trackChanges);
+                .GetAllEventsForClubManagerAsync(clubManagerEventParameters, userName_club.club.ClubId, trackChanges);
 
             var eventDto = _mapper.Map<IEnumerable<EventDto>>(eventsWithMetaData);
-            var links = _eventLinks.TryGenerateLinks(eventDto,
-                linkParameters.ClubManagerEventParameters.Fields,
-                linkParameters.HttpContext);
 
-            return (linkResponse: links, metaData: eventsWithMetaData.MetaData);
+
+            return ( eventDto, metaData: eventsWithMetaData.MetaData);
 
         }
         public async Task<EventDto> CreateOneEventForClubLeaderAsync(AcademicianEventDtoForInsertion academicianEventDtoForInsertion, HttpContext httpContext, bool trackChanges)
@@ -97,6 +94,11 @@ namespace Services.ClubLeaderManagers
             _manager.Event.UpdateOneEventForClubManager(clubEvent);
             await _manager.SaveAsync();
         }
+
+
+
+
+
         private async Task<string> GetUserNameByHttpContextAsync(HttpContext httpContext)
         {
             var user = httpContext.User;
@@ -113,6 +115,26 @@ namespace Services.ClubLeaderManagers
                 throw new Exception("User ID claim is missing in the JWT token.");
             }
             return userName;
+        }
+        private async Task<(string userName, Club club)> GetUserNameAndCLubByHttpContextAsync(HttpContext httpContext)
+        {
+            var user = httpContext.User;
+
+            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+            //var userName = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userName = user.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                throw new Exception("User ID claim is missing in the JWT token.");
+            }
+
+            var club = await _manager.Club.GetOneClubByClubManagerName(userName, false);
+            if (club == null) { throw new Exception("Her hangi bir külüpte yönetici değilsiniz."); }
+            return (userName, club);
         }
         private async Task<Event> GetOneEventByIdAndCheckExists(int id, bool trackChanges)
         {

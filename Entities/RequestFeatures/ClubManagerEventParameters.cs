@@ -8,6 +8,8 @@ namespace Entities.RequestFeatures
 {
     public class ClubManagerEventParameters:RequestParameters
     {
+
+
         public DateTime? StartDate { get; set; } = DateTime.MinValue;
         public DateTime? EndDate { get; set; } = DateTime.MaxValue;
         public bool ValidDateRange => !StartDate.HasValue || !EndDate.HasValue || EndDate > StartDate;

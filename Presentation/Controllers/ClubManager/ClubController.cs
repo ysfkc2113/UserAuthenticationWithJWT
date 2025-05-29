@@ -1,4 +1,5 @@
 ﻿using Entities.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
 using Services.Contracts;
@@ -13,7 +14,7 @@ namespace Presentation.Controllers.ClubManager
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    // [Authorize(Roles = "Club Manager")]
+    [Authorize(Roles = "Club Manager")]
     [Route("api/clubmanager/clubs")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ClubController : ControllerBase
@@ -32,6 +33,7 @@ namespace Presentation.Controllers.ClubManager
             var club = await _manager.ClubServiceClubLeader.GetOneClubByIdForClubManagerAsync(HttpContext, true);
             return Ok(club);
         }
+
         [HttpPut]
         public async Task<IActionResult> UpdateClub([FromBody] ClubManagerDtoForUpdate clubManagerDtoForUpdate)
         {
