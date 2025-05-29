@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <li class="nav-item">
                             <a class="nav-link" href="clubs.html">Kulüpler</a>
                         </li>
+                        <li class="nav-item"> <a class="nav-link" href="my-clubs.html">Kulüplerim</a>
+                        </li>
                         <li class="nav-item dropdown" id="dashboardDropdown" style="display: none;">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Dashboard
@@ -46,9 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <li><a class="dropdown-item" href="academician-dashboard.html">Academician Dashboard</a></li>
                                 <li><a class="dropdown-item" href="club-manager-dashboard.html">Club Manager Dashboard</a></li>
                             </ul>
-                        </li>
-                        <li class="nav-item" id="myClubsNav" style="display: none;">
-                            <a class="nav-link" href="my-clubs.html">Kulüplerim</a>
                         </li>
                         <li class="nav-item" id="myEventsNav" style="display: none;">
                             <a class="nav-link" href="my-events.html">Etkinliklerim</a>
@@ -114,20 +113,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 dashboardDropdown.style.display = 'none';
             }
 
-            const myClubsNav = document.getElementById('myClubsNav');
+            // 'Kulüplerim' bağlantısı artık her zaman görünür olduğu için bu kontrol kaldırıldı.
             const myEventsNav = document.getElementById('myEventsNav');
             if (role === 'ClubManager' || role === 'Academician' || role === 'User') {
-                myClubsNav.style.display = 'block';
                 myEventsNav.style.display = 'block';
             } else {
-                myClubsNav.style.display = 'none';
                 myEventsNav.style.display = 'none';
             }
         } else {
             document.getElementById('loginButton').style.display = 'block';
             document.getElementById('userMenu').style.display = 'none';
             document.getElementById('dashboardDropdown').style.display = 'none';
-            document.getElementById('myClubsNav').style.display = 'none';
+            // 'Kulüplerim' bağlantısı artık her zaman görünür olduğu için bu kontrol kaldırıldı.
             document.getElementById('myEventsNav').style.display = 'none';
         }
     }

@@ -1,17 +1,11 @@
-﻿using Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Entities.DataTransferObjects
+﻿namespace Entities.DataTransferObjects
 {
-    public record AdminClubUserDtoRelations
+    public record MemberClubUserDtoRelations
     {
         public int Id { get; set; }
         //public Club Club { get; set; }//fk club
         public string ClubClubName { get; set; }
+        public string ClubDescription { get; set; }
         public int ClubId { get; set; }
         //public User User { get; set; }//fk user 
         public string UserFirstName { get; set; }

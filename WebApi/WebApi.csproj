@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\navbar.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\userregister.html" />
   </ItemGroup>
 
   <ItemGroup>

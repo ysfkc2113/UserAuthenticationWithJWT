@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - Kulüp Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .register-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <script src="navbar.js"></script>
+
+    <div class="container">
+        <div class="register-container">
+            <h2 class="text-center mb-4">Kayıt Ol</h2>
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">Adınız</label>
+                    <input type="text" class="form-control" id="firstName" placeholder="Adınızı girin123" required>
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Soyadınız</label>
+                    <input type="text" class="form-control" id="lastName" placeholder="Soyadınızı girin" required>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Kullanıcı Adı</label>
+                    <input type="text" class="form-control" id="username" placeholder="Kullanıcı adı belirleyin" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-posta Adresi</label>
+                    <input type="email" class="form-control" id="email" placeholder="email@example.com" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Şifre</label>
+                    <input type="password" class="form-control" id="password" placeholder="Şifrenizi belirleyin" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Şifre Tekrar</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Şifrenizi tekrar girin" required>
+                </div>
+                <div class="d-grid gap-2 mb-3">
+                    <button type="submit" class="btn btn-success">Kayıt Ol</button>
+                </div>
+                <p class="text-center mt-3">Zaten hesabınız var mı? <a href="login.html">Giriş Yapın</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // API temel URL'si - Backend'inizin çalıştığı URL'yi doğru şekilde ayarlayın
+        //const API_BASE_URL = 'https://localhost:7222/api';
+
+        document.getElementById('registerForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const userName = document.getElementById('username').value; // Backend DTO'daki userName ile eşleşmeli
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Şifreler uyuşmuyor!');
+                return;
+            }
+
+            const userForRegistration = {
+                firstName: firstName,
+                lastName: lastName,
+                userName: userName, // DTO'daki property adı
+                email: email,
+                password: password
+            };
+
+            // Bu logu ekledim: Eğer bu konsolda görünürse, JavaScript kodu buraya kadar çalışıyor demektir.
+            console.log('Kayıt isteği gönderiliyor:', userForRegistration);
+
+            try {
+                // HATA BURADAYDI: JSON.stringify içinde yorum olmamalıydı. userForRegistration objesi doğrudan kullanılmalı.
+                const response = await fetch(`${API_BASE_URL}/authentication/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userForRegistration)
+                });
+
+                if (response.status === 201) { // Başarılı kayıt için 201 Created beklenir
+                    alert('Kaydınız başarıyla tamamlandı! Şimdi giriş yapabilirsiniz.');
+                    window.location.href = 'login.html'; // Giriş sayfasına yönlendir
+                } else if (response.status === 400) { // Hata durumunda 400 Bad Request
+                    const errorData = await response.json();
+                    let errorMessage = 'Kayıt başarısız:';
+                    if (errorData && typeof errorData === 'object') {
+                        if (errorData.errors) { // Model validation errors from ASP.NET Core
+                            for (const key in errorData.errors) {
+                                errorData.errors[key].forEach(error => {
+                                    errorMessage += `\n- ${error}`;
+                                });
+                            }
+                        } else { // Other errors from backend
+                            for (const key in errorData) {
+                                if (Array.isArray(errorData[key])) {
+                                    errorData[key].forEach(error => {
+                                        errorMessage += `\n- ${error.description || error}`;
+                                    });
+                                } else if (typeof errorData[key] === 'string' && key !== 'type' && key !== 'title' && key !== 'status' && key !== 'traceId') {
+                                    errorMessage += `\n- ${errorData[key]}`;
+                                }
+                            }
+                        }
+                    } else if (errorData.message) {
+                        errorMessage += `\n- ${errorData.message}`;
+                    } else {
+                        errorMessage += `\n- Bilinmeyen bir hata oluştu.`;
+                    }
+                    alert(errorMessage);
+                } else {
+                    alert(`Bir hata oluştu: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Kayıt hatası:', error);
+                alert('Sunucu ile iletişimde bir hata oluştu, lütfen tekrar deneyin.');
+            }
+        });
+    </script>
+</body>
+</html>

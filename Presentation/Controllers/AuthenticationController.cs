@@ -43,8 +43,9 @@ namespace Presentation.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        //[Consumes("application/json", "application/json-patch+json")]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistrationDto)
         {
             var result = await _service

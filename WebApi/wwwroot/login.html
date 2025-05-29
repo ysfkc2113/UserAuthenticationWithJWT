@@ -114,7 +114,7 @@
 
                 </div>
 
-                <p class="text-center mt-3">Hesabınız yok mu? <a href="register.html">Kayıt Olun</a></p>
+                <p class="text-center mt-3">Hesabınız yok mu? <a href="userregister.html">Kayıt Olun</a></p>
 
             </form>
 
@@ -154,28 +154,26 @@
                 })
                 .then(data => {
                     if (data.accessToken && data.refreshToken) {
-                        setAuthTokens(data.accessToken, data.refreshToken); // Burası çağrılıyor mu?
+                        setAuthTokens(data.accessToken, data.refreshToken);
 
-                        // Kullanıcı adı ve rolü de kaydet (token'dan çözerek)
                         try {
                             const payload = JSON.parse(atob(data.accessToken.split('.')[1]));
                             localStorage.setItem('username', payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]);
-                            const roles = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-                            localStorage.setItem('role', Array.isArray(roles) ? roles[0] : roles);
-                            localStorage.setItem('accessToken', accessToken); // BURADA KAYDEDİYORUZ
-                            localStorage.setItem('refreshToken', refreshToken); // BURADA KAYDEDİYORUZ
+                            const role = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+                            localStorage.setItem('role', role); // ARTIK DİZİ DEĞİL
                         } catch (e) {
                             console.error("Failed to parse token payload during login:", e);
-                            localStorage.setItem('username', username); // Fallback
-                            //localStorage.setItem('role', 'user'); // Fallback
+                            localStorage.setItem('username', username); // fallback
+                            localStorage.setItem('role', 'user');        // fallback
                         }
 
                         alert('Giriş başarılı!');
-                        window.location.href = 'index.html'; // Buradan yönlendiriyoruz
+                        window.location.href = 'index.html';
                     } else {
                         alert('Giriş başarısız: Sunucudan token alınamadı.');
                     }
                 })
+
                 .catch(error => {
                     console.error('Giriş hatası:', error);
                     alert('Bir hata oluştu: ' + error.message);

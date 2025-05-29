@@ -17,11 +17,12 @@ namespace Services.AdminManagers
         private readonly Lazy<IClubService> _clubService;
         private readonly IRepositoryManager _manager;
 
-        public UserRoleManager(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, Lazy<IClubService> clubService)
+        public UserRoleManager(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, Lazy<IClubService> clubService, IRepositoryManager manager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _clubService = clubService;
+            _manager = manager;
         }
 
         public async Task<List<string>> GetRolesByUserIdAsync(string userName)

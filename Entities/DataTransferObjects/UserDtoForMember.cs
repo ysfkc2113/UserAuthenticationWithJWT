@@ -12,8 +12,8 @@ namespace Entities.DataTransferObjects
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? UserName { get; set; }
-        public MailAddress? Email { get; set; }
+        //public string? UserName { get; set; }
+        public  MailAddress? Email { get; set; }
         public string? PhoneNumber { get; set; }
         public string? ProfilPhotoPath { get; set; }
         public DateTime CreatedTime { get; set; }

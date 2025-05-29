@@ -66,13 +66,13 @@ namespace Services.UsersManagers
 
         }
 
-        public async Task<(IEnumerable<AdminClubUserDtoRelations> club_Users, MetaData metaData)>
+        public async Task<(IEnumerable<MemberClubUserDtoRelations> memberClubUserDtoRelations, MetaData metaData)>
             GetAllUsersByClubIdForUsersAsync(ClubUserParameters clubUserParameters,HttpContext httpContext, bool trackChanges)
         {
             var user_club = await GetUserNameByHttpContextAsync(httpContext);
             var my_clubs = await _manager.ClubUser.GetMyClubsByUserIdAsync(user_club.Id, clubUserParameters, false);
-            var clubs= _mapper.Map<List<AdminClubUserDtoRelations>>( my_clubs);
-            return (clubs, my_clubs.MetaData);
+            var memberClubUserDtoRelations = _mapper.Map<List<MemberClubUserDtoRelations>>( my_clubs);
+            return (memberClubUserDtoRelations, my_clubs.MetaData);
         }
         private async Task<User> GetUserNameByHttpContextAsync(HttpContext httpContext)
         {

@@ -36,13 +36,16 @@ namespace Services
 
         public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
         {
+
             var user = _mapper.Map<User>(userForRegistrationDto);
+
             user.CreatedTime = DateTime.Now;
             var result = await _userManager
                 .CreateAsync(user, userForRegistrationDto.Password);
+            var roles = new List<string> { "User" };
 
             if (result.Succeeded)
-                await _userManager.AddToRolesAsync(user, userForRegistrationDto.Roles);
+                await _userManager.AddToRolesAsync(user, roles);
             return result;
         }
 
@@ -113,19 +116,24 @@ namespace Services
         {
             var claims = new List<Claim>()
             {
-              //  new Claim(ClaimTypes.NameIdentifier, _user.Id),
                 new Claim(ClaimTypes.Name, _user.UserName)
 
             };
-            var id = _user.Id;
-            var user = _user;
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, id));
- 
-            var roles = await _userManager.GetRolesAsync(user);
-            foreach (var role in roles)
+
+            var roles = await _userManager.GetRolesAsync(_user);
+
+
+            // Rol öncelik sıralaması
+            var rolePriority = new List<string> { "Admin", "Academician", "Club Manager", "User" };
+
+            // Kullanıcının rollerinden en yüksek önceliğe sahip olanı bul
+            string? selectedRole = rolePriority.FirstOrDefault(p => roles.Contains(p));
+
+            if (selectedRole != null)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes.Role, selectedRole));
             }
+
             return claims;
         }
 

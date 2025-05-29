@@ -87,6 +87,7 @@
 
     <script>
         // API_BASE_URL ve decodeJwtPayload, navbar.js'ten gelmektedir.
+        const localUsername = localStorage.getItem('username'); // localStorage'dan kullanıcı adını çek
 
         // Profil verilerini yükleme
         async function fetchProfileData() {
@@ -152,22 +153,25 @@
                 // HTML elementlerini doldur
                 document.getElementById('profileImage').src = profileData.profilPhotoPath || 'https://via.placeholder.com/150';
                 document.getElementById('profileName').textContent = `${profileData.firstName || ''} ${profileData.lastName || ''}`;
-                document.getElementById('profileUsername').textContent = `@${profileData.userName || 'Bilinmiyor'}`;
+
+                // BURADAKİ DEĞİŞİKLİK: profileUsername'i API'dan gelen userName yerine localStorage'dan veya JWT'den alınanla doldur
+                document.getElementById('profileUsername').textContent = `@${localUsername || 'Bilinmiyor'}`; // LOCALSTORAGE'DAN ALINDI
+
                 document.getElementById('firstName').value = profileData.firstName || '';
                 document.getElementById('lastName').value = profileData.lastName || '';
-                document.getElementById('email').value = profileData.email || ''; // MailAddress objesinden direkt string alacak
+                document.getElementById('email').value = profileData.email?.address || '';
                 document.getElementById('phone').value = profileData.phoneNumber || '';
                 document.getElementById('createdTime').value = profileData.createdTime ? new Date(profileData.createdTime).toLocaleDateString('tr-TR') : 'Bilinmiyor';
                 document.getElementById('roles').value = profileData.roleNames ? profileData.roleNames.join(', ') : 'Bilinmiyor';
 
-                // Hakkımda alanı DTO'da yok, bu yüzden boş bırakılacak veya kaldırılabilir
-                document.getElementById('bio').value = '';
+                document.getElementById('bio').value = ''; // DTO'da olmadığı için boş bırakılıyor
 
             } catch (error) {
                 console.error('Profil verileri yüklenirken bir hata oluştu:', error);
                 document.querySelector('.container').innerHTML = '<p class="text-center text-danger">Profil verileri yüklenemedi. Lütfen daha sonra tekrar deneyin.</p>';
             }
         }
+        
 
         // Profil düzenleme işlevselliği
         const editProfileBtn = document.getElementById('editProfileBtn');

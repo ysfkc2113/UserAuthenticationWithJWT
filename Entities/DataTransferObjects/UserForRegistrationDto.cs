@@ -18,7 +18,7 @@ namespace Entities.DataTransferObjects
         public string? PhoneNumber { get; init; }
         [Required(ErrorMessage ="Password is required.")]
         public string? Password { get; init; }
-        public ICollection<string> Roles { get; init; }
+        //public ICollection<string> Roles { get; init; }  erkrandan rol almıyoruz otomatik user oluyorlar.
 
     }
 }

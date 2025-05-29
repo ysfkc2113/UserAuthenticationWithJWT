@@ -35,18 +35,19 @@ namespace Presentation.Controllers.Member
             var result = await _manager.ClubUserServiceUsers.GetAllUsersByClubIdForUsersAsync(clubUserParameters, HttpContext, false);
             Response.Headers.Add("X-Pagination",
               JsonSerializer.Serialize(result.metaData));
-            return Ok(result.club_Users);
+            return Ok(result.memberClubUserDtoRelations);
+        }
+        
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteClubUser([FromRoute] int id)
+        {
+            await _manager.ClubUserServiceUsers.DeleteClubUserForUsersAsync(id, HttpContext, true);
+            return NoContent();
         }
         [HttpPost("{id:int}")]
         public async Task<IActionResult> CreateClubUser([FromRoute]int id)
         {
             await _manager.ClubUserServiceUsers.CreateClubUserForUsersAsync(id, HttpContext, true);
-            return NoContent();
-        }
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteClubUser([FromRoute] int id)
-        {
-            await _manager.ClubUserServiceUsers.DeleteClubUserForUsersAsync(id, HttpContext, true);
             return NoContent();
         }
     }
