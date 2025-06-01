@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using System;
@@ -11,9 +12,11 @@ namespace Presentation.Controllers
 {
     [ApiController]
     [Route("api/files")]
+    
     public class FilesController: ControllerBase
     {
         [HttpPost("upload")]
+        [AllowAnonymous]
         public async Task<IActionResult> Upload(IFormFile files)
         {
             if (!ModelState.IsValid)

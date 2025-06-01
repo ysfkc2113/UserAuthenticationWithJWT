@@ -13,6 +13,7 @@
             object-fit: cover;
             border-radius: 50%;
             border: 3px solid #007bff;
+            cursor: pointer; /* Add cursor pointer to indicate it's clickable */
         }
 
         .footer {
@@ -35,6 +36,7 @@
                     <h2 class="text-center mb-4">Profil Bilgilerim</h2>
                     <div class="text-center mb-4">
                         <img src="https://via.placeholder.com/150" class="profile-img" id="profileImage" alt="Profil Resmi">
+                        <input type="file" id="profileImageUpload" accept="image/*" style="display: none;">
                         <h4 class="mt-3" id="profileName"></h4>
                         <p class="text-muted" id="profileUsername"></p>
                     </div>
@@ -126,7 +128,6 @@
                         localStorage.setItem('refreshToken', newTokens.refreshToken);
                         console.log('Tokenlar başarıyla yenilendi. Profil isteği yeniden deneniyor...');
 
-                        // Yeniden istek göndermek için recursive çağrı yerine doğrudan response'u güncelle
                         response = await fetch(`${API_BASE_URL}/user/profil`, {
                             method: 'GET',
                             headers: {
@@ -151,19 +152,21 @@
                 console.log("API'dan gelen profil verisi:", profileData);
 
                 // HTML elementlerini doldur
-                document.getElementById('profileImage').src = profileData.profilPhotoPath || 'https://via.placeholder.com/150';
+                // If profileData.profilPhotoPath exists, try to download it
+                if (profileData.profilPhotoPath) {
+                    document.getElementById('profileImage').src = `${API_BASE_URL}/api/files/download?fileName=${profileData.profilPhotoPath}`;
+                } else {
+                    document.getElementById('profileImage').src = 'https://via.placeholder.com/150';
+                }
+
                 document.getElementById('profileName').textContent = `${profileData.firstName || ''} ${profileData.lastName || ''}`;
-
-                // BURADAKİ DEĞİŞİKLİK: profileUsername'i API'dan gelen userName yerine localStorage'dan veya JWT'den alınanla doldur
-                document.getElementById('profileUsername').textContent = `@${localUsername || 'Bilinmiyor'}`; // LOCALSTORAGE'DAN ALINDI
-
+                document.getElementById('profileUsername').textContent = `@${localUsername || 'Bilinmiyor'}`;
                 document.getElementById('firstName').value = profileData.firstName || '';
                 document.getElementById('lastName').value = profileData.lastName || '';
                 document.getElementById('email').value = profileData.email?.address || '';
                 document.getElementById('phone').value = profileData.phoneNumber || '';
                 document.getElementById('createdTime').value = profileData.createdTime ? new Date(profileData.createdTime).toLocaleDateString('tr-TR') : 'Bilinmiyor';
                 document.getElementById('roles').value = profileData.roleNames ? profileData.roleNames.join(', ') : 'Bilinmiyor';
-
                 document.getElementById('bio').value = ''; // DTO'da olmadığı için boş bırakılıyor
 
             } catch (error) {
@@ -171,7 +174,7 @@
                 document.querySelector('.container').innerHTML = '<p class="text-center text-danger">Profil verileri yüklenemedi. Lütfen daha sonra tekrar deneyin.</p>';
             }
         }
-        
+
 
         // Profil düzenleme işlevselliği
         const editProfileBtn = document.getElementById('editProfileBtn');
@@ -179,13 +182,38 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const profileForm = document.getElementById('profileForm');
         const formInputs = profileForm.querySelectorAll('input, textarea');
+        const profileImage = document.getElementById('profileImage');
+        const profileImageUpload = document.getElementById('profileImageUpload');
+
+        let selectedFile = null; // To store the selected file for upload
+
+        profileImage.addEventListener('click', () => {
+            if (!profileImageUpload.readOnly) { // Only allow upload when in edit mode
+                profileImageUpload.click();
+            }
+        });
+
+        profileImageUpload.addEventListener('change', (event) => {
+            if (event.target.files.length > 0) {
+                selectedFile = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    profileImage.src = e.target.result; // Display the new image instantly
+                };
+                reader.readAsDataURL(selectedFile);
+            } else {
+                selectedFile = null;
+            }
+        });
+
 
         editProfileBtn.addEventListener('click', () => {
             formInputs.forEach(input => {
-                if (input.id !== 'profileUsername' && input.id !== 'createdTime' && input.id !== 'roles') { // Kullanıcı adı, kayıt tarihi ve roller düzenlenemez
+                if (input.id !== 'profileUsername' && input.id !== 'createdTime' && input.id !== 'roles') {
                     input.readOnly = false;
                 }
             });
+            profileImageUpload.readOnly = false; // Enable image upload in edit mode
             editProfileBtn.style.display = 'none';
             saveProfileBtn.style.display = 'block';
             cancelEditBtn.style.display = 'block';
@@ -193,14 +221,16 @@
 
         cancelEditBtn.addEventListener('click', () => {
             formInputs.forEach(input => input.readOnly = true);
+            profileImageUpload.readOnly = true; // Disable image upload
             editProfileBtn.style.display = 'block';
             saveProfileBtn.style.display = 'none';
             cancelEditBtn.style.display = 'none';
-            fetchProfileData(); // Orijinal verileri tekrar yükle
+            selectedFile = null; // Clear selected file
+            fetchProfileData(); // Reload original data
         });
 
         profileForm.addEventListener('submit', async function (event) {
-            event.preventDefault(); // Sayfanın yenilenmesini engelle
+            event.preventDefault();
 
             const accessToken = localStorage.getItem('accessToken');
             if (!accessToken) {
@@ -209,20 +239,48 @@
                 return;
             }
 
-            // UserDtoForMember'a uygun verileri hazırlayın
+            let profilPhotoPath = null;
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append('files', selectedFile); // 'files' must match the parameter name in your C# controller
+
+                try {
+                    const uploadResponse = await fetch(`${API_BASE_URL}/api/files/upload`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                            // 'Content-Type' is not needed for FormData; browser sets it with boundary
+                        },
+                        body: formData
+                    });
+
+                    if (!uploadResponse.ok) {
+                        const errorDetails = await uploadResponse.text();
+                        throw new Error(`Dosya yükleme hatası! Durum: ${uploadResponse.status}. Detay: ${errorDetails}`);
+                    }
+
+                    const uploadResult = await uploadResponse.json();
+                    profilPhotoPath = uploadResult.file; // Get the filename from the upload response
+                    console.log('Dosya yükleme başarılı:', uploadResult);
+
+                } catch (error) {
+                    console.error('Profil fotoğrafı yüklenirken hata:', error);
+                    alert('Profil fotoğrafı güncellenirken bir hata oluştu: ' + error.message);
+                    return; // Stop if image upload fails
+                }
+            }
+
             const updatedData = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
-                email: document.getElementById('email').value, // DTO'da MailAddress olsa da, JS'de string olarak gönderilir
+                email: document.getElementById('email').value,
                 phoneNumber: document.getElementById('phone').value,
-                // ProfilPhotoPath, CreatedTime, RoleNames genellikle PUT ile güncellenmez
-                // UserName de genellikle ayrı bir işlemle güncellenir veya hiç güncellenmez
+                profilPhotoPath: profilPhotoPath // Include the new photo path if uploaded
             };
 
             console.log("Güncellenecek profil verileri:", updatedData);
 
             try {
-                // Backend'deki PUT /api/user/profil endpoint'ine gönderim
                 const response = await fetch(`${API_BASE_URL}/user/profil`, {
                     method: 'PUT',
                     headers: {
@@ -237,15 +295,14 @@
                     throw new Error(`Profil güncelleme HTTP hatası! Durum: ${response.status} - ${response.statusText}. Detay: ${errorDetails}`);
                 }
 
-                // API'niz yanıt olarak güncellenmiş UserDtoForMember dönüyorsa
                 const result = await response.json();
                 alert('Profil bilgileriniz başarıyla güncellendi!');
                 formInputs.forEach(input => input.readOnly = true);
+                profileImageUpload.readOnly = true; // Disable image upload
                 editProfileBtn.style.display = 'block';
                 saveProfileBtn.style.display = 'none';
                 cancelEditBtn.style.display = 'none';
-
-                // Güncelleme sonrası verileri yeniden çekerek formu tazeleyin
+                selectedFile = null; // Clear selected file
                 fetchProfileData();
 
             } catch (error) {
@@ -254,7 +311,6 @@
             }
         });
 
-        // Sayfa yüklendiğinde profil verilerini çek
         document.addEventListener('DOMContentLoaded', fetchProfileData);
     </script>
 </body>

@@ -7,7 +7,7 @@ using Presentation.ActionFilters;
 using Repositories.EFCore;
 using Services;
 using Services.Contracts;
-using WebApi.Extensions;
+using WebApi.Extensions; // Bu using ifadesinin doðru olduðundan emin olun
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +23,12 @@ builder.Services.AddControllers(config =>
 })
 // .AddXmlDataContractSerializerFormatters()
 // .AddCustomCsvFormatter()
-.AddApplicationPart(typeof(Presentation.AssemblyRefence).Assembly)
+// ***** BURAYI KONTROL EDÝN *****
+// Eðer FilesController'ýnýz bu Program.cs dosyasýnýn bulunduðu ana projede (assembly'de) ise,
+// bu satýra ihtiyacýnýz yoktur ve hatta sorun yaratabilir.
+// Genellikle bu satýr, controller'larýnýz farklý bir sýnýf kütüphanesi projesindeyse kullanýlýr.
+// Eðer FilesController ana projenizdeyse, bu satýrý yorumlayýn veya silin.
+.AddApplicationPart(typeof(Presentation.AssemblyRefence).Assembly) // Bu satýrý yorumlayýn veya silin
 .AddNewtonsoftJson(opt =>
     opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -52,7 +57,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 // Filters and CORS
 builder.Services.ConfigureActionFilters();
-builder.Services.ConfigureCors();
+// builder.Services.ConfigureCors(); // CORS yapýlandýrmasý Program.cs içinde de olabilir, tekrar etmemek için burayý yorumlayabiliriz veya sadece bir yerde tutabiliriz.
 
 // Data shaping and custom media types
 builder.Services.ConfigureDataShaper();
@@ -103,18 +108,26 @@ if (app.Environment.IsProduction())
 // Middleware pipeline
 app.UseHttpsRedirection();
 app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseStaticFiles(); // Bu kýsým, "Media" klasörü wwwroot içinde deðilse ve doðrudan eriþilmesi planlanýyorsa önemlidir.
 
 app.UseIpRateLimiting();
 
+// ***** BURASI ÇOK ÖNEMLÝ: UseRouting() burada olmalý! *****
+// Endpoint belirleme middleware'i mutlaka Authentication, Authorization ve MapControllers'tan önce gelmelidir.
+app.UseRouting();
+
+// CORS middleware'i UseRouting'den sonra gelmeli
 app.UseCors("CorsPolicy");
 
 app.UseResponseCaching();
 app.UseHttpCacheHeaders();
 
+// Kimlik doðrulama
 app.UseAuthentication();
+// Yetkilendirme
 app.UseAuthorization();
 
+// Controller rotalarýný haritalama
 app.MapControllers();
 
 app.Run();
