@@ -47,6 +47,7 @@ namespace Services.AdminManagers
         public async Task<(IEnumerable<AdminUsersDto> adminUsersDto, MetaData metaData)> GetAllUsersAsync(UsersParameters usersParameters, bool trackChanges)
         {
             var users= await _manager.UsersRepository.GetAllUsersAsync(usersParameters, trackChanges);
+
             return (users, metaData: users.MetaData);
         }
 

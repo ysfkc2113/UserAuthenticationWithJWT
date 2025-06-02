@@ -115,9 +115,9 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Kullanıcı Adı</th>
+                                        <th>İsim Soyisim</th>
+                                        <th>Kulanıcı Adı</th>
                                         <th>Email</th>
-                                        <th>Telefon</th>
                                         <th>Roller</th>
                                         <th>Durum</th>
                                         <th>İşlemler</th>
@@ -399,7 +399,7 @@
                 const options = {
                     method: method,
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`,
+                        'Authorization': `Bearer ${accessToken}`, // Yetkilendirme token'ı
                         'Content-Type': 'application/json'
                     }
                 };
@@ -416,17 +416,30 @@
                     window.location.href = 'login.html';
                     return null;
                 }
-                if (!response.ok) {
+                if (!response.ok) { // Başarısız yanıtlar
                     const errorText = await response.text();
                     console.error(`API hatası (${response.status}):`, errorText);
                     throw new Error(`API Hatası: ${response.status} - ${errorText}`);
                 }
-                // DELETE ve bazı POST/PUT işlemlerinde response body boş olabilir (204 No Content gibi)
-                // Bu durumda response.json() hata vereceğinden boş obje döndürüyoruz.
-                if (response.status === 204 || response.headers.get('Content-Length') === '0') {
-                    return {}; // Boş bir obje döndür
+
+                // X-Pagination başlığını al
+                const paginationHeader = response.headers.get('X-Pagination');
+                let metaData = null;
+                if (paginationHeader) {
+                    try {
+                        metaData = JSON.parse(paginationHeader); // Başlığı JSON olarak ayrıştır
+                    } catch (parseError) {
+                        console.error("X-Pagination başlığı ayrıştırma hatası:", parseError);
+                    }
                 }
-                return await response.json();
+
+                // DELETE ve bazı POST/PUT işlemleri boş yanıt gövdesine sahip olabilir (204 No Content gibi)
+                if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+                    return { data: {}, metaData: metaData }; // Veri için boş bir nesne döndür
+                }
+
+                const data = await response.json(); // Yanıt gövdesini ayrıştır
+                return { data: data, metaData: metaData }; // Hem veriyi hem de meta veriyi döndür
             } catch (error) {
                 console.error("API çağrısı sırasında hata:", error);
                 alert("İşlem sırasında bir hata oluştu: " + error.message);
@@ -440,45 +453,50 @@
         let currentUserSearchTerm = '';
         const usersPerPage = 10; // Her sayfada gösterilecek kullanıcı sayısı
 
+
         async function fetchUsers() {
             const url = `${API_BASE_URL}/api/admin/users?PageNumber=${currentUserPage}&PageSize=${usersPerPage}&SearchTerm=${currentUserSearchTerm}`;
-            const result = await callApi(url);
+            const { data: users, metaData } = await callApi(url);
 
-            if (result) {
+            // Debug için console.log ekleyebilirsiniz
+            // console.log("Fetched Users (direct array):", users);
+            // console.log("Fetched Users MetaData:", metaData);
+
+            if (users && metaData) {
                 const usersTableBody = document.getElementById('users-table-body');
-                usersTableBody.innerHTML = ''; // Tabloyu temizle
+                usersTableBody.innerHTML = '';
 
-                result.adminUsersDto.forEach(user => {
+                users.forEach(user => { // users değişkeni zaten doğrudan bir dizi
+                    // DTO'daki yeni alan adlarını kullanarak verileri tabloya yerleştirin
+                    // userName, email ve RolesName artık DTO'da mevcut
+                    // phoneNumber hala DTO'da yok, bu yüzden boş veya '-' gösterelim
+                    const phoneNumber = user.phoneNumber || '-'; // Eğer backend'den phoneNumber geliyorsa, kullanın. Yoksa '-'
+
                     const row = `
-                            <tr>
-                                <td>${user.userName}</td>
-                                <td>${user.email}</td>
-                                <td>${user.phoneNumber || '-'}</td>
-                                <td>${user.roles ? user.roles.join(', ') : '-'}</td>
-                                <td>
-                                    <span class="badge bg-${user.isActive ? 'success' : 'danger'}">
-                                        ${user.isActive ? 'Aktif' : 'Pasif'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info btn-action view-roles-btn" data-username="${user.userName}" title="Rolleri Görüntüle"><i class="fas fa-user-tag"></i></button>
-                                    <button class="btn btn-sm btn-warning btn-action toggle-user-status-btn" data-username="${user.userName}" data-isactive="${user.isActive}" title="${user.isActive ? 'Pasife Al' : 'Aktifleştir'}">
-                                        <i class="fas fa-toggle-${user.isActive ? 'off' : 'on'}"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger btn-action delete-user-btn" data-username="${user.userName}" title="Kullanıcıyı Sil"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        `;
+                    <tr>
+                        <td>${user.firstName || ''} ${user.lastName || ''}</td> <td>${user.userName || '-'}</td> <td>${user.email || '-'}</td> <td>${user.rolesName ? user.rolesName.join(', ') : '-'}</td> <td>
+                            <span class="badge bg-${user.isActive ? 'success' : 'danger'}">
+                                ${user.isActive ? 'Aktif' : 'Pasif'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-info btn-action view-roles-btn" data-username="${user.userName}" title="Rolleri Görüntüle"><i class="fas fa-user-tag"></i></button>
+                            <button class="btn btn-sm btn-warning btn-action toggle-user-status-btn" data-username="${user.userName}" data-isactive="${user.isActive}" title="${user.isActive ? 'Pasife Al' : 'Aktifleştir'}">
+                                <i class="fas fa-toggle-${user.isActive ? 'off' : 'on'}"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger btn-action delete-user-btn" data-username="${user.userName}" title="Kullanıcıyı Sil"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
                     usersTableBody.innerHTML += row;
                 });
-                renderPagination('users-pagination', result.metaData.CurrentPage, result.metaData.TotalPages, (page) => {
+                renderPagination('users-pagination', metaData.CurrentPage, metaData.TotalPages, (page) => {
                     currentUserPage = page;
                     fetchUsers();
                 });
                 attachUserActionListeners();
             }
         }
-
         function attachUserActionListeners() {
             document.querySelectorAll('.toggle-user-status-btn').forEach(button => {
                 button.onclick = async (e) => {
@@ -487,14 +505,6 @@
                     const newStatus = !isActive; // Değiştirilecek durum
 
                     if (confirm(`'${userName}' kullanıcısını ${newStatus ? 'aktifleştirmek' : 'pasife almak'} istediğinize emin misiniz?`)) {
-                        // Backend API'niz "UserActivated" için tek string username bekliyorsa (PUT/DELETE)
-                        // veya bu işlem için ayrı bir endpoint varsa ona göre ayarlayın.
-                        // Örnek: PUT /api/admin/users/toggle-activation
-                        // Body: { "userName": "testuser", "isActive": true }
-                        // Ya da doğrudan URL'de: /api/admin/users/activate/{username} veya /api/admin/users/deactivate/{username}
-
-                        // Eğer UsersController'daki UserActivated (PUT) metodu `[FromBody] string userName` bekliyorsa,
-                        // ve sadece aktive/deaktive ediyorsa:
                         const url = `${API_BASE_URL}/api/admin/users`; // UsersController'daki PUT metodu için
                         const method = 'PUT';
                         const body = userName; // userName'i doğrudan body olarak gönder
@@ -529,12 +539,12 @@
                 button.onclick = (e) => {
                     const userName = e.currentTarget.dataset.username;
                     document.getElementById('role-username-input').value = userName;
-                    // Rol Yönetimi sekmesine geçiş yap ve rolleri getir
                     document.querySelector('#sidebar a[data-section="roles-section"]').click();
-                    fetchUserRoles(); // Rol Yönetimi bölümünde rolleri getirir
+                    fetchUserRoles();
                 };
             });
         }
+
 
         document.getElementById('user-search-btn').addEventListener('click', () => {
             currentUserSearchTerm = document.getElementById('user-search-input').value;
@@ -554,35 +564,44 @@
         let currentClubSearchTerm = '';
         const clubsPerPage = 10; // Her sayfada gösterilecek kulüp sayısı
 
+
         async function fetchClubs() {
             const url = `${API_BASE_URL}/api/admin/clubs?PageNumber=${currentClubPage}&PageSize=${clubsPerPage}&SearchTerm=${currentClubSearchTerm}`;
-            const result = await callApi(url);
+            // callApi'den dönen nesneyi parçala
+            // API doğrudan dizi döndürdüğü için 'data' kısmı doğrudan kulüp listesi olacak
+            const { data: clubs, metaData } = await callApi(url); // 'clubsData' yerine 'clubs' olarak adlandıralım
 
-            if (result) {
+            // Debug için console.log ekleyebilirsiniz
+            // console.log("Fetched Clubs (direct array):", clubs);
+            // console.log("Fetched Clubs MetaData:", metaData);
+
+
+            if (clubs && metaData) {
                 const clubsTableBody = document.getElementById('clubs-table-body');
                 clubsTableBody.innerHTML = '';
 
-                result.clubDto.forEach(club => {
+                // Hata veren satır: clubs.clubDto yerine doğrudan 'clubs' dizisi kullanılacak
+                clubs.forEach(club => { // clubs değişkeni zaten doğrudan bir dizi
                     const row = `
-                            <tr>
-                                <td>${club.clubName}</td>
-                                <td>${club.description ? club.description.substring(0, 50) + (club.description.length > 50 ? '...' : '') : '-'}</td>
-                                <td>${club.clubManager || 'Atanmamış'}</td>
-                                <td>
-                                    <span class="badge bg-${club.isActive ? 'success' : 'danger'}">
-                                        ${club.isActive ? 'Aktif' : 'Pasif'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary btn-action edit-club-btn" data-id="${club.clubId}" title="Düzenle"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger btn-action delete-club-btn" data-id="${club.clubId}" title="Sil"><i class="fas fa-trash"></i></button>
-                                    <button class="btn btn-sm btn-info btn-action manage-club-users-btn" data-id="${club.clubId}" data-name="${club.clubName}" title="Üyeleri Yönet"><i class="fas fa-users-cog"></i></button>
-                                </td>
-                            </tr>
-                        `;
+                    <tr>
+                        <td>${club.clubName}</td>
+                        <td>${club.description ? club.description.substring(0, 50) + (club.description.length > 50 ? '...' : '') : '-'}</td>
+                        <td>${club.clubManager || 'Atanmamış'}</td>
+                        <td>
+                            <span class="badge bg-${club.isActive ? 'success' : 'danger'}">
+                                ${club.isActive ? 'Aktif' : 'Pasif'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-primary btn-action edit-club-btn" data-id="${club.clubId}" title="Düzenle"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger btn-action delete-club-btn" data-id="${club.clubId}" title="Sil"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-sm btn-info btn-action manage-club-users-btn" data-id="${club.clubId}" data-name="${club.clubName}" title="Üyeleri Yönet"><i class="fas fa-users-cog"></i></button>
+                        </td>
+                    </tr>
+                `;
                     clubsTableBody.innerHTML += row;
                 });
-                renderPagination('clubs-pagination', result.metaData.CurrentPage, result.metaData.TotalPages, (page) => {
+                renderPagination('clubs-pagination', metaData.CurrentPage, metaData.TotalPages, (page) => {
                     currentClubPage = page;
                     fetchClubs();
                 });
@@ -696,51 +715,50 @@
         let currentEventStatusFilter = ''; // "true", "false" veya "" (tümü) olabilir
         const eventsPerPage = 10;
 
+        // fetchEvents fonksiyonunu kullanma örneği
         async function fetchEvents() {
             let url = `${API_BASE_URL}/api/admin/events?PageNumber=${currentEventPage}&PageSize=${eventsPerPage}&SearchTerm=${currentEventSearchTerm}`;
-            if (currentEventStatusFilter !== '') { // Eğer filtre seçilmişse
-                url += `&IsApproved=${currentEventStatusFilter}`; // EventParameters'daki IsApproved ile eşleşiyor
+            if (currentEventStatusFilter !== '') {
+                url += `&IsApproved=${currentEventStatusFilter}`;
             }
-            const result = await callApi(url);
+            // callApi'den dönen nesneyi parçala
+            const { data: events, metaData } = await callApi(url);
 
-            if (result) {
+            if (events && metaData) { // Hem veri hem de meta veri alındıysa kontrol et
                 const eventsTableBody = document.getElementById('events-table-body');
                 eventsTableBody.innerHTML = '';
 
-                result.forEach(event => { // API doğrudan etkinlik listesini döndürüyorsa bu şekilde olmalı
+                events.forEach(event => { // Artık 'events' dizisi üzerinde dönebilirsiniz
                     const eventDate = new Date(event.eventDate).toLocaleDateString('tr-TR', {
                         year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
                     });
 
-                    // EventDto'daki IsApproved (boolean) değerine göre durumu belirleme
                     let statusText = 'Onay Bekliyor';
                     let statusBadgeClass = 'bg-warning text-dark';
                     if (event.isApproved === true) {
                         statusText = 'Onaylandı';
                         statusBadgeClass = 'bg-success';
                     }
-                    // Eğer backend'de "Reddedildi" durumu için ayrı bir flag veya enum yoksa,
-                    // false olanlar "Onay Bekliyor" olarak kabul edilir.
-                    // Eğer Reddedildi durumu varsa, EventDto'ya eklenmeli ve burada işlenmelidir.
 
                     const row = `
-                            <tr>
-                                <td>${event.title}</td>
-                                <td>${event.clubClubName || '-'}</td>
-                                <td>${eventDate}</td>
-                                <td>${event.location}</td>
-                                <td><span class="badge ${statusBadgeClass}">${statusText}</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-success btn-action approve-event-btn" data-id="${event.id}" ${event.isApproved ? 'disabled' : ''} title="Onayla"><i class="fas fa-check-circle"></i></button>
-                                    <button class="btn btn-sm btn-danger btn-action reject-event-btn" data-id="${event.id}" ${!event.isApproved ? '' : 'disabled'} title="Reddet"><i class="fas fa-times-circle"></i></button>
-                                    <button class="btn btn-sm btn-primary btn-action edit-event-btn" data-id="${event.id}" title="Düzenle"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger btn-action delete-event-btn" data-id="${event.id}" title="Sil"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        `;
+                <tr>
+                    <td>${event.title}</td>
+                    <td>${event.clubClubName || '-'}</td>
+                    <td>${eventDate}</td>
+                    <td>${event.location}</td>
+                    <td><span class="badge ${statusBadgeClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-success btn-action approve-event-btn" data-id="${event.id}" ${event.isApproved ? 'disabled' : ''} title="Onayla"><i class="fas fa-check-circle"></i></button>
+                        <button class="btn btn-sm btn-danger btn-action reject-event-btn" data-id="${event.id}" ${!event.isApproved ? '' : 'disabled'} title="Reddet"><i class="fas fa-times-circle"></i></button>
+                        <button class="btn btn-sm btn-primary btn-action edit-event-btn" data-id="${event.id}" title="Düzenle"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger btn-action delete-event-btn" data-id="${event.id}" title="Sil"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
                     eventsTableBody.innerHTML += row;
                 });
-                renderPagination('events-pagination', result.metaData.CurrentPage, result.metaData.TotalPages, (page) => {
+                // Sayfalama için metaData nesnesini kullanın
+                renderPagination('events-pagination', metaData.CurrentPage, metaData.TotalPages, (page) => {
                     currentEventPage = page;
                     fetchEvents();
                 });

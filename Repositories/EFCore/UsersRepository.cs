@@ -47,6 +47,8 @@ namespace Repositories.EFCore
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 ProfilPhotoPath = u.ProfilPhotoPath,
+                UserName = u.UserName,
+                Email=u.Email,
                 IsActive = u.IsActive,
                 CreatedTime = u.CreatedTime,
                 RolesName = userRoleMap.ContainsKey(u.Id) ? userRoleMap[u.Id] : new List<string>()
