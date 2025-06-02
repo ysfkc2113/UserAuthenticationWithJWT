@@ -29,21 +29,15 @@ namespace Presentation.Controllers.Academician
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetAllEvents([FromQuery] AcademicianEventParameters academicianEventParameters)
         {
-            var linkParameters = new LinkParameters()
-            {
-                AcademicianEventParameters = academicianEventParameters,
-                HttpContext = HttpContext
-            };
+
             var result = await _manager
               .EventServiceAcademician
-              .GetAllEventsAsync(linkParameters, false);
+              .GetAllEventsAsync(academicianEventParameters, HttpContext, false);
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(result.metaData));
 
-            return result.linkResponse.HasLinks ?
-                Ok(result.linkResponse.LinkedEntities) :
-                Ok(result.linkResponse.ShapedEntities);
+            return Ok(result.eventDto);
         }
 
 

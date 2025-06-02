@@ -16,7 +16,7 @@ namespace Presentation.Controllers.Academician
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    // [Authorize(Roles = "Academician")]
+    [Authorize(Roles = "Academician")]
     [Route("api/academician/clubs")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ClubController : ControllerBase

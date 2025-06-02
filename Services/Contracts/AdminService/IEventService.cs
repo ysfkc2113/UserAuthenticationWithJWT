@@ -2,6 +2,7 @@
 using Entities.LinkModels;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -35,8 +36,8 @@ namespace Services.Contracts
         Task<(LinkResponse linkResponse, MetaData metaData)> GetEventsByClubIdAsync(int clubId, LinkParameters linkParameters, bool trackChanges);
 
         Task ApproveEventAsync(int id, string approvedByUserId, bool trackChanges);
-        Task<(LinkResponse linkResponse, MetaData metaData)> GetAllEventsAsync(LinkParameters linkParameters,
-            bool trackChanges);
+        Task<(IEnumerable<EventDto> eventDto, MetaData metaData)>GetAllEventsAsync
+            (EventParameters eventParameters, HttpContext httpContext,bool trackChanges);
         Task<EventDto> GetOneEventByIdAsync(int id, bool trackChanges);
         //For Admin
         Task UpdateEventForAdminAsync(int id, AdminEventDtoForUpdate eventDtoForUpdateAdmin, bool trackChanges);

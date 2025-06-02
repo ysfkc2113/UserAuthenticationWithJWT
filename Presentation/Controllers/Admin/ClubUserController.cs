@@ -1,5 +1,6 @@
 ﻿using Entities.DataTransferObjects;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
 using Services.Contracts;
@@ -16,7 +17,7 @@ namespace Presentation.Controllers.Admin
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/admin/clubuser")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ClubUserController:ControllerBase

@@ -51,9 +51,9 @@ namespace Services.AcademicianManagers
             {
                 throw new Exception("This user doesn't your club member.");
             }
-            if (userName_club.club.ClubManager == "Club Manger")
+            if (userName_club.club.ClubManager == "Club Manager")
                 throw new Exception("Klub yöneticisidir.Onayı değiştirilemez.Önce rol atamasını yapın.");
-            _manager.ClubUser.ChangeApprovedClubUserAsync(clubuser);
+            await _manager.ClubUser.ChangeApprovedClubUserAsync(clubuser);
             await _manager.SaveAsync();
         }
 

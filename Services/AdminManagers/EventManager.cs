@@ -4,6 +4,7 @@ using Entities.Exceptions;
 using Entities.LinkModels;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Http;
 using Repositories.Contracts;
 using Services.Contracts;
 using Services.Contracts.AdminService;
@@ -57,23 +58,19 @@ namespace Services.AdminManagers
             await _manager.SaveAsync();
         }
 
-        public async Task<(LinkResponse linkResponse, MetaData metaData)>
-            GetAllEventsAsync(LinkParameters linkParameters,
+        public async Task<(IEnumerable<EventDto> eventDto, MetaData metaData)>
+            GetAllEventsAsync(EventParameters eventParameters, HttpContext httpContext,
             bool trackChanges)
         {
-            //silinecek   if(!linkParameters.EventParameters.ValidPriceRange)
-            //     throw new PriceOutofRangeBadRequestException();
 
             var eventsWithMetaData = await _manager
                 .Event
-                .GetAllEventsAsync(linkParameters.EventParameters, trackChanges);
+                .GetAllEventsAsync(eventParameters, trackChanges);
 
             var eventDto = _mapper.Map<IEnumerable<EventDto>>(eventsWithMetaData);
-            var links = _eventLinks.TryGenerateLinks(eventDto,
-                linkParameters.EventParameters.Fields,
-                linkParameters.HttpContext);
 
-            return (linkResponse: links, metaData: eventsWithMetaData.MetaData);
+
+            return (eventDto: eventDto, metaData: eventsWithMetaData.MetaData);
         }
 
         //public async Task<List<Event>> GetAllEventsAsync(bool trackChanges)

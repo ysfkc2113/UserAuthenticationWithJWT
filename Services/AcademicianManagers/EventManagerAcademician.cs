@@ -62,9 +62,10 @@ namespace Services.AcademicianManagers
             await _manager.SaveAsync();
         }
 
-        public async Task<(LinkResponse linkResponse, MetaData metaData)> GetAllEventsAsync(LinkParameters linkParameters, bool trackChanges)
+        public async Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> GetAllEventsAsync(
+            AcademicianEventParameters academicianEventParameters, HttpContext httpContext, bool trackChanges)
         {
-            var userName = await GetUserNameByHttpContextAsync(linkParameters.HttpContext);
+            var userName = await GetUserNameByHttpContextAsync(httpContext);
             //EventParameters eventParameters = _mapper.Map<EventParameters>(linkParameters.AcademicianEventParameters);
            
             var club = await _manager.Club.GetOneClubByAcademicianName(userName,trackChanges);
@@ -73,16 +74,16 @@ namespace Services.AcademicianManagers
             //eventParameters.ClubId = club.ClubId;
             var eventsWithMetaData = await _manager
                 .Event
-                .GetAllEventsForAcademicianAsync(linkParameters.AcademicianEventParameters, club.ClubId, trackChanges);
+                .GetAllEventsForAcademicianAsync(academicianEventParameters, club.ClubId, trackChanges);
 
             var eventDto = _mapper.Map<IEnumerable<EventDto>>(eventsWithMetaData);
-            var links = _eventLinks.TryGenerateLinks(eventDto,
-                linkParameters.AcademicianEventParameters.Fields,
-                linkParameters.HttpContext);
 
-            return (linkResponse: links, metaData: eventsWithMetaData.MetaData);
+
+            return (eventDto: eventDto, metaData: eventsWithMetaData.MetaData);
 
         }
+
+
 
         public async Task<EventDto> GetOneEventByIdAcedemicianAsync(HttpContext httpContext,int id, bool trackChanges)
         {

@@ -164,6 +164,7 @@ namespace Repositories.EFCore
             clubEvent.PublishedByUserName = userName;
             clubEvent.ApprovedByUserName = userName;
             clubEvent.ClubId = clubId;
+            clubEvent.Visibility = "private";
             Create(clubEvent);
         }
         //ClubLeader

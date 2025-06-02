@@ -39,22 +39,16 @@ namespace Presentation.Controllers.Admin
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetAllEvents([FromQuery] EventParameters eventParameters)
         {
-            var linkParameters = new LinkParameters()
-            {
-                EventParameters = eventParameters,
-                HttpContext = HttpContext
-            };
+
 
             var result = await _manager
                 .EventService
-                .GetAllEventsAsync(linkParameters, false);
+                .GetAllEventsAsync(eventParameters,HttpContext, false);
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(result.metaData));
 
-            return result.linkResponse.HasLinks ?
-                Ok(result.linkResponse.LinkedEntities) :
-                Ok(result.linkResponse.ShapedEntities);
+            return Ok(result.eventDto);
 
         }
 

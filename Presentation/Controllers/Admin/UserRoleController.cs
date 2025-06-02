@@ -13,7 +13,7 @@ namespace Presentation.Controllers.Admin
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/admin/rolemanagment")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class UserRoleController:ControllerBase

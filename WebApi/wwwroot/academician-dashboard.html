@@ -853,7 +853,7 @@
                 currentEventPage = metaData.CurrentPage;
                 totalEventPages = metaData.TotalPages;
 
-                renderClubEvents(data.values); // Assuming 'values' contains the event list
+                renderClubEvents(data); // Assuming 'values' contains the event list
                 renderPagination('eventsPagination', currentEventPage, totalEventPages, fetchClubEvents);
 
             } catch (error) {
@@ -883,12 +883,12 @@
                                     <h5 class="card-title">${event.title}</h5>
                                     <p class="card-text text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i> ${event.location}</p>
                                     <p class="card-text text-muted mb-1"><i class="fas fa-calendar-alt me-1"></i> ${eventDate}</p>
-                                    <p class="card-text">Kontenjan: ${event.quota}</p>
-                                    <p class="card-text">Onay Durumu: ${event.approved ? '<span class="badge bg-success">Onaylı</span>' : '<span class="badge bg-warning text-dark">Beklemede</span>'}</p>
+                                    <p class="card-text">Kontenjan: Kontenjan sınırı yok.</p>
+                                    <p class="card-text">Onay Durumu: ${event.IsApproved ? '<span class="badge bg-success">Onaylı</span>' : '<span class="badge bg-warning text-dark">Beklemede</span>'}</p>
                                     <div class="mt-auto d-flex justify-content-between align-items-center">
                                         <button class="btn btn-sm btn-warning" onclick="openEditEventModal(${event.id})">Düzenle</button>
                                         <button class="btn btn-sm btn-danger" onclick="deleteEvent(${event.id})">Sil</button>
-                                        ${!event.approved ? `<button class="btn btn-sm btn-success" onclick="approveEvent(${event.id})">Onayla</button>` : ''}
+                                        ${!event.isApproved ? `<button class="btn btn-sm btn-success" onclick="approveEvent(${event.id})">Onayla</button>` : ''}
                                     </div>
                                 </div>
                             </div>
@@ -971,7 +971,7 @@
                 document.getElementById('editEventDate').value = new Date(event.eventDate).toISOString().slice(0, 16);
                 document.getElementById('editEventQuota').value = event.quota;
                 document.getElementById('editEventImageUrl').value = event.imageUrl || '';
-                document.getElementById('editEventApproved').checked = event.approved; // Set approval status
+                document.getElementById('editEventApproved').checked = event.isApproved; // Set approval status
 
                 var editEventModal = new bootstrap.Modal(document.getElementById('editEventModal'));
                 editEventModal.show();
@@ -997,7 +997,7 @@
                 eventDate: document.getElementById('editEventDate').value,
                 quota: parseInt(document.getElementById('editEventQuota').value),
                 imageUrl: document.getElementById('editEventImageUrl').value || null,
-                approved: document.getElementById('editEventApproved').checked // Include approved status
+                isApproved: document.getElementById('editEventApproved').checked // Include approved status
             };
 
             try {
@@ -1075,7 +1075,7 @@
                 // Assuming only 'approved' status is changed via this button.
                 const patchDoc = [{
                     "op": "replace",
-                    "path": "/approved",
+                    "path": "/isApproved",
                     "value": true
                 }];
 

@@ -13,8 +13,8 @@ namespace Services.Contracts.AcademcianService
 {
     public interface IEventServiceAcademician
     {
-        Task<(LinkResponse linkResponse, MetaData metaData)> GetAllEventsAsync(LinkParameters linkParameters,
-          bool trackChanges);
+        Task<(IEnumerable<EventDto> eventDto, MetaData metaData)> GetAllEventsAsync(AcademicianEventParameters academicianEventParameters,
+          HttpContext httpContext, bool trackChanges);
         Task <EventDto>GetOneEventByIdAcedemicianAsync(HttpContext httpContext,int id, bool trackChanges);
         Task<EventDto> CreateOneEventForAcademicianAsync(AcademicianEventDtoForInsertion academicianEventDtoForInsertion, HttpContext httpContext,bool trackChanges);
         Task DeleteOneEventForAcademicianAsync(int id,HttpContext httpContext,bool trackChanges);

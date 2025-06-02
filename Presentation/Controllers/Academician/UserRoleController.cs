@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
 using Services.Contracts;
 using System;
@@ -12,7 +13,7 @@ namespace Presentation.Controllers.Academician
     [ServiceFilter(typeof(LogFilterAttribute))]
     //[ServiceFilter(typeof(ValidateMediaTypeAttribute))]
     [ApiController]
-    // [Authorize(Roles = "Academician")]
+    [Authorize(Roles = "Academician")]
     [Route("api/academician/rolemanagment")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class UserRoleController : ControllerBase

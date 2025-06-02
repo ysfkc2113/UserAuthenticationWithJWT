@@ -19,7 +19,7 @@ builder.Services.AddControllers(config =>
 {
     config.RespectBrowserAcceptHeader = true;
     config.ReturnHttpNotAcceptable = true;
-    config.CacheProfiles.Add("10sec", new CacheProfile { Duration = 10 });
+    //config.CacheProfiles.Add("10sec", new CacheProfile { Duration = 10 });
 })
 // .AddXmlDataContractSerializerFormatters()
 // .AddCustomCsvFormatter()
@@ -70,13 +70,13 @@ builder.Services.AddScoped<IEventLinks, EventLinks>();
 builder.Services.ConfigureVersioning();
 
 // Caching
-builder.Services.ConfigureResponseCaching();
-builder.Services.ConfigureHttpCacheHeaders();
-builder.Services.AddMemoryCache();
+//builder.Services.ConfigureResponseCaching();
+//builder.Services.ConfigureHttpCacheHeaders();
+//builder.Services.AddMemoryCache();
 
 // Rate Limiting
-builder.Services.ConfigureRateLimitingOptions();
-builder.Services.AddHttpContextAccessor();
+//builder.Services.ConfigureRateLimitingOptions();
+//builder.Services.AddHttpContextAccessor();
 
 // Identity and JWT Authentication
 builder.Services.ConfigureIdentity();
@@ -110,7 +110,7 @@ app.UseHttpsRedirection();
 app.UseDefaultFiles();
 app.UseStaticFiles(); // Bu kýsým, "Media" klasörü wwwroot içinde deðilse ve doðrudan eriþilmesi planlanýyorsa önemlidir.
 
-app.UseIpRateLimiting();
+//app.UseIpRateLimiting();
 
 // ***** BURASI ÇOK ÖNEMLÝ: UseRouting() burada olmalý! *****
 // Endpoint belirleme middleware'i mutlaka Authentication, Authorization ve MapControllers'tan önce gelmelidir.
@@ -119,8 +119,8 @@ app.UseRouting();
 // CORS middleware'i UseRouting'den sonra gelmeli
 app.UseCors("CorsPolicy");
 
-app.UseResponseCaching();
-app.UseHttpCacheHeaders();
+//app.UseResponseCaching();
+//app.UseHttpCacheHeaders();
 
 // Kimlik doðrulama
 app.UseAuthentication();
