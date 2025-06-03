@@ -72,26 +72,50 @@
                     document.getElementById('usernameDisplay').textContent = username || 'Kullanıcı';
 
                     // Dashboard görünürlüğü rollere göre. Backend'deki rol isimlerinin büyük/küçük harf duyarlılığına dikkat edin.
-                    if (role === 'Admin' || role === 'Academician' || role === 'ClubManager') {
+                    if (role === 'Admin' || role === 'Academician' || role === 'Club Manager') {
                         document.getElementById('dashboardDropdown').style.display = 'block';
                     } else {
                         document.getElementById('dashboardDropdown').style.display = 'none';
                     }
 
-                    // Kulüplerim/Etkinliklerim görünürlüğü rollere göre
-                    if (role === 'ClubManager' || role === 'Academician' || role === 'User') { // 'User' rolü de kendi kulüp/etkinliklerini görebilir
-                        document.getElementById('myClubsNav').style.display = 'block';
-                        document.getElementById('myEventsNav').style.display = 'block';
-                    } else {
-                        document.getElementById('myClubsNav').style.display = 'none';
-                        document.getElementById('myEventsNav').style.display = 'none';
+                    // Eğer myClubsNav hala navbar'da varsa bu kısmı bırakın.
+                    // Yoksa, bu bloğu da kaldırabilirsiniz.
+                    // Mevcut navbar.js dosyanızda 'my-clubs.html' linki hala duruyor, bu yüzden bu kontrolü koruyalım.
+                    const myClubsNav = document.getElementById('myClubsNav');
+                    if (myClubsNav) { // myClubsNav'in varlığını kontrol et
+                        if (role === 'ClubManager' || role === 'Academician' || role === 'User') {
+                            myClubsNav.style.display = 'block';
+                        } else {
+                            myClubsNav.style.display = 'none';
+                        }
                     }
+
+                    // myEventsNav kaldırıldığı için bu kısım tamamen kaldırıldı.
+                    // const myEventsNav = document.getElementById('myEventsNav');
+                    // if (myEventsNav) {
+                    //     if (role === 'ClubManager' || role === 'Academician' || role === 'User') {
+                    //         myEventsNav.style.display = 'block';
+                    //     } else {
+                    //         myEventsNav.style.display = 'none';
+                    //     }
+                    // }
+
                 } else {
                     document.getElementById('loginButton').style.display = 'block';
                     document.getElementById('userMenu').style.display = 'none';
                     document.getElementById('dashboardDropdown').style.display = 'none';
-                    document.getElementById('myClubsNav').style.display = 'none';
-                    document.getElementById('myEventsNav').style.display = 'none';
+
+                    // Eğer myClubsNav hala navbar'da varsa bu kısmı bırakın.
+                    const myClubsNav = document.getElementById('myClubsNav');
+                    if (myClubsNav) { // myClubsNav'in varlığını kontrol et
+                        myClubsNav.style.display = 'none';
+                    }
+
+                    // myEventsNav kaldırıldığı için bu kısım tamamen kaldırıldı.
+                    // const myEventsNav = document.getElementById('myEventsNav');
+                    // if (myEventsNav) {
+                    //     myEventsNav.style.display = 'none';
+                    // }
                 }
             }
 
@@ -264,8 +288,8 @@
                                                     <div class="col-md-4 mb-4">
                                                         <div class="card h-100 shadow-sm">
                                                             <div class="card-body d-flex flex-column">
-                                                                <h5 class="card-title">${event.name}</h5>
-                                                                <h6 class="card-subtitle mb-2 text-muted">${event.clubName ?? ""}</h6>
+                                                                <h5 class="card-title">${event.title}</h5>
+                                                                <h6 class="card-subtitle mb-2 text-muted">${event.clubClubName ?? ""}</h6>
                                                                 <p class="card-text">${event.description ?? ""}</p>
                                                                 <p class="card-text"><small class="text-muted">Tarih: ${date}</small></p>
                                                                 <a href="eventdetail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>

@@ -76,6 +76,7 @@
     </style>
 </head>
 <body>
+    
     <div class="wrapper">
         <nav id="sidebar">
             <div class="sidebar-header">
@@ -153,6 +154,8 @@
                                         <th>Kulüp Adı</th>
                                         <th>Açıklama</th>
                                         <th>Yönetici</th>
+                                        <th>Fakülte</th>
+                                        <th>Danışman Öğretmen</th>
                                         <th>Durum</th>
                                         <th>İşlemler</th>
                                     </tr>
@@ -188,6 +191,12 @@
                                     <div class="mb-3">
                                         <label for="club-manager" class="form-label">Kulüp Yöneticisi Kullanıcı Adı (Opsiyonel)</label>
                                         <input type="text" class="form-control" id="club-manager" placeholder="Yönetici atanmamışsa boş bırakın">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="club-faculty" class="form-label">Fakülte</label> <input type="text" class="form-control" id="club-faculty">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="club-responsible-teacher" class="form-label">Danışman Öğretmen</label> <input type="text" class="form-control" id="club-responsible-teacher">
                                     </div>
                                     <div class="mb-3 form-check" id="club-isactive-container">
                                         <input type="checkbox" class="form-check-input" id="club-isactive">
@@ -282,7 +291,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // API Base URL - Kendi backend API'nizin doğru adresini kontrol edin
-        const API_BASE_URL = 'https://localhost:7222'; // Örneğin, kendi backend'inizin adresi
+        //const API_BASE_URL = 'https://localhost:7222'; // Örneğin, kendi backend'inizin adresi
 
         let accessToken = localStorage.getItem('accessToken');
         let currentAdminUsername = ''; // Giriş yapan adminin kullanıcı adını saklamak için
@@ -455,7 +464,7 @@
 
 
         async function fetchUsers() {
-            const url = `${API_BASE_URL}/api/admin/users?PageNumber=${currentUserPage}&PageSize=${usersPerPage}&SearchTerm=${currentUserSearchTerm}`;
+            const url = `${API_BASE_URL}/admin/users?PageNumber=${currentUserPage}&PageSize=${usersPerPage}&SearchTerm=${currentUserSearchTerm}`;
             const { data: users, metaData } = await callApi(url);
 
             // Debug için console.log ekleyebilirsiniz
@@ -473,21 +482,21 @@
                     const phoneNumber = user.phoneNumber || '-'; // Eğer backend'den phoneNumber geliyorsa, kullanın. Yoksa '-'
 
                     const row = `
-                    <tr>
-                        <td>${user.firstName || ''} ${user.lastName || ''}</td> <td>${user.userName || '-'}</td> <td>${user.email || '-'}</td> <td>${user.rolesName ? user.rolesName.join(', ') : '-'}</td> <td>
-                            <span class="badge bg-${user.isActive ? 'success' : 'danger'}">
-                                ${user.isActive ? 'Aktif' : 'Pasif'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-info btn-action view-roles-btn" data-username="${user.userName}" title="Rolleri Görüntüle"><i class="fas fa-user-tag"></i></button>
-                            <button class="btn btn-sm btn-warning btn-action toggle-user-status-btn" data-username="${user.userName}" data-isactive="${user.isActive}" title="${user.isActive ? 'Pasife Al' : 'Aktifleştir'}">
-                                <i class="fas fa-toggle-${user.isActive ? 'off' : 'on'}"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger btn-action delete-user-btn" data-username="${user.userName}" title="Kullanıcıyı Sil"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
+                                <tr>
+                                    <td>${user.firstName || ''} ${user.lastName || ''}</td> <td>${user.userName || '-'}</td> <td>${user.email || '-'}</td> <td>${user.rolesName ? user.rolesName.join(', ') : '-'}</td> <td>
+                                        <span class="badge bg-${user.isActive ? 'success' : 'danger'}">
+                                            ${user.isActive ? 'Aktif' : 'Pasif'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info btn-action view-roles-btn" data-username="${user.userName}" title="Rolleri Görüntüle"><i class="fas fa-user-tag"></i></button>
+                                        <button class="btn btn-sm btn-warning btn-action toggle-user-status-btn" data-username="${user.userName}" data-isactive="${user.isActive}" title="${user.isActive ? 'Pasife Al' : 'Aktifleştir'}">
+                                            <i class="fas fa-toggle-${user.isActive ? 'off' : 'on'}"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger btn-action delete-user-btn" data-username="${user.userName}" title="Kullanıcıyı Sil"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            `;
                     usersTableBody.innerHTML += row;
                 });
                 renderPagination('users-pagination', metaData.CurrentPage, metaData.TotalPages, (page) => {
@@ -505,7 +514,7 @@
                     const newStatus = !isActive; // Değiştirilecek durum
 
                     if (confirm(`'${userName}' kullanıcısını ${newStatus ? 'aktifleştirmek' : 'pasife almak'} istediğinize emin misiniz?`)) {
-                        const url = `${API_BASE_URL}/api/admin/users`; // UsersController'daki PUT metodu için
+                        const url = `${API_BASE_URL}/admin/users`; // UsersController'daki PUT metodu için
                         const method = 'PUT';
                         const body = userName; // userName'i doğrudan body olarak gönder
 
@@ -522,7 +531,7 @@
                 button.onclick = async (e) => {
                     const userName = e.currentTarget.dataset.username;
                     if (confirm(`'${userName}' kullanıcısını silmek istediğinize emin misiniz? Bu işlem geri alınamaz!`)) {
-                        const url = `${API_BASE_URL}/api/admin/users`; // UsersController'daki DELETE metodu için
+                        const url = `${API_BASE_URL}/admin/users`; // UsersController'daki DELETE metodu için
                         const method = 'DELETE';
                         const body = userName; // userName'i doğrudan body olarak gönder
 
@@ -566,7 +575,7 @@
 
 
         async function fetchClubs() {
-            const url = `${API_BASE_URL}/api/admin/clubs?PageNumber=${currentClubPage}&PageSize=${clubsPerPage}&SearchTerm=${currentClubSearchTerm}`;
+            const url = `${API_BASE_URL}/admin/clubs?PageNumber=${currentClubPage}&PageSize=${clubsPerPage}&SearchTerm=${currentClubSearchTerm}`;
             // callApi'den dönen nesneyi parçala
             // API doğrudan dizi döndürdüğü için 'data' kısmı doğrudan kulüp listesi olacak
             const { data: clubs, metaData } = await callApi(url); // 'clubsData' yerine 'clubs' olarak adlandıralım
@@ -583,22 +592,22 @@
                 // Hata veren satır: clubs.clubDto yerine doğrudan 'clubs' dizisi kullanılacak
                 clubs.forEach(club => { // clubs değişkeni zaten doğrudan bir dizi
                     const row = `
-                    <tr>
-                        <td>${club.clubName}</td>
-                        <td>${club.description ? club.description.substring(0, 50) + (club.description.length > 50 ? '...' : '') : '-'}</td>
-                        <td>${club.clubManager || 'Atanmamış'}</td>
-                        <td>
-                            <span class="badge bg-${club.isActive ? 'success' : 'danger'}">
-                                ${club.isActive ? 'Aktif' : 'Pasif'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-primary btn-action edit-club-btn" data-id="${club.clubId}" title="Düzenle"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-danger btn-action delete-club-btn" data-id="${club.clubId}" title="Sil"><i class="fas fa-trash"></i></button>
-                            <button class="btn btn-sm btn-info btn-action manage-club-users-btn" data-id="${club.clubId}" data-name="${club.clubName}" title="Üyeleri Yönet"><i class="fas fa-users-cog"></i></button>
-                        </td>
-                    </tr>
-                `;
+                                <tr>
+                                    <td>${club.clubName}</td>
+                                    <td>${club.description ? club.description.substring(0, 50) + (club.description.length > 50 ? '...' : '') : '-'}</td>
+                                    <td>${club.clubManager || 'Atanmamış'}</td>
+                                    <td>${club.faculty || '-'}</td> <td>${club.responsible_teacher || '-'}</td> <td>
+                                        <span class="badge bg-${club.isActive ? 'success' : 'danger'}">
+                                            ${club.isActive ? 'Aktif' : 'Pasif'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary btn-action edit-club-btn" data-id="${club.clubId}" title="Düzenle"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger btn-action delete-club-btn" data-id="${club.clubId}" title="Sil"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-info btn-action manage-club-users-btn" data-id="${club.clubId}" data-name="${club.clubName}" title="Üyeleri Yönet"><i class="fas fa-users-cog"></i></button>
+                                    </td>
+                                </tr>
+                            `;
                     clubsTableBody.innerHTML += row;
                 });
                 renderPagination('clubs-pagination', metaData.CurrentPage, metaData.TotalPages, (page) => {
@@ -613,20 +622,38 @@
             document.querySelectorAll('.edit-club-btn').forEach(button => {
                 button.onclick = async (e) => {
                     const clubId = e.currentTarget.dataset.id;
-                    const url = `${API_BASE_URL}/api/admin/clubs/${clubId}`;
-                    const club = await callApi(url); // Tek kulübü çek
+                    const url = `${API_BASE_URL}/admin/clubs/${clubId}`;
 
-                    if (club) {
+                    // callApi'den dönen objeyi doğru şekilde parçala
+                    const { data: club, metaData } = await callApi(url); // <-- Bu satır güncellendi
+
+                    // Debug için dönen kulüp objesini konsola yazdır
+                    console.log("Fetched Club for Editing:", club);
+
+                    if (club) { // Eğer kulüp verisi başarıyla alındıysa
                         document.getElementById('clubModalLabel').textContent = 'Kulüp Düzenle';
                         document.getElementById('club-id').value = club.clubId;
                         document.getElementById('club-name').value = club.clubName;
                         document.getElementById('club-description').value = club.description || '';
                         document.getElementById('club-manager').value = club.clubManager || '';
-                        document.getElementById('club-isactive-container').style.display = 'block'; // Aktif checkbox'ı göster
-                        document.getElementById('club-isactive').checked = club.isActive;
+                        document.getElementById('club-faculty').value = club.faculty || ''; // Set Faculty value
+                        document.getElementById('club-responsible-teacher').value = club.responsible_teacher || ''; // Set Responsible Teacher value
+                        // API'den dönen veride isActive alanı varsa checkbox'ı ayarla
+                        // AdminClubDtoForUpdate DTO'sunda isActive olmasa bile,
+                        // tekil kulüp çekme API'si (GET /api/admin/clubs/{id}) bunu döndürüyor olabilir.
+                        // Eğer döndürmüyorsa, bu satırı kaldırabilirsiniz.
+                        if (club.isActive !== undefined) {
+                            document.getElementById('club-isactive-container').style.display = 'block';
+                            document.getElementById('club-isactive').checked = club.isActive;
+                        } else {
+                            document.getElementById('club-isactive-container').style.display = 'none';
+                        }
 
                         const clubModal = new bootstrap.Modal(document.getElementById('clubModal'));
                         clubModal.show();
+                    } else {
+                        console.error(`Kulüp ID ${clubId} için veri alınamadı.`);
+                        alert('Kulüp detayları yüklenirken bir hata oluştu.');
                     }
                 };
             });
@@ -635,8 +662,9 @@
                 button.onclick = async (e) => {
                     const clubId = e.currentTarget.dataset.id;
                     if (confirm('Bu kulübü silmek istediğinize emin misiniz?')) {
-                        const url = `${API_BASE_URL}/api/admin/clubs/${clubId}`;
-                        const result = await callApi(url, 'DELETE');
+                        const url = `${API_BASE_URL}/admin/clubs/${clubId}`;
+                        // DELETE isteği için de data ve metaData ayıklaması yapılması gerekebilir
+                        const { data: result, metaData } = await callApi(url, 'DELETE');
                         if (result !== null) { // 204 No Content dönebilir
                             alert('Kulüp başarıyla silindi.');
                             fetchClubs();
@@ -649,7 +677,11 @@
                 document.getElementById('clubModalLabel').textContent = 'Yeni Kulüp Ekle';
                 document.getElementById('club-form').reset(); // Formu sıfırla
                 document.getElementById('club-id').value = ''; // ID'yi sıfırla
+                document.getElementById('club-faculty').value = ''; // Clear Faculty
+                document.getElementById('club-responsible-teacher').value = ''; // Clear Responsible Teacher
                 document.getElementById('club-isactive-container').style.display = 'none'; // Yeni kulüpte aktiflik seçeneğini gizle
+                // isActive checkbox'ını da sıfırla
+                document.getElementById('club-isactive').checked = false;
                 const clubModal = new bootstrap.Modal(document.getElementById('clubModal'));
                 clubModal.show();
             };
@@ -662,20 +694,23 @@
                     clubName: document.getElementById('club-name').value,
                     description: document.getElementById('club-description').value,
                     clubManager: document.getElementById('club-manager').value || null,
-                    // is_active sadece güncellemede geçerli, yeni eklemede varsayılan true olabilir.
-                    // AdminClubDtoForUpdate DTO'nuzda IsActive nullable olduğu için burada boş bırakabiliriz.
-                    isActive: clubId ? document.getElementById('club-isactive').checked : undefined // Yeni eklemede isActive göndermeyebiliriz
+                    faculty: document.getElementById('club-faculty').value || null, // Add Faculty
+                    responsible_teacher: document.getElementById('club-responsible-teacher').value || null, // Add Responsible Teacher
+                    // isActive sadece güncellemede gönderilmeli, yeni eklemede backend'iniz varsayılan true olarak kabul etmeli
+                    // Eğer backend'iniz yeni eklemede isActive bekliyorsa, burayı ayarlamanız gerekir.
+                    isActive: clubId ? document.getElementById('club-isactive').checked : undefined
                 };
 
-                let url = `${API_BASE_URL}/api/admin/clubs`;
+                let url = `${API_BASE_URL}/admin/clubs`;
                 let method = 'POST';
 
                 if (clubId) { // Düzenleme işlemi
-                    url = `${API_BASE_URL}/api/admin/clubs/${clubId}`;
+                    url = `${API_BASE_URL}/admin/clubs/${clubId}`;
                     method = 'PUT';
                 }
 
-                const result = await callApi(url, method, clubData);
+                // POST/PUT isteği için de data ve metaData ayıklaması yapılması gerekebilir
+                const { data: result, metaData } = await callApi(url, method, clubData);
                 if (result !== null) { // 204 No Content dönebilir
                     alert(`Kulüp başarıyla ${clubId ? 'güncellendi' : 'eklendi'}.`);
                     bootstrap.Modal.getInstance(document.getElementById('clubModal')).hide(); // Modalı kapat
@@ -717,7 +752,7 @@
 
         // fetchEvents fonksiyonunu kullanma örneği
         async function fetchEvents() {
-            let url = `${API_BASE_URL}/api/admin/events?PageNumber=${currentEventPage}&PageSize=${eventsPerPage}&SearchTerm=${currentEventSearchTerm}`;
+            let url = `${API_BASE_URL}/admin/events?PageNumber=${currentEventPage}&PageSize=${eventsPerPage}&SearchTerm=${currentEventSearchTerm}`;
             if (currentEventStatusFilter !== '') {
                 url += `&IsApproved=${currentEventStatusFilter}`;
             }
@@ -741,20 +776,20 @@
                     }
 
                     const row = `
-                <tr>
-                    <td>${event.title}</td>
-                    <td>${event.clubClubName || '-'}</td>
-                    <td>${eventDate}</td>
-                    <td>${event.location}</td>
-                    <td><span class="badge ${statusBadgeClass}">${statusText}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-success btn-action approve-event-btn" data-id="${event.id}" ${event.isApproved ? 'disabled' : ''} title="Onayla"><i class="fas fa-check-circle"></i></button>
-                        <button class="btn btn-sm btn-danger btn-action reject-event-btn" data-id="${event.id}" ${!event.isApproved ? '' : 'disabled'} title="Reddet"><i class="fas fa-times-circle"></i></button>
-                        <button class="btn btn-sm btn-primary btn-action edit-event-btn" data-id="${event.id}" title="Düzenle"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger btn-action delete-event-btn" data-id="${event.id}" title="Sil"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
+                            <tr>
+                                <td>${event.title}</td>
+                                <td>${event.clubClubName || '-'}</td>
+                                <td>${eventDate}</td>
+                                <td>${event.location}</td>
+                                <td><span class="badge ${statusBadgeClass}">${statusText}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-success btn-action approve-event-btn" data-id="${event.id}" ${event.isApproved ? 'disabled' : ''} title="Onayla"><i class="fas fa-check-circle"></i></button>
+                                    <button class="btn btn-sm btn-danger btn-action reject-event-btn" data-id="${event.id}" ${!event.isApproved ? '' : 'disabled'} title="Reddet"><i class="fas fa-times-circle"></i></button>
+                                    <button class="btn btn-sm btn-primary btn-action edit-event-btn" data-id="${event.id}" title="Düzenle"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger btn-action delete-event-btn" data-id="${event.id}" title="Sil"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `;
                     eventsTableBody.innerHTML += row;
                 });
                 // Sayfalama için metaData nesnesini kullanın
@@ -777,7 +812,7 @@
                             "path": "/isApproved", // AdminEventDtoForUpdate'daki alan adı
                             "value": true
                         }];
-                        const url = `${API_BASE_URL}/api/admin/events/${eventId}`;
+                        const url = `${API_BASE_URL}/admin/events/${eventId}`;
                         const result = await callApi(url, 'PATCH', patchDoc); // PATCH isteği
                         if (result !== null) { // result null değilse işlem başarılı (204 No Content dönebilir)
                             alert('Etkinlik onaylandı!');
@@ -796,7 +831,7 @@
                             "path": "/isApproved", // AdminEventDtoForUpdate'daki alan adı
                             "value": false
                         }];
-                        const url = `${API_BASE_URL}/api/admin/events/${eventId}`;
+                        const url = `${API_BASE_URL}/admin/events/${eventId}`;
                         const result = await callApi(url, 'PATCH', patchDoc);
                         if (result !== null) {
                             alert('Etkinlik reddedildi!');
@@ -820,7 +855,7 @@
                 button.onclick = async (e) => {
                     const eventId = e.currentTarget.dataset.id;
                     if (confirm('Bu etkinliği silmek istediğinize emin misiniz?')) {
-                        const url = `${API_BASE_URL}/api/admin/events/${eventId}`;
+                        const url = `${API_BASE_URL}/admin/events/${eventId}`;
                         const result = await callApi(url, 'DELETE');
                         if (result !== null) { // 204 No Content dönebilir
                             alert('Etkinlik silindi!');
@@ -856,7 +891,7 @@
                 alert('Lütfen bir kullanıcı adı girin.');
                 return;
             }
-            const url = `${API_BASE_URL}/api/admin/rolemanagment/username?userName=${userName}`;
+            const url = `${API_BASE_URL}/admin/rolemanagment/username?userName=${userName}`;
             const roles = await callApi(url);
 
             const displayDiv = document.getElementById('user-roles-display');
@@ -884,7 +919,7 @@
                 return;
             }
             if (confirm(`'${userName}' kullanıcısına '${roleName}' rolünü atamak istediğinize emin misiniz?`)) {
-                const url = `${API_BASE_URL}/api/admin/rolemanagment/assign?userName=${userName}&roleName=${roleName}`;
+                const url = `${API_BASE_URL}/admin/rolemanagment/assign?userName=${userName}&roleName=${roleName}`;
                 const result = await callApi(url, 'POST'); // POST isteği, body boş olabilir
                 if (result !== null) { // 204 No Content döndüğü için `null` kontrolü
                     alert('Rol başarıyla atandı!');
@@ -901,7 +936,7 @@
                 return;
             }
             if (confirm(`'${userName}' kullanıcısından '${roleName}' rolünü kaldırmak istediğinize emin misiniz?`)) {
-                const url = `${API_BASE_URL}/api/admin/rolemanagment/remove?userName=${userName}&roleName=${roleName}`;
+                const url = `${API_BASE_URL}/admin/rolemanagment/remove?userName=${userName}&roleName=${roleName}`;
                 const result = await callApi(url, 'DELETE');
                 if (result !== null) { // 204 No Content döndüğü için `null` kontrolü
                     alert('Rol başarıyla kaldırıldı!');
@@ -948,5 +983,6 @@
         }
 
     </script>
+    <script src="navbar.js"></script>
 </body>
 </html>

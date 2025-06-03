@@ -49,9 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <li><a class="dropdown-item" href="clubManagerDashboard.html">Club Manager Dashboard</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item" id="myEventsNav" style="display: none;">
-                            <a class="nav-link" href="my-events.html">Etkinliklerim</a>
-                        </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item" id="loginButton">
@@ -114,18 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 'Kulüplerim' bağlantısı artık her zaman görünür olduğu için bu kontrol kaldırıldı.
-            const myEventsNav = document.getElementById('myEventsNav');
-            if (role === 'Club Manager' || role === 'Academician' || role === 'User') {
-                myEventsNav.style.display = 'block';
-            } else {
-                myEventsNav.style.display = 'none';
-            }
+            // 'Etkinliklerim' navigasyon öğesi kaldırıldığı için bu kontrol de kaldırıldı.
         } else {
             document.getElementById('loginButton').style.display = 'block';
             document.getElementById('userMenu').style.display = 'none';
             document.getElementById('dashboardDropdown').style.display = 'none';
             // 'Kulüplerim' bağlantısı artık her zaman görünür olduğu için bu kontrol kaldırıldı.
-            document.getElementById('myEventsNav').style.display = 'none';
+            // 'Etkinliklerim' navigasyon öğesi kaldırıldığı için bu kontrol de kaldırıldı.
         }
     }
 

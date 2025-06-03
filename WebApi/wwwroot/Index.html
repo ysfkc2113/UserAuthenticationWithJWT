@@ -44,7 +44,6 @@
         <div class="container">
             <h1 class="display-4">Üniversite Etkinlikleri ve Kulüpleri</h1>
             <p class="lead">Etkinlikleri keşfet, kulüplere katıl ve kampüs hayatını zenginleştir.</p>
-            <a href="register.html" class="btn btn-primary btn-lg">Kayıt Ol</a>
         </div>
     </section>
 
@@ -56,7 +55,7 @@
     <script>
         // API_BASE_URL is now defined in navbar.js, so it's globally available if navbar.js loads first.
         // Or you can redefine it here if you need it specifically for this page's scripts.
-        // const API_BASE_URL = 'https://localhost:7222'; // Örneğin, kendi backend'inizin adresi
+        // const API_BASE_URL = 'https://localhost:7222'; // Örneğin, kendi backendinizin adresi
 
         // Etkinlikleri getiren asenkron fonksiyon
         async function fetchEvents() {
@@ -141,18 +140,18 @@
                         : 'https://placehold.co/700x400/007bff/ffffff?text=Etkinlik+Resmi'; // Varsayılan resim
 
                     container.innerHTML += `
-                            <div class="col-md-4 mb-4">
-                                <div class="card h-100 shadow-sm">
-                                    <img src="${imageUrl}" class="card-img-top event-card-img" alt="${event.title}">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">${event.title}</h5>
-                                        <p class="card-text text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i> ${event.location}</p>
-                                        <p class="card-text text-muted mb-1"><i class="fas fa-calendar-alt me-1"></i> ${eventDate}</p>
-                                        <p class="card-text flex-grow-1">${event.clubClubName || 'Belirtilmemiş'}</p>
-                                        <a href="eventdetail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <img src="${imageUrl}" class="card-img-top event-card-img" alt="${event.title}">
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title">${event.title}</h5>
+                                            <p class="card-text text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i> ${event.location}</p>
+                                            <p class="card-text text-muted mb-1"><i class="fas fa-calendar-alt me-1"></i> ${eventDate}</p>
+                                            <p class="card-text flex-grow-1">${event.clubClubName || 'Belirtilmemiş'}</p>
+                                            <a href="eventdetail.html?id=${event.id}" class="btn btn-primary mt-auto">Detay</a>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>`;
+                                </div>`;
 
                 });
             } catch (error) {

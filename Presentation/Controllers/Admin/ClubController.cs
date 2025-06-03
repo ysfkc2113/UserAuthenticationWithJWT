@@ -69,7 +69,7 @@ namespace Presentation.Controllers.Admin
         {
 
             var club= await _manager.ClubService.UpdateClubAsync(adminClubDtoForUpdate,id,true);
-            return Ok(club);
+            return Ok();
         }
         
 

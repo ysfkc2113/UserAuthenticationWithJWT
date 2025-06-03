@@ -38,19 +38,19 @@
                 padding: 10px;
                 font-size: 1.1em;
                 display: block;
-                color: #f8f9fa;
+                color: #e0e0e0;
                 text-decoration: none;
             }
 
                 #sidebar ul li a:hover {
-                    color: #007bff;
-                    background: #fff;
+                    color: #fff;
+                    background: #495057;
                 }
 
             #sidebar ul li.active > a,
             a[aria-expanded="true"] {
                 color: #fff;
-                background: #007bff;
+                background: #6c757d;
             }
 
         #content {
@@ -60,64 +60,58 @@
             transition: all 0.3s;
         }
 
-        .section-content {
-            display: none;
-        }
-
-            .section-content.active {
-                display: block;
-            }
-
         .card {
             margin-bottom: 20px;
         }
 
-        /* Pagination Styling */
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: white;
+        .section-title {
+            margin-bottom: 20px;
+            color: #343a40;
         }
 
-        .pagination .page-link {
-            color: #007bff;
+        .pagination .page-item .page-link {
+            cursor: pointer;
         }
 
-            .pagination .page-link:hover {
-                color: #0056b3;
+        .message-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1050;
+        }
+
+        .alert-custom {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+            .alert-custom.show {
+                opacity: 1;
             }
     </style>
 </head>
 <body>
-
-    <script src="navbar.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="message-container" id="message-container"></div>
 
     <div class="wrapper">
         <nav id="sidebar">
-            <div class="sidebar-header text-center">
+            <div class="sidebar-header text-center py-4">
                 <h3>Kulüp Yöneticisi</h3>
-                <p><span id="club-manager-username">Yükleniyor...</span></p>
+                <span id="welcome-message"></span>
             </div>
 
             <ul class="list-unstyled components">
                 <li class="active">
-                    <a href="#" data-section="club-info-section">Kulüp Bilgileri</a>
+                    <a href="#" data-section="club-info-section"><i class="fas fa-info-circle"></i> Kulüp Bilgileri</a>
                 </li>
                 <li>
-                    <a href="#" data-section="pending-members-section">Bekleyen Üyelikler</a>
+                    <a href="#" data-section="club-members-section"><i class="fas fa-users"></i> Kulüp Üyeleri</a>
                 </li>
                 <li>
-                    <a href="#" data-section="club-members-section">Kulüp Üyeleri</a>
+                    <a href="#" data-section="pending-members-section"><i class="fas fa-user-clock"></i> Bekleyen Üyelikler</a>
                 </li>
                 <li>
-                    <a href="#" data-section="events-section">Etkinlikler</a>
-                </li>
-                <li>
-                    <a href="#" data-section="create-event-section">Etkinlik Oluştur</a>
-                </li>
-                <li>
-                    <a href="#" data-section="applications-section">Başvurular</a>
+                    <a href="#" data-section="events-section"><i class="fas fa-calendar-alt"></i> Etkinlikler</a>
                 </li>
             </ul>
         </nav>
@@ -127,94 +121,167 @@
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-info">
                         <i class="fas fa-align-left"></i>
-                        <span>Menü Aç/Kapa</span>
+                        <span>Menü</span>
                     </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item" id="navbar-placeholder">
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
 
-            <div id="club-info-section" class="section-content active">
-                <h4>Kulüp Bilgileri</h4>
+            <section id="club-info-section" class="content-section">
+                <h2 class="section-title">Kulüp Bilgileri</h2>
                 <div class="card">
+                    <div class="card-header">Kulüp Detayları</div>
                     <div class="card-body">
-                        <h5 class="card-title" id="club-name">Kulüp Adı: Yükleniyor...</h5>
-                        <p class="card-text" id="club-description">Açıklama: Yükleniyor...</p>
-                        <p class="card-text" id="club-faculty">Fakülte: Yükleniyor...</p>
-                        <p class="card-text" id="club-teacher">Sorumlu Öğretmen: Yükleniyor...</p>
-                        <p class="card-text" id="club-manager">Kulüp Yöneticisi: Yükleniyor...</p>
-                        <p class="card-text" id="club-member-count">Üye Sayısı: Yükleniyor...</p>
-                        <button class="btn btn-primary" id="edit-club-btn">Kulüp Bilgilerini Düzenle</button>
+                        <p><strong>Kulüp Adı:</strong> <span id="club-name"></span></p>
+                        <p><strong>Açıklama:</strong> <span id="club-description"></span></p>
+                        <p><strong>Kuruluş Tarihi:</strong> <span id="club-founding-date"></span></p>
+                        <p><strong>Mail:</strong> <span id="club-mail"></span></p>
+                        <p><strong>Telefon:</strong> <span id="club-phone"></span></p>
+                        <p><strong>Fakülte:</strong> <span id="club-faculty"></span></p>
+                        <p><strong>Onay Durumu:</strong> <span id="club-approved-status"></span></p>
+                        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editClubModal">Kulüp Bilgilerini Düzenle</button>
                     </div>
                 </div>
+            </section>
 
-                <div id="edit-club-form" class="card mt-4" style="display: none;">
-                    <div class="card-header">Kulüp Bilgilerini Düzenle</div>
-                    <div class="card-body">
-                        <form id="update-club-form">
-                            <div class="mb-3">
-                                <label for="edit-club-name" class="form-label">Kulüp Adı</label>
-                                <input type="text" class="form-control" id="edit-club-name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit-club-description" class="form-label">Açıklama</label>
-                                <textarea class="form-control" id="edit-club-description" rows="3" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit-club-logo-url" class="form-label">Logo URL</label>
-                                <input type="url" class="form-control" id="edit-club-logo-url">
-                            </div>
-                            <button type="submit" class="btn btn-success">Kaydet</button>
-                            <button type="button" class="btn btn-secondary" id="cancel-edit-club-btn">İptal</button>
-                        </form>
+            <div class="modal fade" id="editClubModal" tabindex="-1" aria-labelledby="editClubModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editClubModalLabel">Kulüp Bilgilerini Düzenle</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="edit-club-form">
+                                <input type="hidden" id="edit-club-id">
+                                <div class="mb-3">
+                                    <label for="edit-club-name" class="form-label">Kulüp Adı</label>
+                                    <input type="text" class="form-control" id="edit-club-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-club-description" class="form-label">Açıklama</label>
+                                    <textarea class="form-control" id="edit-club-description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-club-mail" class="form-label">Mail</label>
+                                    <input type="email" class="form-control" id="edit-club-mail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-club-phone" class="form-label">Telefon</label>
+                                    <input type="tel" class="form-control" id="edit-club-phone" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-club-faculty" class="form-label">Fakülte</label>
+                                    <input type="text" class="form-control" id="edit-club-faculty" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Kaydet</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="pending-members-section" class="section-content">
-                <h4>Bekleyen Üyelikler</h4>
-                <div id="pending-members-list" class="list-group">
+            <section id="club-members-section" class="content-section d-none">
+                <h2 class="section-title">Kulüp Üyeleri</h2>
+                <div class="card">
+                    <div class="card-header">Üye Listesi</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Kullanıcı Adı</th>
+                                        <th>Adı Soyadı</th>
+                                        <th>Kulüp Rolü</th>
+                                        <th>Onay Durumu</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="club-members-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Club Members Pagination">
+                            <ul class="pagination justify-content-center" id="club-members-pagination"></ul>
+                        </nav>
+                    </div>
                 </div>
-                <nav aria-label="Bekleyen Üyeler Sayfalama">
-                    <ul class="pagination justify-content-center mt-3" id="pending-members-pagination">
-                    </ul>
-                </nav>
-            </div>
+            </section>
 
-            <div id="club-members-section" class="section-content">
-                <h4>Kulüp Üyeleri</h4>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="member-search-input" placeholder="Üye adı veya soyadı ile ara...">
-                    <button class="btn btn-outline-secondary" type="button" id="member-search-button">Ara</button>
+            <section id="pending-members-section" class="content-section d-none">
+                <h2 class="section-title">Bekleyen Üyelikler</h2>
+                <div class="card">
+                    <div class="card-header">Bekleyen Üye Başvuruları</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Kullanıcı Adı</th>
+                                        <th>Adı Soyadı</th>
+                                        <th>Kulüp Rolü</th>
+                                        <th>Eylemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pending-members-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Pending Members Pagination">
+                            <ul class="pagination justify-content-center" id="pending-pagination"></ul>
+                        </nav>
+                    </div>
                 </div>
-                <div id="club-members-list" class="list-group">
-                </div>
-                <nav aria-label="Kulüp Üyeleri Sayfalama">
-                    <ul class="pagination justify-content-center mt-3" id="club-members-pagination">
-                    </ul>
-                </nav>
-            </div>
+            </section>
 
-            <div id="events-section" class="section-content">
-                <h4>Kulüp Etkinlikleri</h4>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="club-events-container">
+            <section id="events-section" class="content-section d-none">
+                <h2 class="section-title">Etkinlikler</h2>
+                <button class="btn btn-success mb-3" id="create-event-btn">Yeni Etkinlik Oluştur</button>
+                <div class="card">
+                    <div class="card-header">Etkinlik Listesi</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Başlık</th>
+                                        <th>Tarih</th>
+                                        <th>Konum</th>
+                                        <th>Onay Durumu</th>
+                                        <th>Eylemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="events-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Events Pagination">
+                            <ul class="pagination justify-content-center" id="events-pagination"></ul>
+                        </nav>
+                    </div>
                 </div>
-                <nav aria-label="Etkinlikler Sayfalama">
-                    <ul class="pagination justify-content-center mt-3" id="club-events-pagination">
-                    </ul>
-                </nav>
-            </div>
+            </section>
 
-            <div id="create-event-section" class="section-content">
-                <h4>Yeni Etkinlik Oluştur</h4>
+            <section id="create-edit-event-section" class="content-section d-none">
+                <h2 class="section-title" id="event-form-title">Yeni Etkinlik Oluştur</h2>
                 <div class="card">
                     <div class="card-body">
-                        <form id="create-event-form">
+                        <form id="event-form">
+                            <input type="hidden" id="event-id">
                             <div class="mb-3">
                                 <label for="event-title" class="form-label">Etkinlik Başlığı</label>
                                 <input type="text" class="form-control" id="event-title" required>
                             </div>
                             <div class="mb-3">
                                 <label for="event-description" class="form-label">Açıklama</label>
-                                <textarea class="form-control" id="event-description" rows="3" required></textarea>
+                                <textarea class="form-control" id="event-description" rows="5" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="event-date" class="form-label">Tarih</label>
@@ -225,581 +292,431 @@
                                 <input type="text" class="form-control" id="event-location" required>
                             </div>
                             <div class="mb-3">
-                                <label for="event-capacity" class="form-label">Kapasite</label>
-                                <input type="number" class="form-control" id="event-capacity" min="1" required>
+                                <label for="event-quota" class="form-label">Kontenjan</label>
+                                <input type="number" class="form-control" id="event-quota" min="1" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="event-image-url" class="form-label">Resim URL</label>
-                                <input type="url" class="form-control" id="event-image-url">
-                            </div>
-                            <button type="submit" class="btn btn-success">Etkinlik Oluştur</button>
+                            <button type="submit" class="btn btn-primary" id="save-event-btn">Kaydet</button>
+                            <button type="button" class="btn btn-secondary" id="cancel-event-btn">İptal</button>
                         </form>
                     </div>
                 </div>
-            </div>
-
-            <div id="applications-section" class="section-content">
-                <h4>Kulüp Başvuruları</h4>
-                <div class="card">
-                    <div class="card-body">
-                        <p class="card-text">Burada kulübünüze yapılan etkinlik ve üyelik başvurularını yönetebilirsiniz.</p>
-                    </div>
-                </div>
-            </div>
+            </section>
 
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="navbar.js"></script>
     <script>
-        // API Base URL - Backend API'nizin doğru adresini kontrol edin
-        const API_BASE_URL = 'https://localhost:7222/api'; //navbar.js'te de tanımlı, çakışma olmaması için burada yorum satırı yapılabilir veya tek bir global dosya kullanılabilir.
+        // Mesaj gösterme fonksiyonu
+        function displayMessage(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('message-container');
+            if (!container) return;
 
-        // NOT: decodeJwtPayload fonksiyonu navbar.js üzerinden erişilebilir olmalıdır.
-        // Eğer navbar.js'i bu sayfaya dahil etmediyseniz, aşağıdaki decodeJwtPayload fonksiyonunu buraya da yapıştırmanız gerekir:
-        /*
-        function decodeJwtPayload(token) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade alert-custom`;
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = `
+                    <div>${message}</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+            container.appendChild(alertDiv);
+
+            setTimeout(() => alertDiv.classList.add('show'), 10);
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                alertDiv.addEventListener('transitionend', () => alertDiv.remove());
+            }, duration);
+        }
+
+        // Sayfalandırma fonksiyonu
+        function renderPagination(paginationElementId, currentPage, totalPages, pageChangeCallback) {
+            const paginationElement = document.getElementById(paginationElementId);
+            paginationElement.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            const createPageItem = (page, text, isActive = false, isDisabled = false) => {
+                const li = document.createElement('li');
+                li.className = `page-item ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`;
+
+                const btn = document.createElement('button');
+                btn.className = 'page-link';
+                btn.textContent = text;
+                btn.addEventListener('click', () => {
+                    if (!isDisabled && !isActive) {
+                        pageChangeCallback(page);
+                    }
+                });
+                li.appendChild(btn);
+                return li;
+            };
+
+            paginationElement.appendChild(createPageItem(currentPage - 1, '«', false, currentPage === 1));
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationElement.appendChild(createPageItem(i, i, i === currentPage));
+            }
+
+            paginationElement.appendChild(createPageItem(currentPage + 1, '»', false, currentPage === totalPages));
+        }
+
+        /**
+         * API çağrıları yapmak için genel bir yardımcı fonksiyon.
+         * @param {string} url - İstek yapılacak tam URL.
+         * @param {string} method - HTTP metodu (GET, POST, PUT, DELETE). Varsayılan: 'GET'.
+         * @param {object} body - İstek gövdesine eklenecek JavaScript nesnesi (POST/PUT için).
+         * @param {boolean} displaySuccessMessage - Başarılı durumda mesaj gösterilip gösterilmeyeceği. Varsayılan: false.
+         * @returns {Promise<object|null>} API yanıtının JSON parse edilmiş hali ({data, metaData} şeklinde) veya hata durumunda null.
+         */
+        async function callApi(url, method = 'GET', body = null, displaySuccessMessage = false) {
+            const accessToken = localStorage.getItem('accessToken');
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            if (accessToken) {
+                headers['Authorization'] = `Bearer ${accessToken}`;
+            }
+
+            const options = {
+                method: method,
+                headers: headers,
+            };
+
+            if (body && (method === 'POST' || method === 'PUT')) {
+                options.body = JSON.stringify(body);
+            }
+
             try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                console.error("Error decoding JWT payload:", e);
+                const response = await fetch(url, options);
+
+                const paginationHeader = response.headers.get('X-Pagination');
+                let metaData = null;
+                if (paginationHeader) {
+                    try {
+                        metaData = JSON.parse(paginationHeader);
+                    } catch (e) {
+                        console.error("X-Pagination header'ı ayrıştırılırken hata:", e);
+                    }
+                }
+
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const data = await response.json();
+                        if (displaySuccessMessage) {
+                            displayMessage('İşlem başarıyla tamamlandı.', 'success');
+                        }
+                        return { data: data, metaData: metaData };
+                    } else {
+                        if (displaySuccessMessage) {
+                            displayMessage('İşlem başarıyla tamamlandı.', 'success');
+                        }
+                        return { data: true, metaData: metaData }; // Başarılı ancak veri yok
+                    }
+                } else {
+                    let errorData = null;
+                    const errorContentType = response.headers.get('content-type');
+                    if (errorContentType && errorContentType.includes('application/json')) {
+                        errorData = await response.json();
+                    } else {
+                        errorData = await response.text();
+                    }
+
+                    console.error(`API Error: ${response.status} -`, errorData);
+                    displayMessage(`Hata: ${response.status} - ${errorData.message || errorData.detail || errorData || 'Bilinmeyen bir hata oluştu.'}`, 'danger');
+
+                    if (response.status === 401) {
+                        setTimeout(() => {
+                            localStorage.clear();
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    }
+                    return null;
+                }
+            } catch (error) {
+                console.error("Network or API call error:", error);
+                displayMessage(`Sunucuya ulaşılamıyor veya ağ hatası: ${error.message}`, 'danger');
                 return null;
             }
         }
-        */
-
-        // Giriş kontrolü ve Club Manager rolü doğrulama
-        async function checkLoginAndRole() {
-            let accessToken = localStorage.getItem('accessToken');
-            if (!accessToken) {
-                alert('Giriş yapmanız gerekiyor!');
-                window.location.href = 'login.html';
-                return false;
-            }
-
-            const payload = decodeJwtPayload(accessToken);
-            if (!payload) {
-                console.error("JWT payload çözülemedi veya boş.");
-                alert('Geçersiz oturum bilgileri. Lütfen tekrar giriş yapın.');
-                localStorage.clear();
-                window.location.href = 'login.html';
-                return false;
-            }
-
-            // Rol bilgisini doğru claim isminden al
-            let userRoles = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-            // userRoles tek bir string ise diziye dönüştür, değilse olduğu gibi kullan veya boş dizi yap
-            if (typeof userRoles === 'string') {
-                userRoles = [userRoles];
-            } else if (!Array.isArray(userRoles)) {
-                userRoles = [];
-            }
-
-            // "Club Manager" rolünü kontrol et
-            if (!userRoles.includes('Club Manager')) {
-                alert('Bu sayfaya erişim yetkiniz yok!');
-                window.location.href = 'index.html'; // Yetkisiz kullanıcıları ana sayfaya yönlendir
-                return false;
-            }
-
-            // Kullanıcı adını doğru claim isminden al ve dashboard'da göster (eğer bir element varsa)
-            let currentClubManagerUsername = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || 'Kulüp Yöneticisi';
-            const usernameDisplayElement = document.getElementById('club-manager-username'); // Bu ID'ye sahip bir elementinizin olduğunu varsayıyorum
-            if (usernameDisplayElement) {
-                usernameDisplayElement.textContent = currentClubManagerUsername;
-            }
-
-            return true;
-        }
 
 
-        // Sidebar fonksiyonu
-        document.getElementById('sidebarCollapse').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('content').classList.toggle('active');
-        });
-
-        document.querySelectorAll('#sidebar ul li a').forEach(item => {
-            item.addEventListener('click', function (e) {
-                e.preventDefault();
-                const sectionId = this.dataset.section;
-                showSection(sectionId);
-
-                // Aktif sınıfı güncelle
-                document.querySelectorAll('#sidebar ul li').forEach(li => li.classList.remove('active'));
-                this.parentElement.classList.add('active');
-            });
-        });
+        // SECTION VE SAYFALANDIRMA YÖNETİMİ
+        let currentClubMembersPage = 1;
+        let clubMembersPerPage = 10;
+        let currentPendingMembersPage = 1;
+        let pendingMembersPerPage = 10;
+        let currentEventsPage = 1;
+        let eventsPerPage = 10;
 
         function showSection(sectionId) {
-            document.querySelectorAll('.section-content').forEach(section => {
-                section.classList.remove('active');
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('d-none');
             });
-            document.getElementById(sectionId).classList.add('active');
-            // Eğer ilgili bölümün verileri henüz yüklenmediyse, burada yükleme fonksiyonunu çağırabilirsiniz.
-            // Örneğin:
-            if (sectionId === 'club-info-section') {
-                fetchClubInfo();
-            } else if (sectionId === 'pending-members-section') {
-                fetchPendingMembers(1); // Sayfa 1'den başla
-            } else if (sectionId === 'club-members-section') {
-                fetchClubMembers(1); // Sayfa 1'den başla
-            } else if (sectionId === 'events-section') {
-                fetchClubEvents(1); // Sayfa 1'den başla
+            document.getElementById(sectionId).classList.remove('d-none');
+
+            document.querySelectorAll('#sidebar ul.components li').forEach(li => {
+                li.classList.remove('active');
+            });
+            const activeLink = document.querySelector(`#sidebar ul.components li a[data-section="${sectionId}"]`);
+            if (activeLink) {
+                activeLink.parentElement.classList.add('active');
             }
-            // 'create-event-section' ve 'applications-section' için gerekirse farklı mantıklar
         }
 
-        // Kulüp Bilgileri Fonksiyonları
-        let managerClubId = null; // Kulüp yöneticisinin yönettiği kulübün ID'sini saklamak için
-
+        // #region Kulüp Bilgileri Yönetimi
         async function fetchClubInfo() {
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const userPayload = decodeJwtPayload(accessToken);
-                const username = userPayload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+            const url = `${API_BASE_URL}/clubmanager/clubs`;
+            const apiResponse = await callApi(url);
 
-                // Kullanıcının yönettiği kulübün ID'sini bulmak için API çağrısı
-                const responseClubs = await fetch(`${API_BASE_URL}/admin/clubs`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-                if (!responseClubs.ok) {
-                    throw new Error(`Kulüpler yüklenirken HTTP hatası! Durum: ${responseClubs.status}`);
-                }
-                const clubsResult = await responseClubs.json();
-                // clubsResult.clubDto'dan gelen her bir kulübün ClubManager alanını kontrol et
-                const managerClub = clubsResult.clubDto.find(club => club.clubManager === username);
-
-                if (managerClub) {
-                    managerClubId = managerClub.clubId; // Kulüp ID'sini sakla
-
-                    const clubInfoResponse = await fetch(`${API_BASE_URL}/admin/clubs/${managerClubId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`
-                        }
-                    });
-
-                    if (!clubInfoResponse.ok) {
-                        throw new Error(`Kulüp bilgileri yüklenirken HTTP hatası! Durum: ${clubInfoResponse.status}`);
-                    }
-
-                    const club = await clubInfoResponse.json();
-                    document.getElementById('club-name').textContent = `Kulüp Adı: ${club.clubName}`;
-                    document.getElementById('club-description').textContent = `Açıklama: ${club.description}`;
-                    document.getElementById('club-faculty').textContent = `Fakülte: ${club.faculty}`;
-                    document.getElementById('club-teacher').textContent = `Sorumlu Öğretmen: ${club.responsible_teacher || 'Belirtilmemiş'}`;
-                    document.getElementById('club-manager').textContent = `Kulüp Yöneticisi: ${club.clubManager || 'Belirtilmemiş'}`;
-
-                    // Üye sayısını ayrı bir API çağrısı ile al
-                    const memberCountResponse = await fetch(`${API_BASE_URL}/admin/clubuser/count/${managerClubId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`
-                        }
-                    });
-                    if (memberCountResponse.ok) {
-                        const memberCount = await memberCountResponse.json();
-                        document.getElementById('club-member-count').textContent = `Üye Sayısı: ${memberCount}`;
-                    } else {
-                        console.warn('Üye sayısı yüklenemedi.');
-                        document.getElementById('club-member-count').textContent = `Üye Sayısı: Bilinmiyor`;
-                    }
-
-                    // Düzenleme formunu varsayılan değerlerle doldur
-                    document.getElementById('edit-club-name').value = club.clubName;
-                    document.getElementById('edit-club-description').value = club.description;
-                    document.getElementById('edit-club-logo-url').value = club.logo_url || '';
-
-                } else {
-                    document.getElementById('club-name').textContent = 'Yönettiğiniz bir kulüp bulunamadı.';
-                    document.getElementById('edit-club-btn').style.display = 'none'; // Düzenleme butonunu gizle
-                    document.getElementById('club-description').textContent = '';
-                    document.getElementById('club-faculty').textContent = '';
-                    document.getElementById('club-teacher').textContent = '';
-                    document.getElementById('club-manager').textContent = '';
-                    document.getElementById('club-member-count').textContent = '';
-                    console.warn('Kulüp yöneticisine atanmış bir kulüp bulunamadı.');
-                }
-
-            } catch (error) {
-                console.error('Kulüp bilgileri yüklenirken bir hata oluştu:', error);
-                alert('Kulüp bilgileri yüklenirken bir hata oluştu: ' + error.message);
-                document.getElementById('club-name').textContent = 'Kulüp bilgileri yüklenemedi.';
-            }
-        }
-
-
-        // Kulüp Bilgilerini Düzenleme İşlevselliği
-        document.getElementById('edit-club-btn').addEventListener('click', () => {
-            document.getElementById('edit-club-form').style.display = 'block';
-            document.getElementById('edit-club-btn').style.display = 'none';
-        });
-
-        document.getElementById('cancel-edit-club-btn').addEventListener('click', () => {
-            document.getElementById('edit-club-form').style.display = 'none';
-            document.getElementById('edit-club-btn').style.display = 'block';
-        });
-
-        document.getElementById('update-club-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const accessToken = localStorage.getItem('accessToken');
-            if (!managerClubId) {
-                alert('Kulüp ID bulunamadı. Lütfen sayfayı yenileyin.');
+            if (!apiResponse || !apiResponse.data) {
+                console.error("Kulüp bilgileri API çağrısı başarısız oldu veya veri bulunamadı.");
+                displayMessage('Kulüp bilgileri yüklenirken bir hata oluştu.', 'danger');
                 return;
             }
 
-            const updatedClub = {
-                clubId: managerClubId, // managerClubId'yi kullan
-                clubName: document.getElementById('edit-club-name').value,
-                description: document.getElementById('edit-club-description').value,
-                logo_url: document.getElementById('edit-club-logo-url').value,
-            };
+            const clubData = apiResponse.data;
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/clubmanager/clubs/${managerClubId}`, { // Endpoint'i kontrol edin
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${accessToken}`
-                    },
-                    body: JSON.stringify(updatedClub)
-                });
+            document.getElementById('club-name').textContent = clubData.clubName || 'N/A';
+            document.getElementById('club-description').textContent = clubData.description || 'N/A';
+            document.getElementById('club-founding-date').textContent = clubData.foundingDate ? new Date(clubData.foundingDate).toLocaleDateString() : 'N/A';
+            document.getElementById('club-mail').textContent = clubData.mail || 'N/A';
+            document.getElementById('club-phone').textContent = clubData.phone || 'N/A';
+            document.getElementById('club-faculty').textContent = clubData.faculty || 'N/A';
+            document.getElementById('club-approved-status').textContent = clubData.isApproved ? 'Onaylı' : 'Beklemede';
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Kulüp güncelleme hatası: ${response.status} - ${response.statusText}. Detay: ${errorText}`);
-                }
+            document.getElementById('edit-club-id').value = clubData.clubId || '';
+            document.getElementById('edit-club-name').value = clubData.clubName || '';
+            document.getElementById('edit-club-description').value = clubData.description || '';
+            document.getElementById('edit-club-mail').value = clubData.mail || '';
+            document.getElementById('edit-club-phone').value = clubData.phone || '';
+            document.getElementById('edit-club-faculty').value = clubData.faculty || '';
+        }
 
-                alert('Kulüp bilgileri başarıyla güncellendi!');
-                document.getElementById('edit-club-form').style.display = 'none';
-                document.getElementById('edit-club-btn').style.display = 'block';
-                fetchClubInfo(); // Güncel bilgileri tekrar çek
-            } catch (error) {
-                console.error('Kulüp güncelleme hatası:', error);
-                alert('Kulüp güncellenirken bir hata oluştu: ' + error.message);
+        async function updateClubInfo(event) {
+            event.preventDefault();
+            const clubId = document.getElementById('edit-club-id').value;
+            const clubName = document.getElementById('edit-club-name').value;
+            const description = document.getElementById('edit-club-description').value;
+            const mail = document.getElementById('edit-club-mail').value;
+            const phone = document.getElementById('edit-club-phone').value;
+            const faculty = document.getElementById('edit-club-faculty').value;
+
+            const url = `${API_BASE_URL}/clubmanager/clubs`;
+            const body = { clubId, clubName, description, mail, phone, faculty };
+
+            const apiResponse = await callApi(url, 'PUT', body, true);
+
+            if (apiResponse) {
+                fetchClubInfo();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editClubModal'));
+                modal.hide();
+            } else {
+                // Hata mesajı callApi içinde zaten gösteriliyor.
             }
-        });
+        }
+        // #endregion
 
+        // #region Kulüp Üyeleri Yönetimi
+        async function fetchClubMembers(pageNumber) {
+            currentClubMembersPage = pageNumber;
+            const url = `${API_BASE_URL}/clubmanager/clubuser?PageNumber=${currentClubMembersPage}&PageSize=${clubMembersPerPage}&Status=Approved`;
+            const apiResponse = await callApi(url);
 
-        // Bekleyen Üyelikler Fonksiyonları
-        async function fetchPendingMembers(pageNumber = 1) {
-            if (!managerClubId) {
-                document.getElementById('pending-members-list').innerHTML = '<p class="text-center text-muted">Kulüp bilgileri yükleniyor, lütfen bekleyiniz veya yönettiğiniz bir kulüp bulunamadı.</p>';
+            const tableBody = document.getElementById('club-members-table-body');
+            tableBody.innerHTML = '';
+
+            if (!apiResponse || !apiResponse.data || apiResponse.data.length === 0) {
+                console.error("Kulüp üyeleri API çağrısı başarısız oldu veya veri bulunamadı.", apiResponse);
+                displayMessage('Kulüp üyeleri yüklenirken bir hata oluştu. Yetkiniz olmayabilir veya sunucuya ulaşılamıyor.', 'danger');
+                tableBody.innerHTML = '<tr><td colspan="5">Kulüp üyesi bulunamadı veya yüklenirken hata oluştu.</td></tr>';
+                document.getElementById('club-members-pagination').innerHTML = '';
                 return;
             }
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const response = await fetch(`${API_BASE_URL}/admin/clubuser/${managerClubId}?PageNumber=${pageNumber}&PageSize=5&IsApproved=false`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
 
-                if (!response.ok) {
-                    throw new Error(`Bekleyen üyeler yüklenirken HTTP hatası! Durum: ${response.status}`);
-                }
+            apiResponse.data.forEach(member => {
+                const row = tableBody.insertRow();
+                row.insertCell().textContent = member.id; // DTO'daki Id alanı
+                row.insertCell().textContent = member.userUserName || 'N/A'; // Kullanıcı Adı
+                row.insertCell().textContent = `${member.userFirstName || ''} ${member.userLastName || ''}`.trim() || 'N/A'; // Adı Soyadı
+                row.insertCell().textContent = member.role_in_club || 'N/A'; // Kulüp Rolü
+                row.insertCell().textContent = member.approved ? 'Onaylı' : 'Beklemede'; // Approved alanı
+            });
 
-                const data = await response.json();
-                const pendingMembers = data.club_Users;
-                const metaData = data.metaData;
-
-                const listContainer = document.getElementById('pending-members-list');
-                listContainer.innerHTML = '';
-
-                if (pendingMembers && pendingMembers.length > 0) {
-                    pendingMembers.forEach(member => {
-                        const listItem = document.createElement('div');
-                        listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-                        listItem.innerHTML = `
-                                <span>${member.userFirstName} ${member.userLastName} (${member.userUserName})</span>
-                                <div>
-                                    <button class="btn btn-success btn-sm approve-btn me-2" data-id="${member.id}">Onayla</button>
-                                    <button class="btn btn-danger btn-sm reject-btn" data-id="${member.id}">Reddet</button>
-                                </div>
-                            `;
-                        listContainer.appendChild(listItem);
-                    });
-
-                    // Butonlara event listener ekle
-                    listContainer.querySelectorAll('.approve-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => approveOrRejectMember(e.target.dataset.id, true));
-                    });
-                    listContainer.querySelectorAll('.reject-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => approveOrRejectMember(e.target.dataset.id, false));
-                    });
-
-                    renderPagination(metaData, 'pending-members-pagination', fetchPendingMembers);
-
-                } else {
-                    listContainer.innerHTML = '<p class="text-center">Hiç bekleyen üyelik bulunmamaktadır.</p>';
-                    document.getElementById('pending-members-pagination').innerHTML = ''; // Sayfalama boşalt
-                }
-
-            } catch (error) {
-                console.error('Bekleyen üyeler yüklenirken hata:', error);
-                document.getElementById('pending-members-list').innerHTML = `<p class="text-danger text-center">Bekleyen üyeler yüklenemedi: ${error.message}</p>`;
-            }
+            renderPagination('club-members-pagination', apiResponse.metaData.currentPage, apiResponse.metaData.totalPages, fetchClubMembers);
         }
+        // #endregion
 
-        async function approveOrRejectMember(clubUserId, isApproved) {
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const endpoint = `${API_BASE_URL}/admin/clubuser/${clubUserId}`; // Approve/Reject için aynı endpoint'i kullanın
+        // #region Bekleyen Üyelikler Yönetimi
+        async function fetchPendingMembers(pageNumber) {
+            currentPendingMembersPage = pageNumber;
+            const url = `${API_BASE_URL}/clubmanager/clubuser?PageNumber=${currentPendingMembersPage}&PageSize=${pendingMembersPerPage}&Status=Pending`;
+            const apiResponse = await callApi(url);
 
-                const response = await fetch(endpoint, {
-                    method: 'PUT', // PUT veya PATCH metodu genellikle uygun
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${accessToken}`
-                    },
-                    // API'niz bir boolean veya belirli bir DTO bekliyorsa body'yi buna göre ayarlayın.
-                    // Şu anki backend'de sadece id ile onaylandığı gözlemlendi.
-                    // Eğer IsApproved değerini göndermeniz gerekiyorsa:
-                    // body: JSON.stringify({ isApproved: isApproved })
-                });
+            const tableBody = document.getElementById('pending-members-table-body');
+            tableBody.innerHTML = '';
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Üyelik işlemi başarısız: ${response.status} - ${response.statusText}. Detay: ${errorText}`);
-                }
-
-                alert(`Üyelik ${isApproved ? 'onaylandı' : 'reddedildi'}!`);
-                fetchPendingMembers(1); // Listeyi yenile
-                fetchClubInfo(); // Üye sayısı değişebileceği için kulüp bilgisini yenile
-            } catch (error) {
-                console.error('Üyelik işlemi hatası:', error);
-                alert('Üyelik işlemi sırasında bir hata oluştu: ' + error.message);
-            }
-        }
-
-
-        // Kulüp Üyeleri Fonksiyonları
-        let currentMembersPage = 1;
-        let memberSearchTerm = '';
-
-        async function fetchClubMembers(pageNumber = 1) {
-            if (!managerClubId) {
-                document.getElementById('club-members-list').innerHTML = '<p class="text-center text-muted">Kulüp bilgileri yükleniyor, lütfen bekleyiniz veya yönettiğiniz bir kulüp bulunamadı.</p>';
+            if (!apiResponse || !apiResponse.data || apiResponse.data.length === 0) {
+                console.error("Bekleyen üyeler API çağrısı başarısız oldu veya veri bulunamadı.", apiResponse);
+                displayMessage('Bekleyen üyeler yüklenirken bir hata oluştu. Yetkiniz olmayabilir veya sunucuya ulaşılamıyor.', 'danger');
+                tableBody.innerHTML = '<tr><td colspan="5">Bekleyen üye bulunamadı veya yüklenirken hata oluştu.</td></tr>';
+                document.getElementById('pending-pagination').innerHTML = '';
                 return;
             }
-            currentMembersPage = pageNumber;
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                let url = `${API_BASE_URL}/admin/clubuser/${managerClubId}?PageNumber=${currentMembersPage}&PageSize=5&IsApproved=true`;
-                if (memberSearchTerm) {
-                    url += `&SearchTerm=${encodeURIComponent(memberSearchTerm)}`;
-                }
 
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
+            apiResponse.data.forEach(member => {
+                const row = tableBody.insertRow();
+                row.insertCell().textContent = member.id; // DTO'daki Id alanı
+                row.insertCell().textContent = member.userUserName || 'N/A'; // Kullanıcı Adı
+                row.insertCell().textContent = `${member.userFirstName || ''} ${member.userLastName || ''}`.trim() || 'N/A'; // Adı Soyadı
+                row.insertCell().textContent = member.role_in_club || 'N/A'; // Kulüp Rolü
+                const actionsCell = row.insertCell();
 
-                if (!response.ok) {
-                    throw new Error(`Kulüp üyeleri yüklenirken HTTP hatası! Durum: ${response.status}`);
-                }
+                const approveBtn = document.createElement('button');
+                approveBtn.className = 'btn btn-success btn-sm me-2';
+                approveBtn.textContent = 'Onayla';
+                approveBtn.addEventListener('click', () => approveRejectMember(member.Id, true)); // member.Id kullanıldı
+                actionsCell.appendChild(approveBtn);
 
-                const data = await response.json();
-                const members = data.club_Users;
-                const metaData = data.metaData;
+                const rejectBtn = document.createElement('button');
+                rejectBtn.className = 'btn btn-danger btn-sm';
+                rejectBtn.textContent = 'Reddet';
+                rejectBtn.addEventListener('click', () => approveRejectMember(member.Id, false)); // member.Id kullanıldı
+                actionsCell.appendChild(rejectBtn);
+            });
 
-                const listContainer = document.getElementById('club-members-list');
-                listContainer.innerHTML = '';
-
-                if (members && members.length > 0) {
-                    members.forEach(member => {
-                        const listItem = document.createElement('div');
-                        listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-                        listItem.innerHTML = `
-                                <span>${member.userFirstName} ${member.userLastName} (${member.userUserName}) - Rol: ${member.role_in_club || 'Üye'}</span>
-                                <div>
-                                    <button class="btn btn-warning btn-sm edit-role-btn me-2" data-id="${member.id}" data-current-role="${member.role_in_club || 'User'}">Rol Düzenle</button>
-                                    <button class="btn btn-danger btn-sm remove-member-btn" data-id="${member.id}">Üyeliği Sonlandır</button>
-                                </div>
-                            `;
-                        listContainer.appendChild(listItem);
-                    });
-
-                    listContainer.querySelectorAll('.edit-role-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => editMemberRole(e.target.dataset.id, e.target.dataset.currentRole));
-                    });
-                    listContainer.querySelectorAll('.remove-member-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => removeMember(e.target.dataset.id));
-                    });
-
-                    renderPagination(metaData, 'club-members-pagination', fetchClubMembers);
-
-                } else {
-                    listContainer.innerHTML = '<p class="text-center">Kulübün onaylanmış üyesi bulunmamaktadır.</p>';
-                    document.getElementById('club-members-pagination').innerHTML = '';
-                }
-
-            } catch (error) {
-                console.error('Kulüp üyeleri yüklenirken hata:', error);
-                document.getElementById('club-members-list').innerHTML = `<p class="text-danger text-center">Kulüp üyeleri yüklenemedi: ${error.message}</p>`;
-            }
+            renderPagination('pending-pagination', apiResponse.metaData.currentPage, apiResponse.metaData.totalPages, fetchPendingMembers);
         }
 
-        document.getElementById('member-search-button').addEventListener('click', () => {
-            memberSearchTerm = document.getElementById('member-search-input').value;
-            fetchClubMembers(1); // Arama yapıldığında ilk sayfayı getir
-        });
+        async function approveRejectMember(clubUserId, isApproved) {
+            let url;
+            let method = 'PUT';
+            let body = null;
 
-        document.getElementById('member-search-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                memberSearchTerm = document.getElementById('member-search-input').value;
+            url = `${API_BASE_URL}/clubmanager/clubuser/${clubUserId}`;
+
+            // Eğer isApproved false ise (Reddetme işlemi), backend'inizdeki API'nin bu durumu nasıl ele aldığını kontrol edin.
+            // Sizin ChangeApproved metotunuz sadece ID alıyor ve muhtemelen onayı değiştiriyor.
+            // Eğer Reddetme için ayrı bir endpoint veya body ile isApproved: false göndermek gerekiyorsa, burayı ayarlayın.
+            // Şimdilik sadece onayla/reddet düğmesine basıldığında ilgili ID'yi gönderiyoruz.
+            // Backend'deki ChangeApproved metodu onayı açıp kapatıyorsa, bu şekilde çalışır.
+            // Eğer Reddetme için ClubUser'ı silmek gibi bir işlem varsa, backend'de DELETE endpoint'i olmalı.
+            // Ve frontend'de rejectBtn'nin event listener'ında o DELETE endpoint'i çağrılmalıdır.
+
+
+            const apiResponse = await callApi(url, method, body, true);
+
+            if (apiResponse) {
+                fetchPendingMembers(currentPendingMembersPage);
                 fetchClubMembers(1);
             }
-        });
-
-        async function editMemberRole(clubUserId, currentRole) {
-            const newRole = prompt(`Üyenin yeni rolünü girin (örn: User, Event Manager, Treasurer, Secretary):`, currentRole);
-            if (newRole === null || newRole.trim() === '') {
-                alert('Rol boş bırakılamaz.');
-                return;
-            }
-
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const response = await fetch(`${API_BASE_URL}/admin/clubuser`, { // Backend'deki ChangeClubRole endpoint'i
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${accessToken}`
-                    },
-                    body: JSON.stringify({
-                        id: parseInt(clubUserId), // Backend ClubUser tablosundaki id
-                        role_in_club: newRole
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Rol güncelleme başarısız: ${response.status} - ${response.statusText}. Detay: ${errorText}`);
-                }
-
-                alert('Üye rolü başarıyla güncellendi!');
-                fetchClubMembers(currentMembersPage); // Listeyi yenile
-            } catch (error) {
-                console.error('Rol güncelleme hatası:', error);
-                alert('Rol güncellenirken bir hata oluştu: ' + error.message);
-            }
         }
+        // #endregion
 
-        async function removeMember(clubUserId) {
-            if (!confirm('Bu üyeyi kulüpten çıkarmak istediğinizden emin misiniz?')) {
-                return;
-            }
-
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const response = await fetch(`${API_BASE_URL}/admin/clubuser/${clubUserId}`, { // Delete endpoint
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Üyeyi çıkarma başarısız: ${response.status} - ${response.statusText}. Detay: ${errorText}`);
-                }
-
-                alert('Üye başarıyla kulüpten çıkarıldı.');
-                fetchClubMembers(currentMembersPage); // Listeyi yenile
-                fetchClubInfo(); // Üye sayısı değişebileceği için kulüp bilgisini yenile
-            } catch (error) {
-                console.error('Üye çıkarma hatası:', error);
-                alert('Üye çıkarılırken bir hata oluştu: ' + error.message);
-            }
-        }
-
-
-        // Etkinlik Yönetimi Fonksiyonları
-        let currentEventsPage = 1;
-
-        async function fetchClubEvents(pageNumber = 1) {
-            if (!managerClubId) {
-                document.getElementById('club-events-container').innerHTML = '<p class="text-center text-muted col-12">Kulüp bilgileri yükleniyor, lütfen bekleyiniz veya yönettiğiniz bir kulüp bulunamadı.</p>';
-                return;
-            }
+        // #region Etkinlik Yönetimi
+        async function fetchClubEvents(pageNumber) {
             currentEventsPage = pageNumber;
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const response = await fetch(`${API_BASE_URL}/admin/events?PageNumber=${currentEventsPage}&PageSize=6&ClubId=${managerClubId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
+            const url = `${API_BASE_URL}/clubmanager/events?PageNumber=${currentEventsPage}&PageSize=${eventsPerPage}`;
+            const apiResponse = await callApi(url);
 
-                if (!response.ok) {
-                    throw new Error(`Etkinlikler yüklenirken HTTP hatası! Durum: ${response.status}`);
-                }
+            const tableBody = document.getElementById('events-table-body');
+            tableBody.innerHTML = '';
 
-                const data = await response.json();
-                const events = data.events;
-                const metaData = data.metaData;
+            if (!apiResponse || !apiResponse.data || apiResponse.data.length === 0) {
+                console.error("Etkinlikler API çağrısı başarısız oldu veya veri bulunamadı.", apiResponse);
+                displayMessage('Etkinlikler yüklenirken bir hata oluştu. Yetkiniz olmayabilir veya sunucuya ulaşılamıyor.', 'danger');
+                tableBody.innerHTML = '<tr><td colspan="6">Etkinlik bulunamadı veya yüklenirken hata oluştu.</td></tr>';
+                document.getElementById('events-pagination').innerHTML = '';
+                return;
+            }
 
-                const eventsContainer = document.getElementById('club-events-container');
-                eventsContainer.innerHTML = '';
+            apiResponse.data.forEach(event => {
+                const row = tableBody.insertRow();
+                row.insertCell().textContent = event.id; // DTO'daki Id alanı
+                row.insertCell().textContent = event.title; // DTO'daki Title alanı
+                row.insertCell().textContent = event.eventDate ? new Date(event.eventDate).toLocaleString() : 'N/A'; // DTO'daki EventDate alanı
+                row.insertCell().textContent = event.location; // DTO'daki Location alanı
+                row.insertCell().textContent = event.isApproved ? 'Onaylı' : 'Beklemede'; // DTO'daki IsApproved alanı
 
-                if (events && events.length > 0) {
-                    events.forEach(event => {
-                        const eventDate = new Date(event.date).toLocaleDateString('tr-TR', {
-                            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                        });
-                        eventsContainer.innerHTML += `
-                                <div class="col">
-                                    <div class="card h-100 shadow-sm event-card">
-                                        <img src="${event.imageUrl || 'https://via.placeholder.com/400x200?text=Etkinlik+Görseli'}" class="card-img-top" alt="Etkinlik Görseli">
-                                        <div class="card-body d-flex flex-column">
-                                            <h5 class="card-title">${event.title}</h5>
-                                            <p class="card-text text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i> ${event.location}</p>
-                                            <p class="card-text text-muted mb-1"><i class="fas fa-calendar-alt me-1"></i> ${eventDate}</p>
-                                            <p class="card-text flex-grow-1">${event.description.substring(0, 100)}...</p>
-                                            <div class="d-flex justify-content-between mt-auto">
-                                                <a href="eventdetail.html?id=${event.id}" class="btn btn-info btn-sm me-2">Detay</a>
-                                                <button class="btn btn-warning btn-sm edit-event-btn me-2" data-id="${event.id}">Düzenle</button>
-                                                <button class="btn btn-danger btn-sm delete-event-btn" data-id="${event.id}">Sil</button>
-                                                ${event.isApproved ? '<span class="badge bg-success align-self-center">Onaylı</span>' : '<button class="btn btn-secondary btn-sm approve-event-btn" data-id="${event.id}">Onaya Gönder</button>'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                    });
+                const actionsCell = row.insertCell();
 
-                    eventsContainer.querySelectorAll('.edit-event-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const eventId = e.target.dataset.id;
-                            // Düzenleme sayfasına yönlendir veya modal aç
-                            alert(`Etkinlik ${eventId} düzenleniyor... (Bu işlev henüz tam entegre edilmedi)`);
-                        });
-                    });
-                    eventsContainer.querySelectorAll('.delete-event-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => deleteEvent(e.target.dataset.id));
-                    });
-                    eventsContainer.querySelectorAll('.approve-event-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => approveEvent(e.target.dataset.id));
-                    });
+                const editBtn = document.createElement('button');
+                editBtn.className = 'btn btn-warning btn-sm me-2';
+                editBtn.textContent = 'Düzenle';
+                editBtn.addEventListener('click', () => editEvent(event));
+                actionsCell.appendChild(editBtn);
 
-                    renderPagination(metaData, 'club-events-pagination', fetchClubEvents);
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-danger btn-sm';
+                deleteBtn.textContent = 'Sil';
+                deleteBtn.addEventListener('click', () => deleteEvent(event.Id)); // event.Id kullanıldı
+                actionsCell.appendChild(deleteBtn);
+            });
 
-                } else {
-                    eventsContainer.innerHTML = '<p class="text-center col-12">Henüz oluşturulmuş bir etkinlik bulunmamaktadır.</p>';
-                    document.getElementById('club-events-pagination').innerHTML = '';
-                }
+            renderPagination('events-pagination', apiResponse.metaData.currentPage, apiResponse.metaData.totalPages, fetchClubEvents);
+        }
 
-            } catch (error) {
-                console.error('Kulüp etkinlikleri yüklenirken hata:', error);
-                document.getElementById('club-events-container').innerHTML = `<p class="text-danger text-center col-12">Etkinlikler yüklenemedi: ${error.message}</p>`;
+        function showCreateEditEventForm() {
+            document.getElementById('event-form').reset();
+            document.getElementById('event-id').value = '';
+            document.getElementById('event-form-title').textContent = 'Yeni Etkinlik Oluştur';
+            showSection('create-edit-event-section');
+        }
+
+        async function editEvent(eventData) {
+            document.getElementById('event-form-title').textContent = 'Etkinlik Düzenle';
+            document.getElementById('event-id').value = eventData.Id; // DTO'daki Id alanı
+            document.getElementById('event-title').value = eventData.Title; // DTO'daki Title alanı
+            document.getElementById('event-description').value = eventData.Description; // DTO'daki Description alanı
+            if (eventData.EventDate) {
+                const date = new Date(eventData.EventDate);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                document.getElementById('event-date').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            } else {
+                document.getElementById('event-date').value = '';
+            }
+            document.getElementById('event-location').value = eventData.Location; // DTO'daki Location alanı
+            document.getElementById('event-quota').value = eventData.Quota; // DTO'da Quota alanı yok, burada hata verebilir. Eğer backend'den gelmiyorsa kaldırılmalı veya eklendiğinden emin olunmalı.
+            // DTO'nuzda Quota alanı yok, bu yüzden bu satır muhtemelen undefined dönecektir. Backend DTO'sunu kontrol edin.
+
+            showSection('create-edit-event-section');
+        }
+
+        async function saveEvent(event) {
+            event.preventDefault();
+            const eventId = document.getElementById('event-id').value;
+            const title = document.getElementById('event-title').value;
+            const description = document.getElementById('event-description').value;
+            const eventDate = document.getElementById('event-date').value;
+            const location = document.getElementById('event-location').value;
+            const quota = parseInt(document.getElementById('event-quota').value); // DTO'da Quota alanı yok, bu satır problem yaratabilir.
+
+            let url;
+            let method;
+            let body;
+
+            if (eventId) {
+                url = `${API_BASE_URL}/clubmanager/events/${eventId}`;
+                method = 'PUT';
+                body = { Id: parseInt(eventId), Title: title, Description: description, EventDate: eventDate, Location: location, Quota: quota }; // DTO'ya uygun alan isimleri
+            } else {
+                url = `${API_BASE_URL}/clubmanager/events`;
+                method = 'POST';
+                body = { Title: title, Description: description, EventDate: eventDate, Location: location, Quota: quota }; // DTO'ya uygun alan isimleri
+            }
+
+            const apiResponse = await callApi(url, method, body, true);
+
+            if (apiResponse) {
+                document.getElementById('event-form').reset();
+                showSection('events-section');
+                fetchClubEvents(currentEventsPage);
             }
         }
 
@@ -807,180 +724,74 @@
             if (!confirm('Bu etkinliği silmek istediğinizden emin misiniz?')) {
                 return;
             }
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const response = await fetch(`${API_BASE_URL}/admin/events/${eventId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
+            const url = `${API_BASE_URL}/clubmanager/events/${eventId}`;
+            const apiResponse = await callApi(url, 'DELETE', null, true);
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Etkinlik silme başarısız: ${response.status} - ${response.statusText}. Detay: ${errorText}`);
-                }
-
-                alert('Etkinlik başarıyla silindi!');
-                fetchClubEvents(currentEventsPage); // Listeyi yenile
-            } catch (error) {
-                console.error('Etkinlik silme hatası:', error);
-                alert('Etkinlik silinirken bir hata oluştu: ' + error.message);
+            if (apiResponse) {
+                fetchClubEvents(currentEventsPage);
             }
         }
+        // #endregion
 
-        async function approveEvent(eventId) {
-            if (!confirm('Bu etkinliği onay için göndermek istediğinizden emin misiniz? Onaylandıktan sonra düzenlenemez.')) {
-                return;
-            }
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const patchDoc = [{
-                    op: "replace",
-                    path: "/IsApproved",
-                    value: true
-                }];
 
-                const response = await fetch(`${API_BASE_URL}/admin/events/${eventId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json-patch+json', // PATCH için özel Content-Type
-                        'Authorization': `Bearer ${accessToken}`
-                    },
-                    body: JSON.stringify(patchDoc)
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Etkinlik onaylama başarısız: ${response.status} - ${response.statusText}. Detay: ${errorText}`);
-                }
-
-                alert('Etkinlik başarıyla onay için gönderildi!');
-                fetchClubEvents(currentEventsPage); // Listeyi yenile
-            } catch (error) {
-                console.error('Etkinlik onaylama hatası:', error);
-                alert('Etkinlik onaylanırken bir hata oluştu: ' + error.message);
-            }
-        }
-
-        // Etkinlik Oluşturma Fonksiyonu
-        document.getElementById('create-event-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const accessToken = localStorage.getItem('accessToken');
-            if (!managerClubId) {
-                alert('Kulüp ID bulunamadı. Lütfen sayfayı yenileyin.');
+        document.addEventListener('DOMContentLoaded', async () => {
+            // #region Rol Kontrolü
+            const role = localStorage.getItem('role');
+            if (role !== 'Club Manager') {
+                displayMessage('Bu sayfaya erişim yetkiniz yok. Lütfen kulüp yöneticisi olarak giriş yapın.', 'danger', 5000);
+                setTimeout(() => {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }, 3000);
                 return;
             }
 
-            const newEvent = {
-                clubId: managerClubId,
-                title: document.getElementById('event-title').value,
-                description: document.getElementById('event-description').value,
-                date: document.getElementById('event-date').value,
-                location: document.getElementById('event-location').value,
-                capacity: parseInt(document.getElementById('event-capacity').value),
-                imageUrl: document.getElementById('event-image-url').value || null, // Boşsa null gönder
-            };
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('welcome-message').textContent = `Hoş geldiniz, ${username}!`;
+            }
+            // #endregion
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin/events`, { // Etkinlik oluşturma endpoint'i
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${accessToken}`
-                    },
-                    body: JSON.stringify(newEvent)
+            // #region Sidebar Toggle
+            const sidebarCollapse = document.getElementById('sidebarCollapse');
+            if (sidebarCollapse) {
+                sidebarCollapse.addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('active');
                 });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Etkinlik oluşturma hatası: ${response.status} - ${response.statusText}. Detay: ${errorText}`);
-                }
-
-                alert('Etkinlik başarıyla oluşturuldu!');
-                document.getElementById('create-event-form').reset(); // Formu sıfırla
-                fetchClubEvents(1); // Yeni etkinliği görmek için etkinlik listesini yenile
-                showSection('events-section'); // Etkinlikler bölümüne dön
-            } catch (error) {
-                console.error('Etkinlik oluşturma hatası:', error);
-                alert('Etkinlik oluşturulurken bir hata oluştu: ' + error.message);
             }
-        });
+            // #endregion
 
-
-        // Ortak Sayfalama Fonksiyonu
-        function renderPagination(metaData, paginationElementId, fetchDataFunction) {
-            const paginationUl = document.getElementById(paginationElementId);
-            paginationUl.innerHTML = ''; // Önceki sayfalamayı temizle
-
-            if (metaData.TotalPages <= 1) {
-                return; // Tek sayfa varsa sayfalama gösterme
-            }
-
-            // Previous button
-            const prevLi = document.createElement('li');
-            prevLi.classList.add('page-item');
-            if (!metaData.HasPrevious) prevLi.classList.add('disabled');
-            const prevLink = document.createElement('a');
-            prevLink.classList.add('page-link');
-            prevLink.href = '#';
-            prevLink.textContent = 'Önceki';
-            prevLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (metaData.HasPrevious) fetchDataFunction(metaData.CurrentPage - 1);
-            });
-            prevLi.appendChild(prevLink);
-            paginationUl.appendChild(prevLi);
-
-            // Page numbers
-            for (let i = 1; i <= metaData.TotalPages; i++) {
-                const li = document.createElement('li');
-                li.classList.add('page-item');
-                if (i === metaData.CurrentPage) li.classList.add('active');
-                const link = document.createElement('a');
-                link.classList.add('page-link');
-                link.href = '#';
-                link.textContent = i;
-                link.addEventListener('click', (e) => {
+            // #region Bölüm Geçişleri
+            document.querySelectorAll('#sidebar ul.components li a').forEach(link => {
+                link.addEventListener('click', function (e) {
                     e.preventDefault();
-                    fetchDataFunction(i);
+                    const sectionId = this.dataset.section;
+                    showSection(sectionId);
                 });
-                li.appendChild(link);
-                paginationUl.appendChild(li);
-            }
-
-            // Next button
-            const nextLi = document.createElement('li');
-            nextLi.classList.add('page-item');
-            if (!metaData.HasNext) nextLi.classList.add('disabled');
-            const nextLink = document.createElement('a');
-            nextLink.classList.add('page-link');
-            nextLink.href = '#';
-            nextLink.textContent = 'Sonraki';
-            nextLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (metaData.HasNext) fetchDataFunction(metaData.CurrentPage + 1);
             });
-            nextLi.appendChild(nextLink);
-            paginationUl.appendChild(nextLi);
-        }
+            // #endregion
 
-        // Dashboard'u başlat
-        document.addEventListener('DOMContentLoaded', async () => { // async anahtar kelimesini eklemeyi unutmayın
-            const hasAccess = await checkLoginAndRole();
-            if (!hasAccess) {
-                // checkLoginAndRole zaten yönlendirme yaptığı için burada başka bir şey yapmaya gerek yok
-                return;
+            // #region İlk Yüklemeler
+            showSection('club-info-section');
+            await fetchClubInfo();
+
+            await fetchClubMembers(1);
+            await fetchPendingMembers(1);
+            await fetchClubEvents(1);
+            // #endregion
+
+            // #region Etkinlik Formu Olay Dinleyicileri
+            document.getElementById('create-event-btn').addEventListener('click', showCreateEditEventForm);
+            document.getElementById('event-form').addEventListener('submit', saveEvent);
+            document.getElementById('cancel-event-btn').addEventListener('click', () => showSection('events-section'));
+            // #endregion
+
+            // #region Kulüp Bilgileri Düzenleme Formu Olay Dinleyicisi
+            const editClubForm = document.getElementById('edit-club-form');
+            if (editClubForm) {
+                editClubForm.addEventListener('submit', updateClubInfo);
             }
-
-            // Eğer erişim varsa, dashboard içeriğini yükle
-            showSection('club-info-section'); // Varsayılan olarak Kulüp Bilgilerini göster
-            fetchClubInfo(); // Kulüp bilgilerini yükle
-
-            // Diğer dashboard başlatma fonksiyonlarını buraya ekleyin, örn:
-            // fetchPendingMembers(1); // Eğer bekleyen üyeler otomatik yüklenecekse
-            // fetchClubMembers(1); // Eğer kulüp üyeleri otomatik yüklenecekse
-            // fetchClubEvents(1); // Eğer etkinlikler otomatik yüklenecekse
+            // #endregion
         });
     </script>
 </body>
